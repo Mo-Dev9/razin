@@ -29,6 +29,10 @@ export const metadata: Metadata = {
     title: 'RentRate — تقييم الشقق والمباني في مصر',
     description: 'اعرف الحقيقة قبل ما تتعاقد. تقييمات حقيقية من سكان حقيقيين.',
   },
+  icons: {
+    icon: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
   robots: {
     index: true,
     follow: true,
