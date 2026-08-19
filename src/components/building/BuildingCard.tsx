@@ -38,9 +38,9 @@ export function BuildingCard({ building }: BuildingCardProps) {
           {Object.entries(building.averageRatings)
             .filter(([k]) => k !== 'overall')
             .slice(0, 3)
-            .map(([, val]) => (
+            .map(([k, val]) => (
               <span
-                key={val}
+                key={k}
                 className={`inline-block w-2 h-2 rounded-full ${
                   val >= 4 ? 'bg-[var(--color-success)]' : val >= 2.5 ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-error)]'
                 }`}

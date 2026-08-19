@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 
@@ -9,6 +9,12 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/admin/buildings').then((res) => {
+      if (res.ok) router.push('/admin');
+    }).catch(() => {});
+  }, [router]);
 
   const handleLogin = async () => {
     if (!password.trim()) return;
