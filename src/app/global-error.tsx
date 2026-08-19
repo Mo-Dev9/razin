@@ -28,7 +28,7 @@ export default function GlobalError({
             خطأ غير متوقع
           </h1>
           <p style={{ fontSize: '0.875rem', color: '#94A3B8', marginBottom: '1.5rem' }}>
-            حاول ت recarregar الصفحة
+            حاول إعادة تحميل الصفحة
           </p>
           <button
             onClick={reset}
