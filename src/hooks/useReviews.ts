@@ -5,11 +5,10 @@ import {
   where,
   orderBy,
   getDocs,
-  addDoc,
   doc,
-  updateDoc,
-  increment,
   getDoc,
+  runTransaction,
+  increment,
 } from 'firebase/firestore';
 import { getDb } from '@/lib/firebase';
 import type { Review, ReviewRatings, Building } from '@/types';
@@ -19,7 +18,7 @@ export function useReviews() {
 
   const getBuildingReviews = useCallback(async (buildingId: string): Promise<Review[]> => {
     try {
-        const q = query(
+      const q = query(
         collection(getDb(), 'reviews'),
         where('buildingId', '==', buildingId),
         orderBy('createdAt', 'desc')
@@ -55,41 +54,64 @@ export function useReviews() {
 
         const overall = Object.values(ratings).reduce((a, b) => a + b, 0) / Object.keys(ratings).length;
 
-        await addDoc(collection(getDb(), 'reviews'), {
-          buildingId,
-          userId,
-          ratings,
-          overall,
-          comment: comment || '',
-          floor: floor || '',
-          apartmentNumber: apartmentNumber || '',
-          createdAt: Date.now(),
-        });
+        await runTransaction(getDb(), async (transaction) => {
+          // 1. Check duplicate inside transaction for safety
+          const reviewsQuery = query(
+            collection(getDb(), 'reviews'),
+            where('buildingId', '==', buildingId),
+            where('userId', '==', userId)
+          );
+          const existing = await getDocs(reviewsQuery);
+          if (!existing.empty) return;
 
-        const buildingRef = doc(getDb(), 'buildings', buildingId);
-        const buildingSnap = await getDoc(buildingRef);
-        if (buildingSnap.exists()) {
-          const b = buildingSnap.data() as Building;
-          const count = b.reviewCount;
-          const newAvg = (key: keyof ReviewRatings) => {
-            const old = b.averageRatings[key] * count;
-            return (old + ratings[key]) / (count + 1);
-          };
-
-          await updateDoc(buildingRef, {
-            averageRatings: {
-              noise: newAvg('noise'),
-              humidity: newAvg('humidity'),
-              landlord: newAvg('landlord'),
-              neighbors: newAvg('neighbors'),
-              lighting: newAvg('lighting'),
-              safety: newAvg('safety'),
-              overall: (b.averageRatings.overall * count + overall) / (count + 1),
-            },
-            reviewCount: increment(1),
-            lastReviewAt: Date.now(),
+          // 2. Create the review
+          const reviewRef = doc(collection(getDb(), 'reviews'));
+          transaction.set(reviewRef, {
+            buildingId,
+            userId,
+            ratings,
+            overall,
+            comment: comment || '',
+            floor: floor || '',
+            apartmentNumber: apartmentNumber || '',
+            createdAt: Date.now(),
           });
-        }
+
+          // 3. Update building averages + count
+          const buildingRef = doc(getDb(), 'buildings', buildingId);
+          const buildingSnap = await getDoc(buildingRef);
+          if (buildingSnap.exists()) {
+            const b = buildingSnap.data() as Building;
+            const count = b.reviewCount;
+            const newAvg = (key: keyof ReviewRatings) => {
+              const old = b.averageRatings[key] * count;
+              return (old + ratings[key]) / (count + 1);
+            };
+
+            transaction.update(buildingRef, {
+              averageRatings: {
+                noise: newAvg('noise'),
+                humidity: newAvg('humidity'),
+                landlord: newAvg('landlord'),
+                neighbors: newAvg('neighbors'),
+                lighting: newAvg('lighting'),
+                safety: newAvg('safety'),
+                overall: (b.averageRatings.overall * count + overall) / (count + 1),
+              },
+              reviewCount: increment(1),
+              lastReviewAt: Date.now(),
+            });
+          }
+
+          // 4. Update user reviewCount
+          const userRef = doc(getDb(), 'users', userId);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            transaction.update(userRef, {
+              reviewCount: increment(1),
+            });
+          }
+        });
 
         return true;
       } catch (err) {
