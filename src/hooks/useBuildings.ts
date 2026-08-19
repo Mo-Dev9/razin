@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { getDb } from '@/lib/firebase';
 import type { Building } from '@/types';
@@ -26,11 +26,6 @@ function matchesSearch(building: Building, q: string): boolean {
 
 export function useBuildings() {
   const [loading, setLoading] = useState(false);
-  const [allBuildings, setAllBuildings] = useState<Building[]>([]);
-
-  useEffect(() => {
-    getAllBuildings().then(setAllBuildings);
-  }, []);
 
   const searchBuildings = useCallback(async (searchQuery: string): Promise<Building[]> => {
     setLoading(true);
@@ -56,5 +51,5 @@ export function useBuildings() {
     }
   }, []);
 
-  return { searchBuildings, getBuilding, loading, allBuildings };
+  return { searchBuildings, getBuilding, loading };
 }

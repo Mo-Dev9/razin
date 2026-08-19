@@ -46,14 +46,6 @@ export interface ReviewRatings {
   safety: number;
 }
 
-export interface Vote {
-  id: string;
-  reviewId: string;
-  userId: string;
-  type: 'up' | 'down';
-  createdAt: number;
-}
-
 export interface UserProfile {
   uid: string;
   isAnonymous: boolean;

@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { isAdmin } from '@/lib/admin';
 import { getAdminDb } from '@/lib/firebase-admin';
-
-async function isAdmin(): Promise<boolean> {
-  const cookieStore = await cookies();
-  const session = cookieStore.get('admin_session');
-  return session?.value === 'authenticated';
-}
 
 export async function GET(req: NextRequest) {
   if (!(await isAdmin())) {

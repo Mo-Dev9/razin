@@ -1,9 +1,3 @@
-import { type ClassValue, clsx } from 'clsx';
-
-export function cn(...inputs: ClassValue[]) {
-  return clsx(inputs);
-}
-
 export function generateAnonymousName(uid: string): string {
   const suffix = uid.slice(0, 4).toLowerCase();
   return `مستخدم_${suffix}`;
