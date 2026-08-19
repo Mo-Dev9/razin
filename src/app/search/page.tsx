@@ -1,9 +1,18 @@
-'use client';
-
-import { Suspense } from 'react';
+import type { Metadata } from 'next';
 import SearchPageInner from './SearchPageInner';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { Suspense } from 'react';
+
+export const metadata: Metadata = {
+  title: 'بحث — RentRate',
+  description: 'ابحث عن شقق ومباني في مصر وشوف تقييمات المستأجرين.',
+  openGraph: {
+    title: 'بحث — RentRate',
+    description: 'ابحث عن شقق ومباني في مصر وشوف تقييمات المستأجرين.',
+    type: 'website',
+  },
+};
 
 export default function SearchPage() {
   return (
