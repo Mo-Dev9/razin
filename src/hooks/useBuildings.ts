@@ -1,31 +1,43 @@
-import { useState, useCallback } from 'react';
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+import { useState, useCallback, useEffect } from 'react';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { getDb } from '@/lib/firebase';
 import type { Building } from '@/types';
 
+let allBuildingsCache: Building[] | null = null;
+
+async function getAllBuildings(): Promise<Building[]> {
+  if (allBuildingsCache) return allBuildingsCache;
+  const snapshot = await getDocs(collection(getDb(), 'buildings'));
+  allBuildingsCache = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Building));
+  return allBuildingsCache;
+}
+
+function matchesSearch(building: Building, q: string): boolean {
+  const fields = [
+    building.area,
+    building.city,
+    building.address,
+    building.buildingNumber,
+    building.floor,
+    building.apartmentNumber,
+  ].filter(Boolean).map((f) => f!.toLowerCase());
+  return fields.some((f) => f.includes(q));
+}
+
 export function useBuildings() {
   const [loading, setLoading] = useState(false);
+  const [allBuildings, setAllBuildings] = useState<Building[]>([]);
+
+  useEffect(() => {
+    getAllBuildings().then(setAllBuildings);
+  }, []);
 
   const searchBuildings = useCallback(async (searchQuery: string): Promise<Building[]> => {
     setLoading(true);
     try {
-      const q = query(
-        collection(getDb(), 'buildings'),
-        where('area', '==', searchQuery)
-      );
-      const snapshot = await getDocs(q);
-      const results = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Building));
-
-      if (results.length === 0) {
-        const q2 = query(
-          collection(getDb(), 'buildings'),
-          where('city', '==', searchQuery)
-        );
-        const snap2 = await getDocs(q2);
-        return snap2.docs.map((d) => ({ id: d.id, ...d.data() } as Building));
-      }
-
-      return results;
+      const q = searchQuery.toLowerCase().trim();
+      const buildings = await getAllBuildings();
+      return buildings.filter((b) => matchesSearch(b, q));
     } catch (err) {
       console.error('Search failed:', err);
       return [];
@@ -44,5 +56,5 @@ export function useBuildings() {
     }
   }, []);
 
-  return { searchBuildings, getBuilding, loading };
+  return { searchBuildings, getBuilding, loading, allBuildings };
 }

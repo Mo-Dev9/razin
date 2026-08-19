@@ -3,11 +3,15 @@ export interface Building {
   address: string;
   city: string;
   area: string;
+  buildingNumber?: string;
+  floor?: string;
+  apartmentNumber?: string;
   geohash?: string;
   averageRatings: RatingAverages;
   reviewCount: number;
   lastReviewAt?: number;
   createdAt: number;
+  source?: string;
 }
 
 export interface RatingAverages {
@@ -28,6 +32,9 @@ export interface Review {
   overall: number;
   comment?: string;
   createdAt: number;
+  buildingNumber?: string;
+  floor?: string;
+  apartmentNumber?: string;
 }
 
 export interface ReviewRatings {

@@ -70,6 +70,11 @@ export default function BuildingPage() {
           <p className="text-sm text-[var(--color-text-secondary)] mt-1">
             {building.area}، {building.city}
           </p>
+          {(building.buildingNumber || building.floor || building.apartmentNumber) && (
+            <p className="text-xs text-[var(--color-primary)] mt-2 font-medium">
+              {[building.buildingNumber && `عمارة ${building.buildingNumber}`, building.floor && `دور ${building.floor}`, building.apartmentNumber && `شقة ${building.apartmentNumber}`].filter(Boolean).join(' · ')}
+            </p>
+          )}
           <div className="flex items-center gap-4 mt-3">
             <div className="text-4xl font-bold text-[var(--color-primary)]">
               {building.averageRatings.overall.toFixed(1)}

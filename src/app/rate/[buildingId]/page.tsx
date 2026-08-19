@@ -30,6 +30,8 @@ export default function RatePage() {
     safety: 3,
   });
   const [comment, setComment] = useState('');
+  const [floor, setFloor] = useState('');
+  const [apartmentNumber, setApartmentNumber] = useState('');
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -49,7 +51,7 @@ export default function RatePage() {
 
   const handleSubmit = async () => {
     if (!user) return;
-    const ok = await submitReview(buildingId, user.uid, ratings, comment || undefined);
+    const ok = await submitReview(buildingId, user.uid, ratings, comment || undefined, floor || undefined, apartmentNumber || undefined);
     if (ok) setSubmitted(true);
   };
 
@@ -100,6 +102,29 @@ export default function RatePage() {
             </p>
           </div>
         )}
+
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <div>
+            <label className="text-xs text-[var(--color-text-secondary)] mb-1 block">الدور</label>
+            <input
+              type="text"
+              value={floor}
+              onChange={(e) => setFloor(e.target.value)}
+              placeholder="مثال: 3"
+              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm text-[var(--color-text)] placeholder-[var(--color-text-secondary)] outline-none focus:border-[var(--color-primary)]"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-[var(--color-text-secondary)] mb-1 block">رقم الشقة</label>
+            <input
+              type="text"
+              value={apartmentNumber}
+              onChange={(e) => setApartmentNumber(e.target.value)}
+              placeholder="مثال: 12"
+              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm text-[var(--color-text)] placeholder-[var(--color-text-secondary)] outline-none focus:border-[var(--color-primary)]"
+            />
+          </div>
+        </div>
 
         <div className="mb-4 p-4 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)]">
           <div className="flex items-center justify-between">

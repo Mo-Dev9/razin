@@ -21,6 +21,11 @@ export function ReviewCard({ review }: ReviewCardProps) {
             <div className="text-[10px] text-[var(--color-text-secondary)]">{formatDate(review.createdAt)}</div>
           </div>
         </div>
+        {(review.floor || review.apartmentNumber) && (
+          <div className="text-[10px] text-[var(--color-primary)] font-medium">
+            {[review.floor && `دور ${review.floor}`, review.apartmentNumber && `شقة ${review.apartmentNumber}`].filter(Boolean).join(' · ')}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-3 gap-2 mb-3">

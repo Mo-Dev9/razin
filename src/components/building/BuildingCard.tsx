@@ -9,6 +9,7 @@ interface BuildingCardProps {
 export function BuildingCard({ building }: BuildingCardProps) {
   const avg = building.averageRatings.overall;
   const label = ratingToLabel(avg);
+  const details = [building.buildingNumber && `عمارة ${building.buildingNumber}`, building.floor && `دور ${building.floor}`, building.apartmentNumber && `شقة ${building.apartmentNumber}`].filter(Boolean).join(' · ');
 
   return (
     <Card href={`/building/${building.id}`} className="p-4">
@@ -18,6 +19,9 @@ export function BuildingCard({ building }: BuildingCardProps) {
           <p className="text-xs text-[var(--color-text-secondary)] mt-1">
             {building.area}، {building.city}
           </p>
+          {details && (
+            <p className="text-[10px] text-[var(--color-primary)] mt-1 font-medium">{details}</p>
+          )}
         </div>
         <div className="flex flex-col items-center mr-4">
           <div className="text-2xl font-bold text-[var(--color-primary)]">
