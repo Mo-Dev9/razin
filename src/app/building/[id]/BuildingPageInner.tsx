@@ -116,9 +116,9 @@ export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps
         {reviews.length === 0 ? (
           <div className="border-2 border-dashed border-[var(--color-border)] rounded-3xl p-10 text-center">
             <div className="text-4xl mb-4">💬</div>
-            <h3 className="font-semibold mb-2">لا توجد تقييمات بعد</h3>
+            <h3 className="font-semibold mb-2">ما فيش تقييمات بعد</h3>
             <p className="text-sm text-[var(--color-text-secondary)]">
-              كن أول من يقيّم هذا المبنى!
+              كن أول من يقيّم هذا المبنى
             </p>
           </div>
         ) : (

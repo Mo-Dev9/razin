@@ -3,7 +3,7 @@ import ProfilePageInner from './ProfilePageInner';
 
 export const metadata: Metadata = {
   title: 'ملفي',
-  description: 'ملفك ومساهماتك على تقييم.',
+  description: 'ملفك ومساهماتك على RentRate.',
 };
 
 export default function ProfilePage() {

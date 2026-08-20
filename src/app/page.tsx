@@ -2,13 +2,13 @@ import type { Metadata } from 'next';
 import HomePageInner from './HomePageInner';
 
 export const metadata: Metadata = {
-  title: 'تقييم — دليل الجيران للعيش اليومي',
-  description: 'تقييم يساعدك تعرف تفاصيل الحياة في المبنى — من صوت الشارع إلى تعاون المالك — من ناس عاشوا هناك فعلاً.',
+  title: 'RentRate — اعرف الحقيقة قبل ما تتعاقد',
+  description: 'تقييمات شقق ومباني سكنية من مستأجرين حقيقيين. اعرف تفاصيل الحياة في المبنى قبل ما توقّع.',
   openGraph: {
-    title: 'تقييم — دليل الجيران للعيش اليومي',
-    description: 'تقييم يساعدك تعرف تفاصيل الحياة في المبنى — من صوت الشارع إلى تعاون المالك — من ناس عاشوا هناك فعلاً.',
+    title: 'RentRate — اعرف الحقيقة قبل ما تتعاقد',
+    description: 'تقييمات شقق ومباني سكنية من مستأجرين حقيقيين. اعرف تفاصيل الحياة في المبنى قبل ما توقّع.',
     url: 'https://rentrate-zeta.vercel.app',
-    siteName: 'تقييم',
+    siteName: 'RentRate',
     locale: 'ar_EG',
     type: 'website',
   },

@@ -17,8 +17,7 @@ export function Header() {
             </svg>
           </div>
           <div className="flex flex-col leading-none">
-            <span className="text-lg font-bold text-[var(--color-primary)]">تقييم</span>
-            <span className="text-[9px] font-medium text-[var(--color-text-muted)] tracking-widest">TAQYEEM</span>
+            <span className="text-lg font-bold text-[var(--color-primary)] tracking-tight">RentRate</span>
           </div>
         </Link>
 

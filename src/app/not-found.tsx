@@ -14,7 +14,7 @@ export default function NotFound() {
           <div className="text-6xl mb-4">🔍</div>
           <h1 className="text-2xl font-bold mb-2">الصفحة غير موجودة</h1>
           <p className="text-sm text-[var(--color-text-secondary)] mb-6">
-            يبدو أن الرابط اللي كتبتته غلط أو الصفحة اتحولت
+            يبدو أن الرابط الذي أدخلته غير صحيح أو الصفحة قد تمت إزالته
           </p>
           <Link href="/">
             <Button>الرجوع للرئيسية</Button>

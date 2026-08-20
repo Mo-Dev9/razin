@@ -14,12 +14,11 @@ export function Footer() {
                 </svg>
               </div>
               <div className="flex flex-col leading-none">
-                <span className="text-lg font-bold">تقييم</span>
-                <span className="text-[9px] font-medium text-white/50 tracking-widest">TAQYEEM</span>
+                <span className="text-lg font-bold tracking-tight">RentRate</span>
               </div>
             </div>
             <p className="text-sm text-white/60 leading-relaxed">
-              دليل الجيران للعيش اليومي. معلومات صادقة من أشخاص عاشوا التجربة.
+              دليل جيرانك للعيش اليومي. معلومات صادقة من ناس عايشين التجربة.
             </p>
           </div>
 
@@ -37,7 +36,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 pt-6 border-t border-white/10 text-center">
-          <p className="text-xs text-white/40">© {new Date().getFullYear()} تقييم — جميع الحقوق محفوظة</p>
+          <p className="text-xs text-white/40">© {new Date().getFullYear()} RentRate — جميع الحقوق محفوظة</p>
         </div>
       </div>
     </footer>

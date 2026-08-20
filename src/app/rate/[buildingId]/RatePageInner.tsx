@@ -110,7 +110,7 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
             احك لنا عن المكان كما هو.
           </h1>
           <p className="text-sm text-[var(--color-text-secondary)]">
-            تقييمك مجهول، لكن أثره يساعد شخصاً آخر يختار قراراً أكبر لكل جانب من 1 إلى 5.
+            تقييمك مجهول الهوية، لكن أثره يساعد شخصاً آخر ياخذ قرار أفضل. قيّم كل جانب من 1 إلى 5.
           </p>
         </div>
 
@@ -200,7 +200,7 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
               </div>
               <div className="border-t border-white/10 pt-4 space-y-3">
                 <p className="text-xs text-white/50 leading-relaxed">
-                  متوسط الأوجه الستة يعطيك صورة حقيقية عن الحياة في المبنى.
+                  متوسط تقييمات الست جوانب يعطيك صورة حقيقية عن الحياة في المبنى.
                 </p>
                 <p className="text-xs text-white/50 leading-relaxed">
                   كل تقييم مجهول الهوية ويُحسب مرة واحدة فقط لكل مستخدم.

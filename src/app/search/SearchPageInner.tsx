@@ -49,7 +49,7 @@ export default function SearchPageInner() {
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
-          تقييمات مجهولة، وقدراتك لك وحدك
+          التقييمات مجهولة الهوية، وأنت اللي بتتحكم فيها
         </p>
       </div>
 
@@ -105,22 +105,15 @@ export default function SearchPageInner() {
       {loading ? (
         <div className="text-center py-20"><div className="w-10 h-10 rounded-full border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] animate-spin mx-auto mb-4"></div><p className="text-sm text-[var(--color-text-secondary)]">جاري البحث...</p></div>
       ) : searched && results.length === 0 ? (
-        <div className="bg-[var(--color-error-bg)] border border-[var(--color-error)]/20 rounded-3xl p-10 text-center">
-          <div className="w-16 h-16 rounded-full bg-[var(--color-error)]/10 flex items-center justify-center mx-auto mb-4">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-error)" strokeWidth="2">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-              <line x1="12" y1="9" x2="12" y2="13" />
-              <line x1="12" y1="17" x2="12.01" y2="17" />
+        <div className="bg-[var(--color-surface-warm)] border border-[var(--color-border)] rounded-3xl p-10 text-center">
+          <div className="w-16 h-16 rounded-full bg-[var(--color-accent)]/10 flex items-center justify-center mx-auto mb-4">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-dark)" strokeWidth="2">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
           </div>
-          <h3 className="font-semibold text-[var(--color-text)] mb-2">تعذر تحميل البيانات</h3>
-          <p className="text-sm text-[var(--color-text-secondary)] mb-4">تحقق من الاتصال وحاول مرة أخرى.</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="rounded-full bg-[var(--color-primary)] text-white px-6 py-2.5 text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-colors"
-          >
-            حاول مجدداً
-          </button>
+          <h3 className="font-semibold text-[var(--color-text)] mb-2">لم يتم العثور على نتائج</h3>
+          <p className="text-sm text-[var(--color-text-secondary)]">جرّب البحث باسم شارع أو حي مختلف.</p>
         </div>
       ) : !searched ? (
         <div className="text-center py-20">

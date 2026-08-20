@@ -19,7 +19,7 @@ export default function HomePageInner() {
     });
   }, [searchBuildings]);
 
-  const neighborhoodNames = ['الروضة', 'العزيزية', 'السلامة'];
+  const neighborhoodNames = ['مدينة نصر', 'المعادي', 'الزمالك'];
 
   return (
     <>
@@ -30,7 +30,7 @@ export default function HomePageInner() {
             <div className="flex-1 text-right">
               <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-surface-warm)] px-4 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] mb-6">
                 <span className="w-2 h-2 rounded-full bg-[var(--color-success)]"></span>
-                دليل الجيران للعيش اليومي
+                دليل جيرانك للعيش اليومي
               </span>
               <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
                 <span className="text-[var(--color-text)]">قبل ما تختار</span>
@@ -38,7 +38,7 @@ export default function HomePageInner() {
                 <span className="text-[var(--color-primary)]">المكان، اسأل.</span>
               </h1>
               <p className="text-[var(--color-text-secondary)] text-base md:text-lg leading-relaxed mb-8 max-w-lg">
-                تقييم يساعدك تعرف تفاصيل الحياة في المبنى — من صوت الشارع إلى تعاون المالك — من ناس عاشوا هناك فعلاً.
+                RentRate بيساعدك تعرف تفاصيل الحياة في المبنى — من صوت الشارع لتعاون المالك — من ناس عايشين هناك فعلاً.
               </p>
               <div className="max-w-md">
                 <SearchBar />
@@ -48,7 +48,7 @@ export default function HomePageInner() {
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
-                تقييمات مجهولة، وقدراتك لك وحدك
+                التقييمات مجهولة الهوية، وأنت اللي بتتحكم فيها
               </p>
             </div>
 
@@ -65,7 +65,7 @@ export default function HomePageInner() {
                       المكان الصح يبدأ من التفاصيل.
                     </h2>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-white/60">جدة · حي الروضة</span>
+                      <span className="text-xs text-white/60">القاهرة · مدينة نصر</span>
                     </div>
                   </div>
                 </div>
@@ -74,7 +74,7 @@ export default function HomePageInner() {
                     <span className="text-xl font-bold text-[var(--color-primary)]">4.4</span>
                     <span className="text-[var(--color-primary)]">★</span>
                   </div>
-                  <span className="text-[10px] text-[var(--color-primary)] font-medium">تقييم حي</span>
+                  <span className="text-[10px] text-[var(--color-primary)] font-medium">تقييم الحي</span>
                 </div>
               </div>
             </div>
@@ -93,7 +93,7 @@ export default function HomePageInner() {
             </div>
             <div className="flex items-center gap-3 bg-[var(--color-accent)]/15 border border-[var(--color-accent)]/30 rounded-2xl px-5 py-4">
               <span className="text-xl">⚖️</span>
-              <span className="text-sm font-medium text-[var(--color-primary)]">مقارنة بين مبانٍ</span>
+              <span className="text-sm font-medium text-[var(--color-primary)]">مقارنة بين مباني</span>
             </div>
           </div>
         </section>
@@ -101,7 +101,7 @@ export default function HomePageInner() {
         {neighborhoods.length > 0 && (
           <section className="mx-auto max-w-5xl px-4 py-12">
             <h2 className="font-display text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-6">
-              مبني يفيدك يقعد هنا
+              مبني يفيدك تسكن هنا
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {neighborhoods.map((b, i) => (
@@ -139,11 +139,11 @@ export default function HomePageInner() {
 
         <section className="mx-auto max-w-5xl px-4 py-12">
           <h2 className="font-display text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-6">
-            كيف تقيم؟
+            إزاي بتقيّم؟
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {[
-              { num: '01', title: 'اختر الحي', desc: 'ابحث عن المبنى اللي عايز تعرف تفاصيله' },
+              { num: '01', title: 'اختار الحي', desc: 'ابحث عن المبنى اللي عايز تعرف تفاصيله' },
               { num: '02', title: 'قيّم', desc: 'قيّم 6 جوانب من تجربتك اليومية' },
               { num: '03', title: 'قارن', desc: 'شوف التقييمات وقارن بين المباني' },
             ].map((step) => (
@@ -158,13 +158,13 @@ export default function HomePageInner() {
 
         <section className="mx-auto max-w-5xl px-4 py-12 pb-20">
           <h2 className="font-display text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-6">
-            ما يقولو السكان
+            السكان بيقولوا إيه؟
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {[
-              { rating: '4.3', area: 'الروضة', quote: 'الحي هادئ والجيران محترمين. الشارع شجره كثير وهادي بالليل.' },
-              { rating: '3.7', area: 'العزيزية', quote: 'الموقع ممتاز بس الصوت من الشارع يدخل بالليل. المالك بطيء في الإصلاحات.' },
-              { rating: '4.3', area: 'السلامة', quote: 'المنطقة جيدة والإنارة ممتازة. أنصح فيه للعائلات الصغيرة.' },
+              { rating: '4.3', area: 'مدينة نصر', quote: 'الحي هادئ والجيران محترمين. الشارع فيه شجر وبهدوء بالليل.' },
+              { rating: '3.7', area: 'المعادي', quote: 'الموقع ممتاز بس صوت الشارع بيدخل بالليل. المالك بطيء في الإصلاحات.' },
+              { rating: '4.3', area: 'الزمالك', quote: 'المنطقة ممتازة والإنارة كويسة. أنصح بالسكن فيه للعائلات.' },
             ].map((review, i) => (
               <div key={i} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 shadow-soft">
                 <div className="flex items-center justify-between mb-3">
@@ -183,7 +183,7 @@ export default function HomePageInner() {
                   «{review.quote}»
                 </p>
                 <div className="flex items-center gap-2 mt-4">
-                  <span className="text-xs text-[var(--color-text-muted)]">مقيم في الحي</span>
+                  <span className="text-xs text-[var(--color-text-muted)]">مساهم في الحي</span>
                   <span className="text-xs text-[var(--color-text-muted)]">·</span>
                   <span className="text-xs text-[var(--color-text-muted)]">2026</span>
                 </div>

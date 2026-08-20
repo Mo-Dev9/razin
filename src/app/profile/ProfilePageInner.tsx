@@ -33,13 +33,13 @@ export default function ProfilePageInner() {
         <div className="mb-6">
           <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)]/15 px-3 py-1 text-xs font-medium text-[var(--color-accent-dark)] mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]"></span>
-            مساحتك في تقييم
+            مساحتك على RentRate
           </span>
           <h1 className="font-display text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-2">
             أثرُك في الحي.
           </h1>
           <p className="text-sm text-[var(--color-text-secondary)]">
-            هذا كل اللي تقدر تشاركه. ملفك مجهول داخلياً، لكن مساهمتك واضحة.
+            هذا كل اللي تقدر تشاركه. ملفك مجهول هويتك، لكن مساهمتك واضحة.
           </p>
         </div>
 
@@ -94,7 +94,7 @@ export default function ProfilePageInner() {
               </div>
               <h3 className="font-bold text-sm text-[var(--color-text)] mb-1">شكراً على صوتك</h3>
               <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
-                كل تقييم سابق يظل مفاجآت الانتقال لشخص آخر.
+                كل تقييم تقدمه يساعد شخصاً آخر يختار مكانه بأفضل شكل.
               </p>
               <Link href="/search" className="inline-flex items-center gap-1 text-xs font-medium text-[var(--color-accent-dark)] mt-3 hover:underline">
                 أضف تجربة جديدة
@@ -117,7 +117,7 @@ export default function ProfilePageInner() {
                   </svg>
                 </div>
                 <h4 className="font-semibold text-sm text-[var(--color-text)] mb-1">
-                  {(profile?.reviewCount || 0) > 0 ? 'تقييماتك' : 'لم تقم بتقييم الأول بعد'}
+                  {(profile?.reviewCount || 0) > 0 ? 'تقييماتك' : 'لم تقيّم بعد'}
                 </h4>
                 <p className="text-xs text-[var(--color-text-secondary)] mb-3">
                   {(profile?.reviewCount || 0) > 0
