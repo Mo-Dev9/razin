@@ -12,9 +12,9 @@ export default function GlobalError({
     <html lang="ar" dir="rtl">
       <body
         style={{
-          background: '#0F172A',
-          color: '#F8FAFC',
-          fontFamily: "'Segoe UI', Tahoma, Arial, sans-serif",
+          background: '#FAF7F2',
+          color: '#132E35',
+          fontFamily: "'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif",
           minHeight: '100vh',
           display: 'flex',
           alignItems: 'center',
@@ -27,16 +27,16 @@ export default function GlobalError({
           <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
             خطأ غير متوقع
           </h1>
-          <p style={{ fontSize: '0.875rem', color: '#94A3B8', marginBottom: '1.5rem' }}>
+          <p style={{ fontSize: '0.875rem', color: '#6B7C7F', marginBottom: '1.5rem' }}>
             حاول إعادة تحميل الصفحة
           </p>
           <button
             onClick={reset}
             style={{
-              background: '#14B8A6',
+              background: '#132E35',
               color: 'white',
               border: 'none',
-              borderRadius: '0.75rem',
+              borderRadius: '999px',
               padding: '0.75rem 1.5rem',
               fontSize: '0.875rem',
               fontWeight: '600',

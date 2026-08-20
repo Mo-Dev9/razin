@@ -2,20 +2,15 @@ import type { Metadata } from 'next';
 import HomePageInner from './HomePageInner';
 
 export const metadata: Metadata = {
-  title: 'RentRate — تقييم الشقق والمباني في مصر',
-  description: 'اعرف الحقيقة قبل ما تتعاقد. تقييمات حقيقية من سكان حقيقيين للشقق والمباني السكنية في مصر.',
+  title: 'تقييم — دليل الجيران للعيش اليومي',
+  description: 'تقييم يساعدك تعرف تفاصيل الحياة في المبنى — من صوت الشارع إلى تعاون المالك — من ناس عاشوا هناك فعلاً.',
   openGraph: {
-    title: 'RentRate — تقييم الشقق والمباني في مصر',
-    description: 'اعرف الحقيقة قبل ما تتعاقد. تقييمات حقيقية من سكان حقيقيين.',
+    title: 'تقييم — دليل الجيران للعيش اليومي',
+    description: 'تقييم يساعدك تعرف تفاصيل الحياة في المبنى — من صوت الشارع إلى تعاون المالك — من ناس عاشوا هناك فعلاً.',
     url: 'https://rentrate-zeta.vercel.app',
-    siteName: 'RentRate',
+    siteName: 'تقييم',
     locale: 'ar_EG',
     type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'RentRate — تقييم الشقق والمباني في مصر',
-    description: 'اعرف الحقيقة قبل ما تتعاقد. تقييمات حقيقية من سكان حقيقيين.',
   },
 };
 

@@ -1,17 +1,25 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #14B8A6;
-  --color-primary-dark: #0D9488;
-  --color-accent: #F59E0B;
-  --color-background: #0F172A;
-  --color-surface: #1E293B;
-  --color-surface-light: #334155;
-  --color-text: #F8FAFC;
-  --color-text-secondary: #94A3B8;
-  --color-border: #334155;
-  --color-error: #EF4444;
-  --color-success: #22C55E;
+  --color-primary: #132E35;
+  --color-primary-dark: #0E2228;
+  --color-primary-light: #1A3D47;
+  --color-accent: #EBB15B;
+  --color-accent-dark: #D49A3F;
+  --color-muted: #2E6259;
+  --color-muted-light: #3A7D72;
+  --color-background: #FAF7F2;
+  --color-surface: #FFFFFF;
+  --color-surface-warm: #F5F0E8;
+  --color-text: #132E35;
+  --color-text-secondary: #6B7C7F;
+  --color-text-muted: #9CA8A5;
+  --color-border: #E8E2D8;
+  --color-border-light: #F0EBE3;
+  --color-error: #D94F4F;
+  --color-error-bg: #FDF2F2;
+  --color-success: #2E6259;
+  --color-success-light: #E8F5F0;
 }
 
 html {
@@ -21,8 +29,14 @@ html {
 body {
   background: var(--color-background);
   color: var(--color-text);
-  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display {
+  font-family: 'Amiri', 'Georgia', serif;
 }
 
 input[type="range"] {
@@ -31,7 +45,7 @@ input[type="range"] {
   width: 100%;
   height: 6px;
   border-radius: 3px;
-  background: var(--color-surface-light);
+  background: var(--color-border);
   outline: none;
 }
 
@@ -41,16 +55,35 @@ input[type="range"]::-webkit-slider-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--color-primary);
+  background: var(--color-accent);
   cursor: pointer;
-  border: 2px solid var(--color-background);
+  border: 2px solid var(--color-surface);
 }
 
 input[type="range"]::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--color-primary);
+  background: var(--color-accent);
   cursor: pointer;
-  border: 2px solid var(--color-background);
+  border: 2px solid var(--color-surface);
+}
+
+.shadow-offset {
+  box-shadow: 4px 4px 0px var(--color-accent);
+}
+
+.shadow-soft {
+  box-shadow: 0 2px 12px rgba(19, 46, 53, 0.08);
+}
+
+.card-gradient {
+  background: linear-gradient(135deg, #132E35 0%, #1A3D47 50%, #2E6259 100%);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

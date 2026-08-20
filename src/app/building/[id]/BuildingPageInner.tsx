@@ -6,6 +6,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { BuildingRatings } from '@/components/building/BuildingRatings';
 import { ReviewCard } from '@/components/review/ReviewCard';
 import { useBuildings } from '@/hooks/useBuildings';
@@ -39,7 +40,7 @@ export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps
     return (
       <>
         <Header />
-        <main className="flex-1 text-center py-20 text-[var(--color-text-secondary)]">جاري التحميل...</main>
+        <main className="flex-1"><LoadingSpinner /></main>
       </>
     );
   }
@@ -48,10 +49,12 @@ export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps
     return (
       <>
         <Header />
-        <main className="flex-1 text-center py-20">
-          <div className="text-4xl mb-4">❌</div>
-          <h3 className="font-semibold mb-2">المبنى غير موجود</h3>
-          <Button variant="ghost" onClick={() => router.back()}>رجوع</Button>
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-4xl mb-4">❌</div>
+            <h3 className="font-semibold mb-2">المبنى غير موجود</h3>
+            <Button variant="ghost" onClick={() => router.back()}>رجوع</Button>
+          </div>
         </main>
       </>
     );
@@ -67,19 +70,28 @@ export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps
           </Button>
         </div>
 
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold">{building.address}</h1>
-          <p className="text-sm text-[var(--color-text-secondary)] mt-1">
-            {building.area}، {building.city}
-          </p>
-          {(building.buildingNumber || building.floor || building.apartmentNumber) && (
-            <p className="text-xs text-[var(--color-primary)] mt-2 font-medium">
-              {[building.buildingNumber && `عمارة ${building.buildingNumber}`, building.floor && `دور ${building.floor}`, building.apartmentNumber && `شقة ${building.apartmentNumber}`].filter(Boolean).join(' · ')}
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-[var(--color-text)]">{building.address}</h1>
+            <p className="text-sm text-[var(--color-text-secondary)] mt-1">
+              {building.area}، {building.city}
             </p>
-          )}
-          <div className="flex items-center gap-4 mt-3">
-            <div className="text-4xl font-bold text-[var(--color-primary)]">
-              {building.averageRatings.overall.toFixed(1)}
+            {(building.buildingNumber || building.floor || building.apartmentNumber) && (
+              <p className="text-xs text-[var(--color-primary)] mt-2 font-medium">
+                {[building.buildingNumber && `عمارة ${building.buildingNumber}`, building.floor && `دور ${building.floor}`, building.apartmentNumber && `شقة ${building.apartmentNumber}`].filter(Boolean).join(' · ')}
+              </p>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="bg-[var(--color-accent)]/15 rounded-2xl px-5 py-3 text-center">
+              <div className="text-3xl font-bold text-[var(--color-primary)]">
+                {building.averageRatings.overall.toFixed(1)}
+              </div>
+              <div className="flex gap-0.5 justify-center mt-1">
+                {Array.from({ length: Math.round(building.averageRatings.overall) }).map((_, j) => (
+                  <span key={j} className="text-[var(--color-accent)] text-xs">★</span>
+                ))}
+              </div>
             </div>
             <div className="text-sm text-[var(--color-text-secondary)]">
               {building.reviewCount} تقييم
@@ -87,13 +99,14 @@ export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps
           </div>
         </div>
 
-        <Card className="p-4 mb-6">
+        <Card className="p-5 mb-6">
           <h2 className="font-semibold mb-4 text-sm">تفاصيل التقييمات</h2>
-          <BuildingRatings ratings={building.averageRatings} />
+          <BuildingRatings reviews={reviews} />
         </Card>
 
         <Button
           className="w-full mb-6"
+          size="lg"
           onClick={() => router.push(`/rate/${building.id}`)}
         >
           قيّم هذا المبنى
@@ -101,8 +114,12 @@ export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps
 
         <h2 className="font-semibold mb-4 text-sm">التقييمات</h2>
         {reviews.length === 0 ? (
-          <div className="text-center py-10 text-[var(--color-text-secondary)] text-sm">
-            لا توجد تقييمات بعد. كن أول من يقيّم!
+          <div className="border-2 border-dashed border-[var(--color-border)] rounded-3xl p-10 text-center">
+            <div className="text-4xl mb-4">💬</div>
+            <h3 className="font-semibold mb-2">لا توجد تقييمات بعد</h3>
+            <p className="text-sm text-[var(--color-text-secondary)]">
+              كن أول من يقيّم هذا المبنى!
+            </p>
           </div>
         ) : (
           <div className="space-y-3 pb-10">

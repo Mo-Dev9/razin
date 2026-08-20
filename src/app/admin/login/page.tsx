@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-[var(--color-background)] px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-[var(--color-primary)]">RentRate</h1>
+          <h1 className="text-2xl font-bold text-[var(--color-primary)]">تقييم</h1>
           <p className="text-sm text-[var(--color-text-secondary)] mt-2">لوحة التحكم</p>
         </div>
 
@@ -65,7 +65,7 @@ export default function AdminLoginPage() {
           </div>
 
           {error && (
-            <div className="mb-4 rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
+            <div className="mb-4 rounded-xl bg-[var(--color-error-bg)] border border-[var(--color-error)]/20 px-4 py-3 text-sm text-[var(--color-error)]">
               {error}
             </div>
           )}

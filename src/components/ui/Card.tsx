@@ -1,21 +1,20 @@
-import { type ReactNode } from 'react';
-
 interface CardProps {
-  children: ReactNode;
+  children: React.ReactNode;
   className?: string;
-  href?: string;
+  variant?: 'default' | 'dark' | 'gradient' | 'error';
 }
 
-export function Card({ children, className = '', href }: CardProps) {
-  const base = `rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] ${className}`;
+const variantClasses = {
+  default: 'bg-[var(--color-surface)] border border-[var(--color-border)] shadow-soft',
+  dark: 'bg-[var(--color-primary)] text-white',
+  gradient: 'card-gradient text-white',
+  error: 'bg-[var(--color-error-bg)] border border-[var(--color-error)]/20',
+};
 
-  if (href) {
-    return (
-      <a href={href} className={`${base} block hover:border-[var(--color-primary)] transition-colors`}>
-        {children}
-      </a>
-    );
-  }
-
-  return <div className={base}>{children}</div>;
+export function Card({ children, className = '', variant = 'default' }: CardProps) {
+  return (
+    <div className={`rounded-3xl ${variantClasses[variant]} ${className}`}>
+      {children}
+    </div>
+  );
 }

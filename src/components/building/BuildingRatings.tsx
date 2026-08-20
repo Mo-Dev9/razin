@@ -1,30 +1,35 @@
-import type { RatingAverages } from '@/types';
+import type { Review } from '@/types';
 import { RATING_LABELS } from '@/types';
 
 interface BuildingRatingsProps {
-  ratings: RatingAverages;
+  reviews: Review[];
 }
 
-export function BuildingRatings({ ratings }: BuildingRatingsProps) {
-  return (
-    <div className="space-y-3">
-      {Object.entries(RATING_LABELS).map(([key, { ar, icon }]) => {
-        const value = ratings[key as keyof typeof RATING_LABELS];
-        const percentage = (value / 5) * 100;
-        const color =
-          value >= 4 ? 'bg-[var(--color-success)]' : value >= 2.5 ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-error)]';
+const RATING_ICONS: Record<string, string> = {
+  trafficNoise: '🚗',
+  quietness: '🤫',
+  neighbors: '👥',
+  ownerCooperation: '🤝',
+  safety: '🛡️',
+  lighting: '💡',
+};
 
+export function BuildingRatings({ reviews }: BuildingRatingsProps) {
+  if (!reviews.length) return null;
+
+  const keys = Object.keys(RATING_LABELS) as (keyof typeof RATING_LABELS)[];
+
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      {keys.map((key) => {
+        const vals = reviews.map((r) => r.ratings[key]).filter((v): v is number => v != null);
+        const avg = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
         return (
-          <div key={key}>
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs flex items-center gap-1">
-                <span>{icon}</span> {ar}
-              </span>
-              <span className="text-xs font-bold">{value.toFixed(1)}</span>
-            </div>
-            <div className="h-2 rounded-full bg-[var(--color-surface-light)]">
-              <div className={`h-full rounded-full ${color}`} style={{ width: `${percentage}%` }} />
-            </div>
+          <div key={key} className="bg-[var(--color-surface-warm)] rounded-2xl p-4 text-center">
+            <span className="text-2xl">{RATING_ICONS[key] || '⭐'}</span>
+            <div className="text-lg font-bold text-[var(--color-primary)] mt-1">{avg.toFixed(1)}</div>
+            <div className="text-xs text-[var(--color-text-secondary)] mt-0.5">{RATING_LABELS[key].ar}</div>
+            <div className="text-[10px] text-[var(--color-text-muted)]">{vals.length} تقييم</div>
           </div>
         );
       })}

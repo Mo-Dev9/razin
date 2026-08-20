@@ -126,7 +126,7 @@ export default function AdminDashboard() {
         </div>
 
         {message && (
-          <div className={`mb-4 rounded-xl px-4 py-3 text-sm ${message.type === 'success' ? 'bg-green-500/10 border border-green-500/20 text-green-400' : 'bg-red-500/10 border border-red-500/20 text-red-400'}`}>
+          <div className={`mb-4 rounded-xl px-4 py-3 text-sm ${message.type === 'success' ? 'bg-[var(--color-success-light)] border border-[var(--color-success)]/20 text-[var(--color-success)]' : 'bg-[var(--color-error-bg)] border border-[var(--color-error)]/20 text-[var(--color-error)]'}`}>
             {message.text}
           </div>
         )}

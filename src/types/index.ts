@@ -3,6 +3,7 @@ export interface Building {
   address: string;
   city: string;
   area: string;
+  district?: string;
   buildingNumber?: string;
   floor?: string;
   apartmentNumber?: string;
@@ -56,10 +57,10 @@ export interface UserProfile {
 }
 
 export const RATING_LABELS: Record<keyof ReviewRatings, { ar: string; icon: string }> = {
-  noise: { ar: 'الضجيج', icon: '🔊' },
-  humidity: { ar: 'الرطوبة', icon: '💧' },
-  landlord: { ar: 'المالك', icon: '🏠' },
+  noise: { ar: 'الطرقبة', icon: '🚗' },
+  humidity: { ar: 'الهدوء', icon: '🤫' },
+  landlord: { ar: 'تعاون المالك', icon: '🤝' },
   neighbors: { ar: 'الجيران', icon: '👥' },
-  lighting: { ar: 'الإنارة', icon: '💡' },
-  safety: { ar: 'الأمان', icon: '🔒' },
+  safety: { ar: 'الأمان', icon: '🛡️' },
+  lighting: { ar: 'الإضاءة', icon: '💡' },
 };

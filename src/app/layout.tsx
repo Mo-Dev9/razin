@@ -1,37 +1,27 @@
-import type { Metadata, Viewport } from 'next';
+import type { Metadata } from 'next';
 import './globals.css';
 
 const BASE_URL = 'https://rentrate-zeta.vercel.app';
 
-export const viewport: Viewport = {
-  themeColor: '#0F172A',
-  width: 'device-width',
-  initialScale: 1,
-};
-
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'RentRate — تقييم الشقق والمباني في مصر',
-    template: '%s | RentRate',
+    default: 'تقييم — دليل الجيران للعيش اليومي',
+    template: '%s | تقييم',
   },
   description: 'اكتشف تقييمات الشقق والمباني السكنية قبل التوقيع. تقييمات حقيقية من سكان حقيقيين.',
   openGraph: {
     type: 'website',
     locale: 'ar_EG',
     url: BASE_URL,
-    siteName: 'RentRate',
-    title: 'RentRate — تقييم الشقق والمباني في مصر',
-    description: 'اعرف الحقيقة قبل ما تتعاقد. تقييمات حقيقية من سكان حقيقيين.',
+    siteName: 'تقييم',
+    title: 'تقييم — دليل الجيران للعيش اليومي',
+    description: 'تقييم يساعدك تعرف تفاصيل الحياة في المبنى — من صوت الشارع إلى تعاون المالك — من ناس عاشوا هناك فعلاً.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RentRate — تقييم الشقق والمباني في مصر',
-    description: 'اعرف الحقيقة قبل ما تتعاقد. تقييمات حقيقية من سكان حقيقيين.',
-  },
-  icons: {
-    icon: '/favicon.svg',
-    apple: '/favicon.svg',
+    title: 'تقييم — دليل الجيران للعيش اليومي',
+    description: 'تقييم يساعدك تعرف تفاصيل الحياة في المبنى — من صوت الشارع إلى تعاون المالك — من ناس عاشوا هناك فعلاً.',
   },
   robots: {
     index: true,
@@ -52,6 +42,15 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="flex flex-col min-h-screen">
         {children}
       </body>

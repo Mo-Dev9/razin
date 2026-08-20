@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import ProfilePageInner from './ProfilePageInner';
 
 export const metadata: Metadata = {
-  title: 'حسابي — RentRate',
-  description: 'حسابك وتقييماتك على RentRate.',
+  title: 'ملفي',
+  description: 'ملفك ومساهماتك على تقييم.',
 };
 
 export default function ProfilePage() {

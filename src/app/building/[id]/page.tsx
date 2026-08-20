@@ -8,13 +8,8 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   return {
-    title: `مبنى ${id} — RentRate`,
+    title: `مبنى ${id}`,
     description: 'تفاصيل تقييمات المبنى من المستأجرين السابقين.',
-    openGraph: {
-      title: `تقييمات المبنى — RentRate`,
-      description: 'تفاصيل تقييمات المبنى من المستأجرين السابقين.',
-      type: 'website',
-    },
   };
 }
 

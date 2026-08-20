@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import RatePageInner from './RatePageInner';
 
 export const metadata: Metadata = {
-  title: 'قيّم المبنى — RentRate',
+  title: 'أضف تقييمك',
   description: 'قيّم تجربتك في المبنى وساعد المستأجرين الجايين.',
 };
 

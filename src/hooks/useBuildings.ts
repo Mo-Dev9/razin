@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, addDoc } from 'firebase/firestore';
 import { getDb } from '@/lib/firebase';
 import type { Building } from '@/types';
 
@@ -17,6 +17,7 @@ function matchesSearch(building: Building, q: string): boolean {
     building.area,
     building.city,
     building.address,
+    building.district,
     building.buildingNumber,
     building.floor,
     building.apartmentNumber,
@@ -51,5 +52,29 @@ export function useBuildings() {
     }
   }, []);
 
-  return { searchBuildings, getBuilding, loading };
+  const addBuilding = useCallback(async (data: {
+    address: string;
+    city: string;
+    area: string;
+    district?: string;
+  }): Promise<string | null> => {
+    setLoading(true);
+    try {
+      const docRef = await addDoc(collection(getDb(), 'buildings'), {
+        ...data,
+        averageRatings: { noise: 0, humidity: 0, landlord: 0, neighbors: 0, lighting: 0, safety: 0, overall: 0 },
+        reviewCount: 0,
+        createdAt: Date.now(),
+      });
+      allBuildingsCache = null;
+      return docRef.id;
+    } catch (err) {
+      console.error('Add building failed:', err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { searchBuildings, getBuilding, addBuilding, loading };
 }

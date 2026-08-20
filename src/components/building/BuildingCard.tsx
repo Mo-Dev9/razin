@@ -1,53 +1,39 @@
+import Link from 'next/link';
 import type { Building } from '@/types';
-import { Card } from '@/components/ui/Card';
-import { ratingToLabel } from '@/lib/utils';
 
 interface BuildingCardProps {
   building: Building;
+  ratingAvg?: number;
+  reviewCount?: number;
 }
 
-export function BuildingCard({ building }: BuildingCardProps) {
-  const avg = building.averageRatings.overall;
-  const label = ratingToLabel(avg);
-  const details = [building.buildingNumber && `عمارة ${building.buildingNumber}`, building.floor && `دور ${building.floor}`, building.apartmentNumber && `شقة ${building.apartmentNumber}`].filter(Boolean).join(' · ');
-
+export function BuildingCard({ building, ratingAvg = 0, reviewCount = 0 }: BuildingCardProps) {
   return (
-    <Card href={`/building/${building.id}`} className="p-4">
-      <div className="flex items-start justify-between">
-        <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm truncate">{building.address}</h3>
+    <Link
+      href={`/building/${building.id}`}
+      className="group block bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 shadow-soft hover:shadow-md transition-all hover:-translate-y-1"
+    >
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex-1">
+          <h3 className="font-bold text-[var(--color-text)] text-base group-hover:text-[var(--color-primary)] transition-colors">
+            {building.address || 'بلا عنوان'}
+          </h3>
           <p className="text-xs text-[var(--color-text-secondary)] mt-1">
-            {building.area}، {building.city}
+            {building.city} {building.district ? `· ${building.district}` : ''}
           </p>
-          {details && (
-            <p className="text-[10px] text-[var(--color-primary)] mt-1 font-medium">{details}</p>
-          )}
         </div>
-        <div className="flex flex-col items-center mr-4">
-          <div className="text-2xl font-bold text-[var(--color-primary)]">
-            {avg.toFixed(1)}
+        {ratingAvg > 0 && (
+          <div className="flex items-center gap-1 bg-[var(--color-accent)]/15 px-3 py-1.5 rounded-xl flex-shrink-0">
+            <span className="text-lg font-bold text-[var(--color-primary)]">{ratingAvg.toFixed(1)}</span>
+            <span className="text-[var(--color-accent)]">★</span>
           </div>
-          <div className="text-[10px] text-[var(--color-text-secondary)]">{label}</div>
-        </div>
+        )}
       </div>
-      <div className="mt-3 flex items-center justify-between">
-        <span className="text-[10px] text-[var(--color-text-secondary)]">
-          {building.reviewCount} تقييم
-        </span>
-        <div className="flex gap-1">
-          {Object.entries(building.averageRatings)
-            .filter(([k]) => k !== 'overall')
-            .slice(0, 3)
-            .map(([k, val]) => (
-              <span
-                key={k}
-                className={`inline-block w-2 h-2 rounded-full ${
-                  val >= 4 ? 'bg-[var(--color-success)]' : val >= 2.5 ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-error)]'
-                }`}
-              />
-            ))}
-        </div>
+
+      <div className="flex items-center gap-4 text-xs text-[var(--color-text-muted)]">
+        <span>{reviewCount} تقييم</span>
+        {building.district && <span>{building.district}</span>}
       </div>
-    </Card>
+    </Link>
   );
 }
