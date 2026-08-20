@@ -34,7 +34,6 @@ export default function HomePageInner() {
               </span>
               <h1 className="text-4xl sm:text-5xl md:text-[3.2rem] font-bold leading-[1.05] mb-6">
                 <span className="text-[var(--color-text)]">قبل متـ</span>
-                <br />
                 <span className="text-[var(--color-primary)]">Rent</span>
                 <br />
                 <span className="text-[var(--color-primary)]">Rate</span>
