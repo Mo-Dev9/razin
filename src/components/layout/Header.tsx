@@ -9,18 +9,20 @@ export function Header() {
   return (
     <header className="bg-[var(--color-surface)] border-b border-[var(--color-border)] sticky top-0 z-50">
       <div className="mx-auto max-w-5xl px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="relative w-10 h-10 flex items-center justify-center">
-            <svg viewBox="0 0 40 40" width="40" height="40" className="absolute inset-0">
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="relative w-12 h-12 flex items-center justify-center">
+            <svg viewBox="0 0 48 48" width="48" height="48" className="absolute inset-0" style={{ filter: 'drop-shadow(0 2px 8px rgba(233, 185, 74, 0.4))' }}>
               <polygon
-                points="20,2 24.5,14.5 38,14.5 27,22.5 31,36 20,28 9,36 13,22.5 2,14.5 15.5,14.5"
+                points="24,2 29.5,16.5 46,16.5 32.5,26 37,42 24,33 11,42 15.5,26 2,16.5 18.5,16.5"
                 fill="var(--color-accent)"
               />
             </svg>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="relative z-10">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
+            <div className="relative z-10 w-7 h-7 rounded-full bg-white flex items-center justify-center" style={{ boxShadow: '0 1px 4px rgba(15, 44, 44, 0.15)' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0F2C2C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+            </div>
           </div>
           <div className="flex flex-col leading-none">
             <span className="text-lg font-bold tracking-tight">RentRate</span>

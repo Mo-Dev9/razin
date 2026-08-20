@@ -6,18 +6,20 @@ export function Footer() {
       <div className="mx-auto max-w-5xl px-4 py-10">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="max-w-xs">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="relative w-8 h-8 flex items-center justify-center">
-                <svg viewBox="0 0 32 32" width="32" height="32" className="absolute inset-0">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="relative w-10 h-10 flex items-center justify-center">
+                <svg viewBox="0 0 40 40" width="40" height="40" className="absolute inset-0" style={{ filter: 'drop-shadow(0 2px 8px rgba(233, 185, 74, 0.35))' }}>
                   <polygon
-                    points="16,1 19.2,11.2 30,11.2 21.2,17.8 24.4,28.8 16,22.2 7.6,28.8 10.8,17.8 2,11.2 12.8,11.2"
+                    points="20,2 24.5,14.5 38,14.5 27,22.5 31,36 20,28 9,36 13,22.5 2,14.5 15.5,14.5"
                     fill="var(--color-accent)"
                   />
                 </svg>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0F2C2C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="relative z-10">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                  <polyline points="9 22 9 12 15 12 15 22" />
-                </svg>
+                <div className="relative z-10 w-6 h-6 rounded-full bg-white flex items-center justify-center" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.15)' }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0F2C2C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                  </svg>
+                </div>
               </div>
               <div className="flex flex-col leading-none">
                 <span className="text-lg font-bold tracking-tight">RentRate</span>
