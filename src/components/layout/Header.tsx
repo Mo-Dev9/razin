@@ -17,7 +17,7 @@ export function Header() {
                 fill="var(--color-accent)"
               />
             </svg>
-            <div className="relative z-10 w-7 h-7 rounded-full bg-white flex items-center justify-center" style={{ boxShadow: '0 1px 4px rgba(15, 44, 44, 0.15)' }}>
+            <div className="relative z-10 w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.85)' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0F2C2C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                 <polyline points="9 22 9 12 15 12 15 22" />
