@@ -146,27 +146,43 @@ export default function HomePageInner() {
           </section>
         )}
 
-        <section className="mx-auto max-w-5xl px-4 py-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-2">
-            كيف يعمل RentRate
-          </h2>
-          <p className="text-[var(--color-text-secondary)] text-base mb-8">
-            قرار السكن يستحق معرفة أكثر. بنساعدك تشوف الصورة كاملة قبل ما تدفع أو تنتقل.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {[
-              { num: '01', title: 'ابحث عن العنوان', desc: 'اكتب اسم الحي أو المدينة وشوف المباني القريبة منك.' },
-              { num: '02', title: 'اقرأ الواقع', desc: 'قارن تفاصيل الحياة اليومية والتقييمات الحقيقية.' },
-              { num: '03', title: 'اتخذ قرارك', desc: 'شارك تجربتك وخلي اللي بعدك يختار بوضوح.' },
-            ].map((step) => (
-              <div key={step.num} className="bg-[var(--color-primary)] rounded-3xl p-6 text-white hover:scale-[1.03] hover:shadow-[0_10px_30px_-5px_rgb(15_44_44/0.2)] transition-all duration-200">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center text-sm font-bold text-[var(--color-accent)]">{step.num}</span>
-                  <h3 className="text-lg font-bold text-[var(--color-accent)]">{step.title}</h3>
-                </div>
-                <p className="text-sm text-white/60 leading-relaxed">{step.desc}</p>
+        <section className="bg-[#0F2C2C] py-16 md:py-20 mt-12">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-16">
+              <div className="lg:w-2/5 flex-shrink-0">
+                <h2 className="text-xl md:text-2xl font-bold text-[#E9B94A] mb-3">
+                  كيف يعمل RentRate
+                </h2>
+                <h3 className="text-2xl md:text-[2rem] font-bold text-[#F1F5F4] leading-tight mb-4">
+                  قرار السكن يستحق معرفة أكثر.
+                </h3>
+                <p className="text-sm text-[#94B4B0] leading-relaxed">
+                  بنساعدك تشوف الصورة كاملة قبل ما تدفع أو تنتقل.
+                </p>
               </div>
-            ))}
+
+              <div className="lg:w-3/5 grid grid-cols-1 sm:grid-cols-3 gap-5">
+                {[
+                  { num: '01', title: 'ابحث عن العنوان', desc: 'اكتب اسم الحي أو المدينة وشوف المباني القريبة منك.' },
+                  { num: '02', title: 'اقرأ الواقع', desc: 'قارن تفاصيل الحياة اليومية والتقييمات الحقيقية.' },
+                  { num: '03', title: 'اتخذ قرارك', desc: 'شارك تجربتك وخلي اللي بعدك يختار بوضوح.' },
+                ].map((step) => (
+                  <div
+                    key={step.num}
+                    className="relative rounded-[24px] p-6 border border-[#2A4A4A] backdrop-blur-sm hover:-translate-y-2 hover:shadow-[0_15px_40px_-10px_rgba(233,185,74,0.15)] transition-all duration-300 group"
+                    style={{ background: 'rgba(26, 47, 47, 0.6)' }}
+                  >
+                    <div className="flex items-center justify-between mb-5">
+                      <h4 className="text-base font-bold text-[#F1F5F4]">{step.title}</h4>
+                      <span className="w-10 h-10 rounded-full border border-[#E9B94A]/40 flex items-center justify-center text-sm font-bold text-[#E9B94A] group-hover:bg-[#E9B94A] group-hover:text-[#0F2C2C] group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(233,185,74,0.4)] transition-all duration-300">
+                        {step.num}
+                      </span>
+                    </div>
+                    <p className="text-sm text-[#94B4B0] leading-relaxed">{step.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
