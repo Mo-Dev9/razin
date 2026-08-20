@@ -12,7 +12,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
   const hasAvg = vals.length > 0;
 
   return (
-    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 shadow-soft">
+    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 shadow-soft hover:shadow-[0_10px_30px_-5px_rgb(15_44_44/0.15)] hover:-translate-y-1 hover:scale-[1.02] transition-all duration-200">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="text-xs text-[var(--color-text-muted)]">مساهم في الحي</span>

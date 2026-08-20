@@ -35,7 +35,7 @@ export default function ProfilePageInner() {
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]"></span>
             مساحتك على RentRate
           </span>
-          <h1 className="font-display text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-2">
             أثرُك في الحي.
           </h1>
           <p className="text-sm text-[var(--color-text-secondary)]">
@@ -45,7 +45,7 @@ export default function ProfilePageInner() {
 
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1">
-            <div className="bg-[var(--color-primary)] rounded-3xl p-6 text-white">
+            <div className="card-gradient rounded-3xl p-6 text-white">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-medium mb-4">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
@@ -63,18 +63,18 @@ export default function ProfilePageInner() {
                 </div>
               </div>
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded-lg bg-[var(--color-accent)]/20 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[var(--color-accent)]/20 flex items-center justify-center hover:scale-110 cursor-default" style={{ animation: 'pulse-glow 3s ease-in-out infinite' }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="2">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                   </svg>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white/10 rounded-2xl p-4 text-center">
+                <div className="bg-white/10 rounded-2xl p-4 text-center hover:bg-white/15 hover:scale-[1.02] transition-all">
                   <div className="text-2xl font-bold">{profile?.reviewCount || 0}</div>
                   <div className="text-xs text-white/60 mt-1">تقييم مشارك</div>
                 </div>
-                <div className="bg-white/10 rounded-2xl p-4 text-center">
+                <div className="bg-white/10 rounded-2xl p-4 text-center hover:bg-white/15 hover:scale-[1.02] transition-all">
                   <div className="text-2xl font-bold">1</div>
                   <div className="text-xs text-white/60 mt-1">مدينة</div>
                 </div>
@@ -83,8 +83,8 @@ export default function ProfilePageInner() {
           </div>
 
           <div className="lg:w-72 space-y-5">
-            <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 shadow-soft">
-              <div className="w-12 h-12 rounded-2xl bg-[var(--color-surface-warm)] flex items-center justify-center mb-4">
+            <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 shadow-soft hover:shadow-[0_10px_30px_-5px_rgb(15_44_44/0.15)] transition-all">
+              <div className="w-12 h-12 rounded-2xl bg-[var(--color-surface-warm)] flex items-center justify-center mb-4 hover:scale-110 transition-transform">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                   <circle cx="9" cy="7" r="4" />
@@ -96,7 +96,7 @@ export default function ProfilePageInner() {
               <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
                 كل تقييم تقدمه يساعد شخصاً آخر يختار مكانه بأفضل شكل.
               </p>
-              <Link href="/search" className="inline-flex items-center gap-1 text-xs font-medium text-[var(--color-accent-dark)] mt-3 hover:underline">
+              <Link href="/search" className="inline-flex items-center gap-1 text-xs font-medium text-[var(--color-accent-dark)] mt-3 hover:underline underline-offset-4">
                 أضف تجربة جديدة
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="7" y1="17" x2="17" y2="7" />
@@ -105,16 +105,14 @@ export default function ProfilePageInner() {
               </Link>
             </div>
 
-            <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5">
+            <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 hover:shadow-soft transition-all">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-sm text-[var(--color-text)]">تقييماتك</h3>
                 <span className="text-xs text-[var(--color-text-muted)]">{profile?.reviewCount || 0} تجربة</span>
               </div>
               <div className="border-2 border-dashed border-[var(--color-border)] rounded-2xl p-8 text-center">
-                <div className="w-12 h-12 rounded-2xl bg-[var(--color-accent)]/15 flex items-center justify-center mx-auto mb-3">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-dark)" strokeWidth="2">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                  </svg>
+                <div className="w-12 h-12 rounded-2xl bg-[var(--color-accent)]/15 flex items-center justify-center mx-auto mb-3 hover:scale-110 transition-transform" style={{ animation: 'pulse-glow 3s ease-in-out infinite' }}>
+                  <span className="text-2xl">😊</span>
                 </div>
                 <h4 className="font-semibold text-sm text-[var(--color-text)] mb-1">
                   {(profile?.reviewCount || 0) > 0 ? 'تقييماتك' : 'لم تقيّم بعد'}

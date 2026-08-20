@@ -7,42 +7,49 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-background)]/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-xl bg-[var(--color-accent)] flex items-center justify-center">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#132E35" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <header className="bg-[var(--color-surface)] border-b border-[var(--color-border)] sticky top-0 z-50">
+      <div className="mx-auto max-w-5xl px-4 h-16 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2 group">
+          <div className="relative w-10 h-10 flex items-center justify-center">
+            <svg viewBox="0 0 40 40" width="40" height="40" className="absolute inset-0">
+              <polygon
+                points="20,2 24.5,14.5 38,14.5 27,22.5 31,36 20,28 9,36 13,22.5 2,14.5 15.5,14.5"
+                fill="var(--color-accent)"
+              />
+            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="relative z-10">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
           </div>
           <div className="flex flex-col leading-none">
-            <span className="text-lg font-bold text-[var(--color-primary)] tracking-tight">RentRate</span>
+            <span className="text-lg font-bold tracking-tight">RentRate</span>
           </div>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
-          <Link href="/search" className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors">
-            اكتشف المباني
-          </Link>
-          <Link href="/profile" className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors">
+          <Link href="/profile" className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4 decoration-2">
             ملفي
           </Link>
-          <Link href="/search" className="inline-flex items-center gap-1 rounded-full bg-[var(--color-primary)] text-white px-5 py-2 text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-colors">
-            قيم مبناك
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="7" y1="17" x2="17" y2="7" />
-              <polyline points="7 7 17 7 17 17" />
-            </svg>
+          <Link href="/rate/new" className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4 decoration-2">
+            أضف تقييمك
+          </Link>
+          <Link href="/search" className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4 decoration-2">
+            اكتشف المباني
+          </Link>
+          <Link
+            href="/search"
+            className="bg-[var(--color-accent)] text-[var(--color-primary)] px-5 py-2.5 rounded-full text-sm font-bold hover:bg-[var(--color-accent-dark)] hover:scale-[1.03] hover:shadow-lg active:scale-[0.98]"
+          >
+            قيم مبانيك
           </Link>
         </nav>
 
         <button
-          className="md:hidden p-2 text-[var(--color-text)]"
           onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="القائمة"
+          className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl hover:bg-[var(--color-surface-warm)]"
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             {menuOpen ? (
               <>
                 <line x1="18" y1="6" x2="6" y2="18" />
@@ -60,15 +67,22 @@ export function Header() {
       </div>
 
       {menuOpen && (
-        <div className="md:hidden border-t border-[var(--color-border)] bg-[var(--color-background)] px-4 py-4 space-y-3">
-          <Link href="/search" className="block text-sm font-medium text-[var(--color-text-secondary)]" onClick={() => setMenuOpen(false)}>
-            اكتشف المباني
-          </Link>
-          <Link href="/profile" className="block text-sm font-medium text-[var(--color-text-secondary)]" onClick={() => setMenuOpen(false)}>
+        <div className="md:hidden border-t border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-4 space-y-3">
+          <Link href="/profile" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4">
             ملفي
           </Link>
-          <Link href="/search" className="block w-full text-center rounded-full bg-[var(--color-primary)] text-white px-5 py-2 text-sm font-semibold" onClick={() => setMenuOpen(false)}>
-            قيم مبناك
+          <Link href="/rate/new" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4">
+            أضف تقييمك
+          </Link>
+          <Link href="/search" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4">
+            اكتشف المباني
+          </Link>
+          <Link
+            href="/search"
+            onClick={() => setMenuOpen(false)}
+            className="block text-center bg-[var(--color-accent)] text-[var(--color-primary)] px-5 py-2.5 rounded-full text-sm font-bold hover:bg-[var(--color-accent-dark)]"
+          >
+            قيم مبانيك
           </Link>
         </div>
       )}

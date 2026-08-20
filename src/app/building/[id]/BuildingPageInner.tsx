@@ -104,13 +104,16 @@ export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps
           <BuildingRatings reviews={reviews} />
         </Card>
 
-        <Button
-          className="w-full mb-6"
-          size="lg"
+        <button
           onClick={() => router.push(`/rate/${building.id}`)}
+          className="w-full mb-6 bg-[var(--color-primary)] text-white py-[18px] rounded-full text-sm font-bold hover:bg-[var(--color-primary-dark)] hover:shadow-[0_10px_25px_-5px_rgb(15_44_44/0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
         >
           قيّم هذا المبنى
-        </Button>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 10 20 15 15 20" />
+            <path d="M4 4v7a4 4 0 0 0 4 4h12" />
+          </svg>
+        </button>
 
         <h2 className="font-semibold mb-4 text-sm">التقييمات</h2>
         {reviews.length === 0 ? (

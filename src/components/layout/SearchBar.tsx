@@ -46,7 +46,7 @@ export function SearchBar({ initialQuery = '', placeholder = 'اسم المبن�
       </div>
       <button
         type="submit"
-        className="rounded-full bg-[var(--color-primary)] text-white px-6 py-3 text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-colors flex-shrink-0"
+        className="rounded-2xl bg-[var(--color-primary)] text-white px-6 py-3 text-sm font-semibold hover:bg-[var(--color-primary-dark)] hover:scale-[1.03] hover:shadow-lg active:scale-[0.98] transition-all flex-shrink-0"
       >
         ابحث
       </button>

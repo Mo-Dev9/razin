@@ -11,7 +11,7 @@ export function BuildingCard({ building, ratingAvg = 0, reviewCount = 0 }: Build
   return (
     <Link
       href={`/building/${building.id}`}
-      className="group block bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 shadow-soft hover:shadow-md transition-all hover:-translate-y-1"
+      className="group block bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 shadow-soft hover:shadow-[0_10px_30px_-5px_rgb(15_44_44/0.15)] transition-all duration-200 hover:-translate-y-1 hover:scale-[1.02]"
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
@@ -23,7 +23,7 @@ export function BuildingCard({ building, ratingAvg = 0, reviewCount = 0 }: Build
           </p>
         </div>
         {ratingAvg > 0 && (
-          <div className="flex items-center gap-1 bg-[var(--color-accent)]/15 px-3 py-1.5 rounded-xl flex-shrink-0">
+          <div className="flex items-center gap-1 bg-[var(--color-accent)]/15 px-3 py-1.5 rounded-xl flex-shrink-0 group-hover:scale-105">
             <span className="text-lg font-bold text-[var(--color-primary)]">{ratingAvg.toFixed(1)}</span>
             <span className="text-[var(--color-accent)]">★</span>
           </div>

@@ -62,7 +62,7 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="w-20 h-20 rounded-full bg-[var(--color-success-light)] flex items-center justify-center mx-auto mb-4">
+            <div className="w-20 h-20 rounded-full bg-[var(--color-success-light)] flex items-center justify-center mx-auto mb-4" style={{ animation: 'pulse-glow 2s ease-in-out infinite' }}>
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
@@ -106,7 +106,7 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]"></span>
             صوتك مهم
           </span>
-          <h1 className="font-display text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-2">
             احك لنا عن المكان كما هو.
           </h1>
           <p className="text-sm text-[var(--color-text-secondary)]">
@@ -117,7 +117,7 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1">
             {building && (
-              <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 mb-5">
+              <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 mb-5 hover:shadow-soft">
                 <label className="text-sm font-semibold text-[var(--color-text)] block mb-2">عن أي مبنى تحدث؟</label>
                 <div className="rounded-2xl bg-[var(--color-surface-warm)] border border-[var(--color-border-light)] px-4 py-3 flex items-center justify-between">
                   <span className="text-sm text-[var(--color-text)]">{building.address}</span>
@@ -154,7 +154,7 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
                 placeholder="مثلاً: الشقة هادئة بعد الساعة 10، لكن مواقف تتلعب بسرعة..."
                 maxLength={500}
                 rows={4}
-                className="w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-sm text-[var(--color-text)] placeholder-[var(--color-text-muted)] outline-none focus:border-[var(--color-primary)] resize-none"
+                className="w-full rounded-[20px] border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-sm text-[var(--color-text)] placeholder-[var(--color-text-muted)] outline-none focus:border-[var(--color-primary)] resize-none transition-all"
               />
               <div className="flex justify-between mt-1">
                 <div className="flex items-center gap-1 text-[10px] text-[var(--color-text-muted)]">
@@ -168,18 +168,26 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
               </div>
             </div>
 
-            <Button className="w-full" size="lg" loading={loading} onClick={handleSubmit}>
-              <span className="flex items-center justify-center gap-2">
-                احفظ التقييم
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              </span>
-            </Button>
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="w-full bg-[var(--color-primary)] text-white py-[18px] rounded-full text-sm font-bold hover:bg-[var(--color-primary-dark)] hover:shadow-[0_10px_25px_-5px_rgb(15_44_44/0.3)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  احفظ التقييم
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </>
+              )}
+            </button>
           </div>
 
           <div className="lg:w-72">
-            <div className="bg-[var(--color-primary)] rounded-3xl p-6 text-white sticky top-24">
+            <div className="card-gradient rounded-3xl p-6 text-white sticky top-24">
               <h3 className="text-[var(--color-accent)] font-bold text-sm mb-4">المحصلة</h3>
               <div className="mb-4">
                 <div className="flex justify-between text-xs text-white/60 mb-1">

@@ -38,7 +38,7 @@ export default function SearchPageInner() {
           <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]"></span>
           دليل الأحياء
         </span>
-        <h1 className="font-display text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-2">
+        <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-2">
           المكان الذي تفكر فيه، تعرفه
         </h1>
         <p className="text-sm text-[var(--color-text-secondary)] mb-2">
@@ -73,7 +73,7 @@ export default function SearchPageInner() {
           </div>
           <button
             type="submit"
-            className="rounded-full bg-[var(--color-primary)] text-white px-6 py-3 text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-colors flex items-center justify-center gap-2"
+            className="rounded-2xl bg-[var(--color-primary)] text-white px-6 py-3 text-sm font-semibold hover:bg-[var(--color-primary-dark)] hover:scale-[1.03] hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2"
           >
             ابحث
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -103,17 +103,25 @@ export default function SearchPageInner() {
       )}
 
       {loading ? (
-        <div className="text-center py-20"><div className="w-10 h-10 rounded-full border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] animate-spin mx-auto mb-4"></div><p className="text-sm text-[var(--color-text-secondary)]">جاري البحث...</p></div>
+        <div className="text-center py-20">
+          <div className="w-10 h-10 rounded-full border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] animate-spin mx-auto mb-4"></div>
+          <p className="text-sm text-[var(--color-text-secondary)]">جاري البحث...</p>
+        </div>
       ) : searched && results.length === 0 ? (
         <div className="bg-[var(--color-surface-warm)] border border-[var(--color-border)] rounded-3xl p-10 text-center">
-          <div className="w-16 h-16 rounded-full bg-[var(--color-accent)]/10 flex items-center justify-center mx-auto mb-4">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-dark)" strokeWidth="2">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          <div className="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center mx-auto mb-4" style={{ animation: 'pulse-glow 2s ease-in-out infinite' }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E9B94A" strokeWidth="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
           </div>
           <h3 className="font-semibold text-[var(--color-text)] mb-2">لم يتم العثور على نتائج</h3>
-          <p className="text-sm text-[var(--color-text-secondary)]">جرّب البحث باسم شارع أو حي مختلف.</p>
+          <p className="text-sm text-[var(--color-text-secondary)] mb-4">جرّب البحث باسم شارع أو حي مختلف.</p>
+          <button
+            onClick={() => { setQuery(''); setResults([]); setSearched(false); }}
+            className="bg-[var(--color-primary)] text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-[var(--color-primary-dark)] hover:scale-105 hover:shadow-lg active:scale-95 transition-all"
+          >
+            حاول مجدداً
+          </button>
         </div>
       ) : !searched ? (
         <div className="text-center py-20">
