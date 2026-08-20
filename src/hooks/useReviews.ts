@@ -46,7 +46,7 @@ export function useReviews() {
   }, []);
 
   const submitReview = useCallback(
-    async (buildingId: string, userId: string, ratings: ReviewRatings, comment?: string, floor?: string, apartmentNumber?: string): Promise<boolean> => {
+    async (buildingId: string, userId: string, ratings: ReviewRatings, comment?: string, buildingNumber?: string, floor?: string, apartmentNumber?: string): Promise<boolean> => {
       setLoading(true);
       try {
         const already = await hasUserReviewed(buildingId, userId);
@@ -72,6 +72,7 @@ export function useReviews() {
             ratings,
             overall,
             comment: comment || '',
+            buildingNumber: buildingNumber || '',
             floor: floor || '',
             apartmentNumber: apartmentNumber || '',
             createdAt: Date.now(),

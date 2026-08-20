@@ -11,15 +11,31 @@ export function ReviewCard({ review }: ReviewCardProps) {
   const avg = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) : '—';
   const hasAvg = vals.length > 0;
 
+  const details = [
+    review.buildingNumber && `عمارة ${review.buildingNumber}`,
+    review.floor && `دور ${review.floor}`,
+    review.apartmentNumber && `شقة ${review.apartmentNumber}`,
+  ].filter(Boolean);
+
+  const dateStr = review.createdAt
+    ? new Date(review.createdAt).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' })
+    : '';
+
   return (
     <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 shadow-soft hover:shadow-[0_10px_30px_-5px_rgb(15_44_44/0.15)] hover:-translate-y-1 hover:scale-[1.02] transition-all duration-200">
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-[var(--color-text-muted)]">مساهم في الحي</span>
-          <span className="text-xs text-[var(--color-text-muted)]">·</span>
-          <span className="text-xs text-[var(--color-text-muted)]">
-            {review.createdAt ? new Date(review.createdAt).getFullYear() : '—'}
-          </span>
+        <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+          {details.length > 0 ? (
+            <span>{details.join(' · ')}</span>
+          ) : (
+            <span>تقييم مجهول</span>
+          )}
+          {dateStr && (
+            <>
+              <span>·</span>
+              <span>{dateStr}</span>
+            </>
+          )}
         </div>
         {hasAvg && (
           <div className="flex items-center gap-1 bg-[var(--color-accent)]/15 px-2.5 py-1 rounded-lg">

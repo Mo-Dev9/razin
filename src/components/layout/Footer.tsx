@@ -14,12 +14,10 @@ export function Footer() {
                     fill="var(--color-accent)"
                   />
                 </svg>
-                <div className="relative z-10 w-6 h-6 rounded-md flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.85)' }}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0F2C2C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                    <polyline points="9 22 9 12 15 12 15 22" />
-                  </svg>
-                </div>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0F2C2C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="relative z-10" style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))' }}>
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
               </div>
               <div className="flex flex-col leading-none">
                 <span className="text-lg font-bold tracking-tight">RentRate</span>

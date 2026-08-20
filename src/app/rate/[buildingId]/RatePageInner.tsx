@@ -32,6 +32,9 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
     safety: 3,
   });
   const [comment, setComment] = useState('');
+  const [buildingNumber, setBuildingNumber] = useState('');
+  const [floor, setFloor] = useState('');
+  const [apartmentNumber, setApartmentNumber] = useState('');
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -52,7 +55,7 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
 
   const handleSubmit = async () => {
     if (!user) return;
-    const ok = await submitReview(buildingId, user.uid, ratings, comment || undefined);
+    const ok = await submitReview(buildingId, user.uid, ratings, comment || undefined, buildingNumber || undefined, floor || undefined, apartmentNumber || undefined);
     if (ok) setSubmitted(true);
   };
 
@@ -128,6 +131,42 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
                 <p className="text-xs text-[var(--color-text-muted)] mt-1">{building.area}، {building.city}</p>
               </div>
             )}
+
+            <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 mb-5">
+              <label className="text-sm font-semibold text-[var(--color-text)] block mb-3">تفاصيل الوحدة (اختياري)</label>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="text-xs text-[var(--color-text-muted)] block mb-1">عمارة</label>
+                  <input
+                    type="text"
+                    value={buildingNumber}
+                    onChange={(e) => setBuildingNumber(e.target.value)}
+                    placeholder="رقم العمارة"
+                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-3 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-[var(--color-text-muted)] block mb-1">الدور</label>
+                  <input
+                    type="text"
+                    value={floor}
+                    onChange={(e) => setFloor(e.target.value)}
+                    placeholder="رقم الدور"
+                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-3 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-[var(--color-text-muted)] block mb-1">الشقة</label>
+                  <input
+                    type="text"
+                    value={apartmentNumber}
+                    onChange={(e) => setApartmentNumber(e.target.value)}
+                    placeholder="رقم الشقة"
+                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-3 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+                  />
+                </div>
+              </div>
+            </div>
 
             <div className="mb-5">
               <p className="text-xs text-[var(--color-accent-dark)] font-medium mb-2">ستقيّم جوانب الحياة</p>
