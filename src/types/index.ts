@@ -52,6 +52,9 @@ export interface UserProfile {
   isAnonymous: boolean;
   displayName: string;
   email?: string;
+  photoURL?: string;
+  linkedProvider?: string;
+  linkedAt?: number;
   reviewCount: number;
   createdAt: number;
 }

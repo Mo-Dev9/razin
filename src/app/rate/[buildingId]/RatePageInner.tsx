@@ -18,7 +18,7 @@ interface RatePageInnerProps {
 
 export default function RatePageInner({ buildingId }: RatePageInnerProps) {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { getBuilding } = useBuildings();
   const { submitReview, hasUserReviewed, loading } = useReviews();
 
@@ -54,6 +54,7 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
   const filledCount = Object.values(ratings).filter((v) => v !== 0).length;
 
   const handleSubmit = async () => {
+    if (authLoading) return;
     if (!user) return;
     const ok = await submitReview(buildingId, user.uid, ratings, comment || undefined, buildingNumber || undefined, floor || undefined, apartmentNumber || undefined);
     if (ok) setSubmitted(true);
@@ -209,10 +210,10 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
 
             <button
               onClick={handleSubmit}
-              disabled={loading}
+              disabled={loading || authLoading}
               className="w-full bg-[var(--color-primary)] text-white py-[18px] rounded-full text-sm font-bold hover:bg-[var(--color-primary-dark)] hover:shadow-[0_10px_25px_-5px_rgb(15_44_44/0.3)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
             >
-              {loading ? (
+              {loading || authLoading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               ) : (
                 <>
@@ -223,6 +224,11 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
                 </>
               )}
             </button>
+            {!authLoading && !user && (
+              <p className="text-xs text-red-600 text-center mt-2">
+                حدث خطأ في تحميل الحساب. حاول تحديث الصفحة.
+              </p>
+            )}
           </div>
 
           <div className="lg:w-72">
