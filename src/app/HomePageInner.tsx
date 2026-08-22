@@ -61,9 +61,9 @@ export default function HomePageInner() {
             </div>
 
             <div className="flex-1 w-full max-w-md">
-              <div className="relative rounded-[32px] p-3 pb-4 pr-4" style={{ background: '#FAF4EB', boxShadow: '0 20px 40px -10px rgb(15 44 44 / 0.15)' }}>
-                <div className="relative rounded-[28px] p-8 text-white overflow-hidden" style={{ background: 'linear-gradient(160deg, #0F4442 0%, #134B4A 100%)' }}>
-                  <div className="absolute inset-0 opacity-[0.15]">
+              <div className="relative rounded-[32px] p-3 pb-4 pr-4 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_50px_-10px_rgb(15_44_44/0.25)] group" style={{ background: '#FAF4EB', boxShadow: '0 20px 40px -10px rgb(15 44 44 / 0.15)' }}>
+                <div className="relative rounded-[28px] p-8 text-white overflow-hidden transition-all duration-300 group-hover:shadow-[0_0_30px_rgb(42_106_104/0.2)]" style={{ background: 'linear-gradient(160deg, #0F4442 0%, #134B4A 100%)' }}>
+                  <div className="absolute inset-0 opacity-[0.15] group-hover:opacity-[0.2] transition-opacity duration-300">
                     <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(#2A6A68 1px, transparent 1px), linear-gradient(90deg, #2A6A68 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
                   </div>
                   <div className="relative">
