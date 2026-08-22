@@ -69,9 +69,9 @@ export default function HomePageInner() {
                       <div className="absolute inset-4 border border-white/20 rounded-xl" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
                     </div>
                     <div className="relative">
-                      <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs mb-6">أحياء نعرفها</span>
+                      <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs mb-6">رأي السكان</span>
                       <h2 className="text-2xl md:text-3xl font-bold leading-relaxed mb-8">
-                        المكان الصح يبدأ من التفاصيل.
+                        اسأل اللي عاشوا هناك.
                       </h2>
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-white/60">القاهرة · مدينة نصر</span>
@@ -95,7 +95,7 @@ export default function HomePageInner() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="flex items-center gap-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl px-5 py-4 hover:shadow-soft hover:-translate-y-1 hover:scale-[1.02] cursor-default">
               <span className="text-xl">📊</span>
-              <span className="text-sm font-medium text-[var(--color-text)]">بيانات عن الحي</span>
+              <span className="text-sm font-medium text-[var(--color-text)]">متوسطات التقييم</span>
             </div>
             <div className="flex items-center gap-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl px-5 py-4 hover:shadow-soft hover:-translate-y-1 hover:scale-[1.02] cursor-default">
               <span className="text-xl">💬</span>
@@ -111,7 +111,7 @@ export default function HomePageInner() {
         {neighborhoods.length > 0 && (
           <section className="mx-auto max-w-5xl px-4 py-12">
             <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-6">
-              مبنى يفيدك تسكن هنا
+              مباني بتجارب حقيقية
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {neighborhoods.map((b, i) => (
@@ -166,7 +166,7 @@ export default function HomePageInner() {
                 {[
                   { num: '01', title: 'ابحث عن العنوان', desc: 'اكتب اسم الحي أو المدينة وشوف المباني القريبة منك.' },
                   { num: '02', title: 'اقرأ الواقع', desc: 'قارن تفاصيل الحياة اليومية والتقييمات الحقيقية.' },
-                  { num: '03', title: 'اتخذ قرارك', desc: 'شارك تجربتك وخلي اللي بعدك يختار بوضوح.' },
+                  { num: '03', title: 'اتخذ قرارك', desc: 'قرارك مبني على تجارب حقيقية مش وعود.' },
                 ].map((step) => (
                   <div
                     key={step.num}
