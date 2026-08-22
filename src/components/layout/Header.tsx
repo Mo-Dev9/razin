@@ -99,7 +99,7 @@ export function Header() {
               href="/search"
               className="bg-[var(--color-accent)] text-[var(--color-primary)] px-5 py-2.5 rounded-full text-sm font-bold hover:bg-[var(--color-accent-dark)] hover:scale-[1.03] hover:shadow-lg active:scale-[0.98]"
             >
-              قيم مبانيك
+              اكتب تقييمك
             </Link>
           )}
         </nav>
@@ -156,7 +156,7 @@ export function Header() {
             onClick={() => setMenuOpen(false)}
             className="block text-center bg-[var(--color-accent)] text-[var(--color-primary)] px-5 py-2.5 rounded-full text-sm font-bold hover:bg-[var(--color-accent-dark)]"
           >
-            قيم مبانيك
+            اكتب تقييمك
           </Link>
           {isLinkedWithGoogle && (
             <button

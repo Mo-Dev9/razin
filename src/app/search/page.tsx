@@ -5,8 +5,8 @@ import { Suspense } from 'react';
 import SearchPageInner from './SearchPageInner';
 
 export const metadata: Metadata = {
-  title: 'اكتشف المباني',
-  description: 'ابحث بين تجارب السكان، وقارن تفاصيل المبنى كما عاشها كل يوم.',
+  title: 'اكتشف المباني — RentRate',
+  description: 'ابحث عن أي مبنى أو حي في مصر واطلع على تقييمات مجهولة من السكان: الطرقبة، الرطوبة، الأمان وتعاون المالك. قارن قبل قرار الإيجار.',
 };
 
 export default function SearchPage() {

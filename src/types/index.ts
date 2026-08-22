@@ -61,7 +61,7 @@ export interface UserProfile {
 
 export const RATING_LABELS: Record<keyof ReviewRatings, { ar: string; icon: string }> = {
   noise: { ar: 'الطرقبة', icon: '🚗' },
-  humidity: { ar: 'الهدوء', icon: '🤫' },
+  humidity: { ar: 'الرطوبة', icon: '💧' },
   landlord: { ar: 'تعاون المالك', icon: '🤝' },
   neighbors: { ar: 'الجيران', icon: '👥' },
   safety: { ar: 'الأمان', icon: '🛡️' },

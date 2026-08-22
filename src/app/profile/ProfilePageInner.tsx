@@ -103,8 +103,8 @@ export default function ProfilePageInner() {
                   <div className="text-xs text-white/60 mt-1">تقييم مشارك</div>
                 </div>
                 <div className="bg-white/10 rounded-2xl p-4 text-center hover:bg-white/15 hover:scale-[1.02] transition-all">
-                  <div className="text-2xl font-bold">1</div>
-                  <div className="text-xs text-white/60 mt-1">مدينة</div>
+                  <div className="text-2xl font-bold">{isLinkedWithGoogle ? '✓' : '🔒'}</div>
+                  <div className="text-xs text-white/60 mt-1">{isLinkedWithGoogle ? 'حساب مرتبط' : 'مجهول'}</div>
                 </div>
               </div>
             </div>
