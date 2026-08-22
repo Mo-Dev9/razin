@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -37,6 +37,23 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
   const [apartmentNumber, setApartmentNumber] = useState('');
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = useCallback(async () => {
+    const url = `${window.location.origin}/building/${buildingId}`;
+    const text = 'قيّم المبنى ده على RentRate — اعرف الحقيقة قبل ما تتعاقد';
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'RentRate', text, url });
+      } catch {
+        // User cancelled share
+      }
+    } else {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  }, [buildingId]);
 
   useEffect(() => {
     if (buildingId) {
@@ -71,13 +88,39 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold mb-2">شكراً لتقييمك!</h2>
+            <h2 className="text-xl font-bold mb-2">خلصتها!</h2>
             <p className="text-sm text-[var(--color-text-secondary)] mb-6">
-              تقييمك هيساعد المستأجرين اللي جايين
+              تقييمك بقى جزء من دليل الحي. شارك اللينك مع حد بيفتكر يسكن هنا.
             </p>
-            <Button onClick={() => router.push(`/building/${buildingId}`)}>
-              رجوع للمبنى
-            </Button>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Button onClick={() => router.push(`/building/${buildingId}`)}>
+                رجوع للمبنى
+              </Button>
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-2 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text)] px-5 py-3 rounded-full text-sm font-semibold hover:bg-[var(--color-surface-warm)] hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all"
+              >
+                {copied ? (
+                  <>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" strokeWidth="2.5">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    تم النسخ!
+                  </>
+                ) : (
+                  <>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="18" cy="5" r="3" />
+                      <circle cx="6" cy="12" r="3" />
+                      <circle cx="18" cy="19" r="3" />
+                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                    </svg>
+                    شارك اللينك
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </main>
       </>

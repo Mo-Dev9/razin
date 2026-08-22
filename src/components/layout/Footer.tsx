@@ -41,8 +41,15 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-white/10 text-center">
-          <p className="text-xs text-white/40">© {new Date().getFullYear()} RentRate — جميع الحقوق محفوظة</p>
+        <div className="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4 text-xs text-white/40">
+            <span>© {new Date().getFullYear()} RentRate</span>
+            <span className="hidden sm:inline">·</span>
+            <Link href="/privacy" className="hover:text-white/70 transition-colors">سياسة الخصوصية</Link>
+            <Link href="/terms" className="hover:text-white/70 transition-colors">شروط الاستخدام</Link>
+            <Link href="/contact" className="hover:text-white/70 transition-colors">تواصل معنا</Link>
+          </div>
+          <p className="text-xs text-white/40">جميع الحقوق محفوظة</p>
         </div>
       </div>
     </footer>
