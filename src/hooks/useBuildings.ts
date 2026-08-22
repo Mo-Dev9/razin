@@ -42,6 +42,37 @@ export function useBuildings() {
     }
   }, []);
 
+  const searchBuildingsAdvanced = useCallback(async (filters: { city?: string; district?: string; hasReviews?: boolean }): Promise<Building[]> => {
+    setLoading(true);
+    try {
+      const buildings = await getAllBuildings();
+      return buildings.filter((b) => {
+        if (filters.city && b.city !== filters.city) return false;
+        if (filters.district && b.district !== filters.district) return false;
+        if (filters.hasReviews && b.reviewCount === 0) return false;
+        return true;
+      });
+    } catch (err) {
+      console.error('Advanced search failed:', err);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const getAllCities = useCallback(async (): Promise<string[]> => {
+    const buildings = await getAllBuildings();
+    const cities = [...new Set(buildings.map((b) => b.city).filter(Boolean))];
+    return cities.sort();
+  }, []);
+
+  const getAllDistricts = useCallback(async (city?: string): Promise<string[]> => {
+    const buildings = await getAllBuildings();
+    const filtered = city ? buildings.filter((b) => b.city === city) : buildings;
+    const districts = [...new Set(filtered.map((b) => b.district).filter((d): d is string => !!d))];
+    return districts.sort();
+  }, []);
+
   const getBuilding = useCallback(async (id: string): Promise<Building | null> => {
     try {
       const docSnap = await getDoc(doc(getDb(), 'buildings', id));
@@ -76,5 +107,5 @@ export function useBuildings() {
     }
   }, []);
 
-  return { searchBuildings, getBuilding, addBuilding, loading };
+  return { searchBuildings, searchBuildingsAdvanced, getAllCities, getAllDistricts, getBuilding, addBuilding, loading };
 }

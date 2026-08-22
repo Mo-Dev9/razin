@@ -31,7 +31,7 @@ export function Header() {
           <Link href="/profile" className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4 decoration-2">
             ملفي
           </Link>
-          <Link href="/rate/new" className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4 decoration-2">
+          <Link href="/search" className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4 decoration-2">
             أضف تقييمك
           </Link>
           <Link href="/search" className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4 decoration-2">
@@ -71,7 +71,7 @@ export function Header() {
           <Link href="/profile" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4">
             ملفي
           </Link>
-          <Link href="/rate/new" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4">
+          <Link href="/search" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4">
             أضف تقييمك
           </Link>
           <Link href="/search" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4">

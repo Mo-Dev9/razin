@@ -1,19 +1,38 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { BuildingCard } from '@/components/building/BuildingCard';
 import { useBuildings } from '@/hooks/useBuildings';
 import type { Building } from '@/types';
 
+type ActiveChip = 'all' | 'withReviews' | 'topRated';
+
 export default function SearchPageInner() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const q = searchParams.get('q') || '';
-  const { searchBuildings, loading } = useBuildings();
+  const { searchBuildings, searchBuildingsAdvanced, getAllCities, getAllDistricts, loading } = useBuildings();
   const [query, setQuery] = useState(q);
   const [results, setResults] = useState<Building[]>([]);
   const [searched, setSearched] = useState(false);
+  const [cities, setCities] = useState<string[]>([]);
+  const [districts, setDistricts] = useState<string[]>([]);
+  const [selectedCity, setSelectedCity] = useState('');
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [activeChip, setActiveChip] = useState<ActiveChip>('all');
+
+  useEffect(() => {
+    getAllCities().then(setCities);
+    getAllDistricts().then(setDistricts);
+  }, [getAllCities, getAllDistricts]);
+
+  useEffect(() => {
+    if (selectedCity) {
+      getAllDistricts(selectedCity).then(setDistricts);
+    } else {
+      getAllDistricts().then(setDistricts);
+    }
+  }, [selectedCity, getAllDistricts]);
 
   useEffect(() => {
     if (q) {
@@ -24,12 +43,62 @@ export default function SearchPageInner() {
     }
   }, [q, searchBuildings]);
 
+  const applyFilters = async (textQuery?: string, city?: string, district?: string, chip?: ActiveChip) => {
+    const qText = textQuery ?? query;
+    const c = city ?? selectedCity;
+    const d = district ?? selectedDistrict;
+    const ch = chip ?? activeChip;
+
+    if (!qText.trim() && !c && !d && ch === 'all') {
+      setResults([]);
+      setSearched(false);
+      return;
+    }
+
+    let filtered: Building[];
+
+    if (qText.trim()) {
+      filtered = await searchBuildings(qText.trim());
+    } else {
+      filtered = await searchBuildingsAdvanced({ city: c || undefined, district: d || undefined });
+    }
+
+    if (c) filtered = filtered.filter((b) => b.city === c);
+    if (d) filtered = filtered.filter((b) => b.district === d);
+    if (ch === 'withReviews') filtered = filtered.filter((b) => b.reviewCount > 0);
+    if (ch === 'topRated') filtered = filtered.filter((b) => b.averageRatings.overall >= 4.0);
+
+    setResults(filtered);
+    setSearched(true);
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmed = query.trim();
-    if (!trimmed) return;
-    router.push(`/search?q=${encodeURIComponent(trimmed)}`);
+    applyFilters();
   };
+
+  const handleCityChange = (city: string) => {
+    setSelectedCity(city);
+    setSelectedDistrict('');
+    applyFilters(undefined, city, '');
+  };
+
+  const handleDistrictChange = (district: string) => {
+    setSelectedDistrict(district);
+    applyFilters(undefined, undefined, district);
+  };
+
+  const handleChipClick = (chip: ActiveChip) => {
+    setActiveChip(chip);
+    applyFilters(undefined, undefined, undefined, chip);
+  };
+
+  const chipClass = (active: boolean) =>
+    `flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-medium whitespace-nowrap border transition-all cursor-pointer ${
+      active
+        ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
+        : 'bg-[var(--color-surface)] text-[var(--color-text-secondary)] border-[var(--color-border)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]'
+    }`;
 
   return (
     <>
@@ -53,13 +122,10 @@ export default function SearchPageInner() {
         </p>
       </div>
 
-      <form onSubmit={handleSearch} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-4 mb-6 shadow-soft">
+      <form onSubmit={handleSearch} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-4 mb-5 shadow-soft">
         <div className="flex flex-col sm:flex-row items-stretch gap-3">
           <div className="relative flex-1">
-            <svg
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]"
-              width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-            >
+            <svg className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
@@ -71,10 +137,7 @@ export default function SearchPageInner() {
               className="w-full rounded-full bg-[var(--color-background)] border border-[var(--color-border-light)] py-3 pr-10 pl-4 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-primary)] transition-colors"
             />
           </div>
-          <button
-            type="submit"
-            className="rounded-2xl bg-[var(--color-primary)] text-white px-6 py-3 text-sm font-semibold hover:bg-[var(--color-primary-dark)] hover:scale-[1.03] hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-          >
+          <button type="submit" className="rounded-2xl bg-[var(--color-primary)] text-white px-6 py-3 text-sm font-semibold hover:bg-[var(--color-primary-dark)] hover:scale-[1.03] hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2">
             ابحث
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8" />
@@ -82,10 +145,41 @@ export default function SearchPageInner() {
             </svg>
           </button>
         </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 mt-3">
+          <select value={selectedCity} onChange={(e) => handleCityChange(e.target.value)} className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-3 py-2.5 text-sm text-[var(--color-text)] cursor-pointer">
+            <option value="">كل المدن</option>
+            {cities.map((city) => (
+              <option key={city} value={city}>{city}</option>
+            ))}
+          </select>
+          <select value={selectedDistrict} onChange={(e) => handleDistrictChange(e.target.value)} className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-3 py-2.5 text-sm text-[var(--color-text)] cursor-pointer">
+            <option value="">كل الأحياء</option>
+            {districts.map((d) => (
+              <option key={d} value={d}>{d}</option>
+            ))}
+          </select>
+        </div>
+
         <p className="text-[10px] text-[var(--color-text-muted)] mt-2 pr-4">
           {searched ? `${results.length} نتيجة` : 'ابحث عن مبنى أو حي أو مدينة'}
         </p>
       </form>
+
+      <div className="flex gap-3 mb-5 overflow-x-auto pb-1">
+        <button onClick={() => handleChipClick('all')} className={chipClass(activeChip === 'all')}>
+          <span>📊</span>
+          بيانات الحي
+        </button>
+        <button onClick={() => handleChipClick('withReviews')} className={chipClass(activeChip === 'withReviews')}>
+          <span>💬</span>
+          تقييمات السكان
+        </button>
+        <button onClick={() => handleChipClick('topRated')} className={chipClass(activeChip === 'topRated')}>
+          <span>⚖️</span>
+          الأعلى تقييماً
+        </button>
+      </div>
 
       {searched && (
         <div className="flex items-center justify-between mb-4">
@@ -117,7 +211,7 @@ export default function SearchPageInner() {
           <h3 className="font-semibold text-[var(--color-text)] mb-2">لم يتم العثور على نتائج</h3>
           <p className="text-sm text-[var(--color-text-secondary)] mb-4">جرّب البحث باسم شارع أو حي مختلف.</p>
           <button
-            onClick={() => { setQuery(''); setResults([]); setSearched(false); }}
+            onClick={() => { setQuery(''); setResults([]); setSearched(false); setSelectedCity(''); setSelectedDistrict(''); setActiveChip('all'); }}
             className="bg-[var(--color-primary)] text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-[var(--color-primary-dark)] hover:scale-105 hover:shadow-lg active:scale-95 transition-all"
           >
             حاول مجدداً

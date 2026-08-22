@@ -61,28 +61,30 @@ export default function HomePageInner() {
             </div>
 
             <div className="flex-1 w-full max-w-md">
-              <div className="relative">
-                <div className="absolute -inset-3 bg-[var(--color-accent)]/20 rounded-[2rem] rotate-2"></div>
-                <div className="relative bg-[var(--color-primary)] rounded-[28px] p-8 text-white overflow-hidden border-4 border-[var(--color-primary)]">
-                  <div className="absolute inset-0 opacity-10">
-                    <div className="absolute inset-4 border border-white/20 rounded-xl" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-                  </div>
-                  <div className="relative">
-                    <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs mb-6">أحياء نعرفها</span>
-                    <h2 className="text-2xl md:text-3xl font-bold leading-relaxed mb-8">
-                      المكان الصح يبدأ من التفاصيل.
-                    </h2>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-white/60">القاهرة · مدينة نصر</span>
+              <div className="relative border-[4px] border-[#0F2C2C] rounded-[28px] p-3">
+                <div className="relative">
+                  <div className="absolute -inset-3 bg-[var(--color-accent)]/20 rounded-[2rem] rotate-2"></div>
+                  <div className="relative bg-[var(--color-primary)] rounded-[24px] p-8 text-white overflow-hidden">
+                    <div className="absolute inset-0 opacity-10">
+                      <div className="absolute inset-4 border border-white/20 rounded-xl" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+                    </div>
+                    <div className="relative">
+                      <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs mb-6">أحياء نعرفها</span>
+                      <h2 className="text-2xl md:text-3xl font-bold leading-relaxed mb-8">
+                        المكان الصح يبدأ من التفاصيل.
+                      </h2>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-white/60">القاهرة · مدينة نصر</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="absolute -bottom-4 md:-left-4 -left-2 bg-[var(--color-accent)] rounded-2xl px-4 py-3 shadow-lg hover:scale-110 cursor-default">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xl font-bold text-[var(--color-primary)]">4.4</span>
-                    <span className="text-[var(--color-primary)]" style={{ animation: 'star-spin 3s ease-in-out infinite' }}>★</span>
+                  <div className="absolute -bottom-4 md:-left-4 -left-2 bg-[var(--color-accent)] rounded-2xl px-4 py-3 shadow-lg hover:scale-110 cursor-default">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xl font-bold text-[var(--color-primary)]">4.4</span>
+                      <span className="text-[var(--color-primary)]" style={{ animation: 'star-spin 3s ease-in-out infinite' }}>★</span>
+                    </div>
+                    <span className="text-[10px] text-[var(--color-primary)] font-medium">تقييم الحي</span>
                   </div>
-                  <span className="text-[10px] text-[var(--color-primary)] font-medium">تقييم الحي</span>
                 </div>
               </div>
             </div>
