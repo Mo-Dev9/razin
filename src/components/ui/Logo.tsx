@@ -1,46 +1,38 @@
 interface LogoProps {
   size?: number;
   variant?: 'light' | 'dark';
-  showWordmark?: boolean;
 }
 
-export function Logo({ size = 48, variant = 'light', showWordmark = false }: LogoProps) {
-  const starColor = variant === 'light' ? '#E9B94A' : '#FAF4EB';
-  const cutoutColor = variant === 'light' ? '#0F2C2C' : '#134B4A';
+export function Logo({ size = 48, variant = 'light' }: LogoProps) {
+  const id = `logo-grad-${variant}-${size}`;
 
   return (
-    <div className="flex items-center gap-2.5">
-      <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
-        <svg
-          viewBox="0 0 48 48"
-          width={size}
-          height={size}
-          style={{ filter: `drop-shadow(0 2px 8px rgba(233, 185, 74, ${variant === 'light' ? '0.4' : '0.3'}))` }}
-        >
-          {/* Five-pointed star */}
-          <path
-            d="M24 2 L29.8 16.8 L46 16.8 L33.2 26.4 L37.8 42 L24 33.2 L10.2 42 L14.8 26.4 L2 16.8 L18.2 16.8 Z"
-            fill={starColor}
-          />
-          {/* House silhouette cutout in center */}
-          <path
-            d="M24 14 L30 19.5 L30 28 L27 28 L27 22 L21 22 L21 28 L18 28 L18 19.5 Z"
-            fill={cutoutColor}
-            opacity="0.85"
-          />
-        </svg>
-      </div>
-      {showWordmark && (
-        <div className="flex items-baseline gap-0.5">
-          <span className="text-lg font-bold tracking-tight" style={{ color: variant === 'light' ? 'var(--color-text)' : '#FAF4EB' }}>
-            Rent
-          </span>
-          <span className="text-lg font-bold tracking-tight" style={{ color: variant === 'light' ? 'var(--color-text)' : '#FAF4EB' }}>
-            Rate
-          </span>
-          <span className="text-sm" style={{ color: '#E9B94A' }}>★</span>
-        </div>
-      )}
-    </div>
+    <svg
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ filter: 'drop-shadow(0 2px 6px rgba(233, 185, 74, 0.35))' }}
+    >
+      <defs>
+        <linearGradient id={id} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#F4C94A" />
+          <stop offset="100%" stopColor="#D4A017" />
+        </linearGradient>
+      </defs>
+
+      {/* Lucide Star — filled */}
+      <path
+        d="M23.163 3.81a1.13 1.13 0 0 1 1.674 0l4.937 5.34a2.407 2.407 0 0 0 1.807 1.242l5.904.857a1.13 1.13 0 0 1 .627 1.927l-4.27 4.152a2.407 2.407 0 0 0-.694 2.131l1.008 5.834a1.13 1.13 0 0 1-1.643 1.205L27.18 24.26a2.407 2.407 0 0 0-2.238 0l-5.263 2.77a1.13 1.13 0 0 1-1.643-1.206l1.008-5.833a2.407 2.407 0 0 0-.694-2.132L13.98 13.106a1.13 1.13 0 0 1 .627-1.927l5.904-.857a2.407 2.407 0 0 0 1.807-1.242z"
+        fill={`url(#${id})`}
+      />
+
+      {/* Lucide House — negative space cutout */}
+      <g fill={variant === 'light' ? '#0F2C2C' : '#1A2F2F'} fillRule="evenodd" opacity="0.9">
+        <path d="M26.5 25.5v-5.5a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 0-.5 .5v5.5" />
+        <path d="M16.5 16a1.5 1.5 0 0 1 .531-1.144l5.25-4.75a1.5 1.5 0 0 1 1.938 0l5.25 4.75A1.5 1.5 0 0 1 30 16v8.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 16 24.5z" />
+      </g>
+    </svg>
   );
 }
