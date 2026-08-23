@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { Logo } from '@/components/ui/Logo';
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -26,21 +27,7 @@ export function Header() {
     <header className="bg-[var(--color-surface)] border-b border-[var(--color-border)] sticky top-0 z-50">
       <div className="mx-auto max-w-5xl px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="relative w-12 h-12 flex items-center justify-center">
-            <svg viewBox="0 0 48 48" width="48" height="48" className="absolute inset-0" style={{ filter: 'drop-shadow(0 2px 8px rgba(233, 185, 74, 0.4))' }}>
-              <polygon
-                points="24,2 29.5,16.5 46,16.5 32.5,26 37,42 24,33 11,42 15.5,26 2,16.5 18.5,16.5"
-                fill="var(--color-accent)"
-              />
-            </svg>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F2C2C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="relative z-10" style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))' }}>
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
-          </div>
-          <div className="flex flex-col leading-none">
-            <span className="text-lg font-bold tracking-tight">RentRate</span>
-          </div>
+          <Logo size={48} variant="light" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
