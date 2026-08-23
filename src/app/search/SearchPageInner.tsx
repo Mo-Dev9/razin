@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { BuildingCard } from '@/components/building/BuildingCard';
 import { useBuildings } from '@/hooks/useBuildings';
 import type { Building } from '@/types';
@@ -9,9 +9,10 @@ import type { Building } from '@/types';
 type ActiveChip = 'all' | 'withReviews' | 'topRated';
 
 export default function SearchPageInner() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const q = searchParams.get('q') || '';
-  const { searchBuildings, searchBuildingsAdvanced, getAllCities, getAllDistricts, loading } = useBuildings();
+  const { searchBuildings, searchBuildingsAdvanced, getAllCities, getAllDistricts, addBuilding, loading } = useBuildings();
   const [query, setQuery] = useState(q);
   const [results, setResults] = useState<Building[]>([]);
   const [searched, setSearched] = useState(false);
@@ -20,6 +21,11 @@ export default function SearchPageInner() {
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [activeChip, setActiveChip] = useState<ActiveChip>('all');
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newAddress, setNewAddress] = useState('');
+  const [newCity, setNewCity] = useState('');
+  const [newArea, setNewArea] = useState('');
+  const [addLoading, setAddLoading] = useState(false);
 
   useEffect(() => {
     getAllCities().then(setCities);
@@ -91,6 +97,21 @@ export default function SearchPageInner() {
   const handleChipClick = (chip: ActiveChip) => {
     setActiveChip(chip);
     applyFilters(undefined, undefined, undefined, chip);
+  };
+
+  const handleAddBuilding = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAddress.trim() || !newCity.trim() || !newArea.trim()) return;
+    setAddLoading(true);
+    const id = await addBuilding({
+      address: newAddress.trim(),
+      city: newCity.trim(),
+      area: newArea.trim(),
+    });
+    setAddLoading(false);
+    if (id) {
+      router.push(`/rate/${id}`);
+    }
   };
 
   const chipClass = (active: boolean) =>
@@ -210,12 +231,72 @@ export default function SearchPageInner() {
           </div>
           <h3 className="font-semibold text-[var(--color-text)] mb-2">لم يتم العثور على نتائج</h3>
           <p className="text-sm text-[var(--color-text-secondary)] mb-4">جرّب البحث باسم شارع أو حي مختلف.</p>
-          <button
-            onClick={() => { setQuery(''); setResults([]); setSearched(false); setSelectedCity(''); setSelectedDistrict(''); setActiveChip('all'); }}
-            className="bg-[var(--color-primary)] text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-[var(--color-primary-dark)] hover:scale-105 hover:shadow-lg active:scale-95 transition-all"
-          >
-            حاول مجدداً
-          </button>
+
+          {!showAddForm ? (
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="bg-[var(--color-accent)] text-[var(--color-primary)] px-6 py-3 rounded-full text-sm font-bold hover:bg-[var(--color-accent-dark)] hover:scale-105 hover:shadow-lg active:scale-95 transition-all"
+              >
+                + أضف مبناك
+              </button>
+              <button
+                onClick={() => { setQuery(''); setResults([]); setSearched(false); setSelectedCity(''); setSelectedDistrict(''); setActiveChip('all'); }}
+                className="text-[var(--color-text-secondary)] text-sm hover:text-[var(--color-primary)] transition-colors"
+              >
+                حاول مجدداً
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleAddBuilding} className="max-w-sm mx-auto text-right">
+              <h4 className="font-semibold text-[var(--color-text)] mb-3">أضف مبناك</h4>
+              <p className="text-xs text-[var(--color-text-muted)] mb-4">أضف المبنى الأول وتقيّمه أنت</p>
+
+              <input
+                type="text"
+                value={newAddress}
+                onChange={(e) => setNewAddress(e.target.value)}
+                placeholder="عنوان المبنى (مثال: شارع مصطفى النحاس)"
+                required
+                className="w-full rounded-xl border border-[var(--color-border)] bg-white px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-primary)] transition-colors mb-3"
+              />
+
+              <input
+                type="text"
+                value={newCity}
+                onChange={(e) => setNewCity(e.target.value)}
+                placeholder="المدينة (مثال: القاهرة)"
+                required
+                className="w-full rounded-xl border border-[var(--color-border)] bg-white px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-primary)] transition-colors mb-3"
+              />
+
+              <input
+                type="text"
+                value={newArea}
+                onChange={(e) => setNewArea(e.target.value)}
+                placeholder="الحي (مثال: مدينة نصر)"
+                required
+                className="w-full rounded-xl border border-[var(--color-border)] bg-white px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-primary)] transition-colors mb-4"
+              />
+
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  disabled={addLoading || !newAddress.trim() || !newCity.trim() || !newArea.trim()}
+                  className="flex-1 bg-[var(--color-primary)] text-white px-4 py-3 rounded-full text-sm font-bold hover:bg-[var(--color-primary-dark)] hover:scale-105 hover:shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {addLoading ? 'جاري الإضافة...' : 'أضف وقيّم'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setShowAddForm(false); setNewAddress(''); setNewCity(''); setNewArea(''); }}
+                  className="px-4 py-3 rounded-full text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-border)] transition-colors"
+                >
+                  إلغاء
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       ) : !searched ? (
         <div className="text-center py-20">
