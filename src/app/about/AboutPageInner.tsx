@@ -19,7 +19,7 @@ export default function AboutPageInner() {
               كل باب في القاهرة<strong className="text-[var(--color-primary)]"> قصة.</strong>
             </h1>
             <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed">
-              إحنا مجموعة شباب مصري عايش في نفس الضغط اللي بتعيش فيه — نص ساعة في التاكسى بنبحث عن شقة، ونقعد شهرين نندم.
+              إحنا مجموعة شباب مصري عايشين في نفس الضغط اللي بتعيش فيه — بنقعد ساعات ندور على شقة، وندخلها وندم.
             </p>
           </div>
 
@@ -31,10 +31,10 @@ export default function AboutPageInner() {
                   المشكلة
                 </span>
                 <h2 className="text-xl font-bold text-[var(--color-text)] mb-3">
-                  ا个赛季 seasons نتعاقد بـ &quot;الكلام الحلو&quot;
+                  بنتعاقد على كلام مش واقع
                 </h2>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed mb-3">
-                  صاحب العقار بيوريك الشقة نضيفة، والعميل بي Deus &quot;إن شاء الله&quot;، وبعد ما تدخل — تكتشف إن الصوت من الشارع مش نايم، والمكيف مش شغال، والجيران بيعملوا حفلة كل جمعة.
+                  صاحب العقار بيوريك الشقة نضيفة، والعميل بيقول &quot;إن شاء الله&quot;، وبعد ما تدخل — تكتشف إن الصوت من الشارع مش نايم، والمكيف مش شغال، والجيران بيعملوا حفلة كل جمعة.
                 </p>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed">
                   مفيش مكان تعرف فيه الحقيقة قبل ما تدفع. مش بنك، مش صحيفة، مش حتى جارك — لأنه جارك الحالي مبيحبش يتكلم.
