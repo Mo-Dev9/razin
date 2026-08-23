@@ -12,6 +12,7 @@ export default function SearchPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const q = searchParams.get('q') || '';
+  const addMode = searchParams.get('add') === 'true';
   const { searchBuildings, searchBuildingsAdvanced, getAllCities, getAllDistricts, addBuilding, loading } = useBuildings();
   const [query, setQuery] = useState(q);
   const [results, setResults] = useState<Building[]>([]);
@@ -21,7 +22,7 @@ export default function SearchPageInner() {
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [activeChip, setActiveChip] = useState<ActiveChip>('all');
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(addMode);
   const [newAddress, setNewAddress] = useState('');
   const [newCity, setNewCity] = useState('');
   const [newArea, setNewArea] = useState('');

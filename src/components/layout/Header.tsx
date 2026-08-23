@@ -31,14 +31,14 @@ export function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
-          <Link href="/profile" className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4 decoration-2">
-            ملفي
-          </Link>
-          <Link href="/search" className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4 decoration-2">
-            أضف تقييمك
-          </Link>
           <Link href="/search" className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4 decoration-2">
             اكتشف المباني
+          </Link>
+          <Link href="/about" className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4 decoration-2">
+            عنا
+          </Link>
+          <Link href="/profile" className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4 decoration-2">
+            ملفي
           </Link>
 
           {isLinkedWithGoogle && user ? (
@@ -86,7 +86,7 @@ export function Header() {
               href="/search"
               className="bg-[var(--color-accent)] text-[var(--color-primary)] px-5 py-2.5 rounded-full text-sm font-bold hover:bg-[var(--color-accent-dark)] hover:scale-[1.03] hover:shadow-lg active:scale-[0.98]"
             >
-              اكتب تقييمك
+              أضف مبناك
             </Link>
           )}
         </nav>
@@ -129,21 +129,21 @@ export function Header() {
               </div>
             </div>
           )}
-          <Link href="/profile" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4">
-            ملفي
-          </Link>
-          <Link href="/search" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4">
-            أضف تقييمك
-          </Link>
           <Link href="/search" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4">
             اكتشف المباني
+          </Link>
+          <Link href="/about" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4">
+            عنا
+          </Link>
+          <Link href="/profile" onClick={() => setMenuOpen(false)} className="block text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:underline underline-offset-4">
+            ملفي
           </Link>
           <Link
             href="/search"
             onClick={() => setMenuOpen(false)}
             className="block text-center bg-[var(--color-accent)] text-[var(--color-primary)] px-5 py-2.5 rounded-full text-sm font-bold hover:bg-[var(--color-accent-dark)]"
           >
-            اكتب تقييمك
+            أضف مبناك
           </Link>
           {isLinkedWithGoogle && (
             <button

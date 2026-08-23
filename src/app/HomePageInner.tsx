@@ -51,13 +51,25 @@ export default function HomePageInner() {
               <div className="max-w-md">
                 <SearchBar />
               </div>
-              <p className="text-xs text-[var(--color-text-muted)] mt-4 flex items-center gap-1.5">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </svg>
-                التقييمات مجهولة الهوية، وأنت اللي بتتحكم فيها
-              </p>
+              <div className="flex items-center gap-3 mt-4">
+                <Link
+                  href="/search?add=true"
+                  className="inline-flex items-center gap-2 bg-[var(--color-accent)] text-[var(--color-primary)] px-6 py-3 rounded-full text-sm font-bold hover:bg-[var(--color-accent-dark)] hover:scale-[1.03] hover:shadow-lg active:scale-[0.98] transition-all"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  أضف مبناك
+                </Link>
+                <p className="text-xs text-[var(--color-text-muted)] flex items-center gap-1.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                  مجهول الهوية
+                </p>
+              </div>
             </div>
 
             <div className="flex-1 w-full max-w-md">
