@@ -19,7 +19,7 @@ export default function HomePageInner() {
     });
   }, [searchBuildings]);
 
-  const neighborhoodNames = ['مدينة نصر', 'المعادي', 'الزمالك'];
+  const neighborhoodNames = neighborhoods.map((b) => b.area);
 
   return (
     <>
@@ -209,34 +209,41 @@ export default function HomePageInner() {
               <p className="text-sm text-[var(--color-text-secondary)] mt-1">ما يقوله السكان</p>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {[
-              { rating: '4.3', area: 'مدينة نصر', address: 'شارع مصطفى النحاس، مدينة نصر', city: 'القاهرة', quote: 'الحي هادئ والجيران محترمين. الشارع فيه شجر وبهدوء بالليل.', date: '20 أغسطس 2026' },
-              { rating: '3.7', area: 'المعادي', address: 'شارع 9، المعادي', city: 'القاهرة', quote: 'الموقع ممتاز بس صوت الشارع بيدخل بالليل. المالك بطيء في الإصلاحات.', date: '18 أغسطس 2026' },
-              { rating: '4.3', area: 'الزمالك', address: 'شارع Zamzam، الزمالك', city: 'القاهرة', quote: 'المنطقة ممتازة والإنارة كويسة. أنصح بالسكن فيه للعائلات.', date: '15 أغسطس 2026' },
-            ].map((review, i) => (
-              <div key={i} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 shadow-soft hover:shadow-[0_10px_30px_-5px_rgb(15_44_44/0.15)] hover:-translate-y-1 hover:scale-[1.02] transition-all duration-200">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <p className="text-sm font-semibold text-[var(--color-text)]">{review.address}</p>
-                    <p className="text-xs text-[var(--color-text-muted)]">{review.city} · {review.area}</p>
+          {neighborhoods.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {neighborhoods.map((b) => (
+                <Link
+                  key={b.id}
+                  href={`/building/${b.id}`}
+                  className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 shadow-soft hover:shadow-[0_10px_30px_-5px_rgb(15_44_44/0.15)] hover:-translate-y-1 hover:scale-[1.02] transition-all duration-200"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--color-text)]">{b.address}</p>
+                      <p className="text-xs text-[var(--color-text-muted)]">{b.city} · {b.area}</p>
+                    </div>
+                    <span className="inline-flex items-center gap-1 bg-[var(--color-accent)]/15 px-2.5 py-1 rounded-lg text-sm font-bold text-[var(--color-primary)]">
+                      {b.averageRatings.overall.toFixed(1)} <span className="text-[var(--color-accent)]">★</span>
+                    </span>
                   </div>
-                  <span className="inline-flex items-center gap-1 bg-[var(--color-accent)]/15 px-2.5 py-1 rounded-lg text-sm font-bold text-[var(--color-primary)]">
-                    {review.rating} <span className="text-[var(--color-accent)]">★</span>
-                  </span>
-                </div>
-                <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed line-clamp-3">
-                  «{review.quote}»
-                </p>
-                <div className="flex items-center justify-between mt-4">
-                  <span className="text-xs text-[var(--color-text-muted)]">{review.date}</span>
-                  <Link href="/search" className="text-xs font-medium text-[var(--color-accent-dark)] hover:underline underline-offset-4">
-                    عرض المبنى ←
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
+                  <div className="flex items-center justify-between mt-4">
+                    <span className="text-xs text-[var(--color-text-muted)]">{b.reviewCount} تقييم</span>
+                    <span className="text-xs font-medium text-[var(--color-accent-dark)]">
+                      عرض المبنى ←
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-[var(--color-surface-warm)] border border-[var(--color-border)] rounded-3xl p-10 text-center">
+              <div className="text-4xl mb-4">💬</div>
+              <h3 className="font-semibold mb-2">لا توجد تقييمات بعد</h3>
+              <p className="text-sm text-[var(--color-text-secondary)]">
+                كن أول من يقيّم مبنى على RentRate ويساعد غيرك
+              </p>
+            </div>
+          )}
         </section>
       </main>
       <Footer />

@@ -181,7 +181,7 @@ export default function ProfilePageInner() {
               <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
                 كل تقييم تقدمه يساعد شخصاً آخر يختار مكانه بأفضل شكل.
               </p>
-              <Link href="/search" className="inline-flex items-center gap-1 text-xs font-medium text-[var(--color-accent-dark)] mt-3 hover:underline underline-offset-4">
+              <Link href="/search?add=true" className="inline-flex items-center gap-1 text-xs font-medium text-[var(--color-accent-dark)] mt-3 hover:underline underline-offset-4">
                 أضف تجربة جديدة
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="7" y1="17" x2="17" y2="7" />

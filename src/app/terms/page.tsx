@@ -139,10 +139,10 @@ export default function TermsPage() {
             لديك سؤال عن هذه الشروط، أو تريد الإبلاغ عن محتوى مخالف؟
           </p>
           <a
-            href="mailto:support@rentrate.com"
+            href="mailto:rentrate.eg@outlook.com"
             className="inline-flex items-center gap-2 bg-[var(--color-primary)] text-white font-bold rounded-full px-6 py-3 hover:bg-[var(--color-muted)]"
           >
-            راسلنا على support@rentrate.com ←
+            راسلنا على rentrate.eg@outlook.com ←
           </a>
         </section>
       </main>

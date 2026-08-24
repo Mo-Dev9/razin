@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
@@ -12,6 +13,7 @@ interface Stats {
 }
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [stats, setStats] = useState<Stats>({ buildings: 0, reviews: 0 });
@@ -28,6 +30,10 @@ export default function AdminDashboard() {
         fetch('/api/admin/buildings'),
         fetch('/api/admin/reviews'),
       ]);
+      if (bRes.status === 401) {
+        router.push('/admin/login');
+        return;
+      }
       const bData = await bRes.json();
       const rData = await rRes.json();
       setBuildings(bData.buildings || []);
@@ -39,7 +45,11 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [router]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const deleteBuilding = async (buildingId: string) => {
     if (!confirm('هل أنت متأكد من حذف هذا المبنى وجميع تقييماته؟')) return;

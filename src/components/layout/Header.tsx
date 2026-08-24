@@ -83,7 +83,7 @@ export function Header() {
             </div>
           ) : (
             <Link
-              href="/search"
+              href="/search?add=true"
               className="bg-[var(--color-accent)] text-[var(--color-primary)] px-5 py-2.5 rounded-full text-sm font-bold hover:bg-[var(--color-accent-dark)] hover:scale-[1.03] hover:shadow-lg active:scale-[0.98]"
             >
               أضف مبناك
@@ -139,7 +139,7 @@ export function Header() {
             ملفي
           </Link>
           <Link
-            href="/search"
+            href="/search?add=true"
             onClick={() => setMenuOpen(false)}
             className="block text-center bg-[var(--color-accent)] text-[var(--color-primary)] px-5 py-2.5 rounded-full text-sm font-bold hover:bg-[var(--color-accent-dark)]"
           >

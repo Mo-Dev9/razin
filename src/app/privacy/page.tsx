@@ -103,7 +103,7 @@ export default function PrivacyPolicyPage() {
           <ul className="list-disc ps-6 space-y-2 leading-8 text-[var(--color-text-secondary)] mb-4">
             <li><strong className="text-[var(--color-text)]">البقاء مجهولًا:</strong> يمكنك استخدام المنصة كاملة دون تقديم أي معلومة شخصية.</li>
             <li><strong className="text-[var(--color-text)]">إلغاء الربط:</strong> تسجيل الخروج من حساب Google يعيدك إلى وضع المجهولية الكاملة في أي وقت.</li>
-            <li><strong className="text-[var(--color-text)]">تعديل أو حذف تقييمك:</strong> يمكنك طلب تعديل تقييمك أو حذفه نهائيًا عبر مراسلتنا على <a href="mailto:support@rentrate.com" className="text-[var(--color-muted)] font-medium hover:text-[var(--color-accent-dark)] underline underline-offset-4">support@rentrate.com</a>، مع ذكر اسم المبنى ونص التقييم لنتمكن من تحديده.</li>
+            <li><strong className="text-[var(--color-text)]">تعديل أو حذف تقييمك:</strong> يمكنك طلب تعديل تقييمك أو حذفه نهائيًا عبر مراسلتنا على <a href="mailto:rentrate.eg@outlook.com" className="text-[var(--color-muted)] font-medium hover:text-[var(--color-accent-dark)] underline underline-offset-4">rentrate.eg@outlook.com</a>، مع ذكر اسم المبنى ونص التقييم لنتمكن من تحديده.</li>
             <li><strong className="text-[var(--color-text)]">حذف بيانات حسابك المرتبط:</strong> عند طلبك، نحذف الاسم وصورة الحساب المخزّنة لدينا.</li>
           </ul>
           <p className="leading-8 text-[var(--color-text-secondary)]">
