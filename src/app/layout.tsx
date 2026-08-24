@@ -1,4 +1,7 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
 import './globals.css';
 
 const BASE_URL = 'https://rentrate-zeta.vercel.app';
@@ -37,6 +40,19 @@ export const metadata: Metadata = {
       'ar': BASE_URL,
     },
   },
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'RentRate',
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#0F2C2C',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -50,9 +66,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
           rel="stylesheet"
         />
+        <link rel="apple-touch-icon" href="/logo-192.png" />
       </head>
       <body className="flex flex-col min-h-screen">
         {children}
+        <ServiceWorkerRegistration />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

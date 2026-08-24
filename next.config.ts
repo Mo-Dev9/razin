@@ -1,7 +1,17 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  reactStrictMode: true,
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: "rentrate",
+  project: "rentrate",
+  silent: true,
+  widenClientFileUpload: true,
+  sourcemaps: { disable: true },
+  webpack: {
+    treeshake: { removeDebugLogging: true },
+  },
+});
