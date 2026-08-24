@@ -5,13 +5,14 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
 };
 
-export default withSentryConfig(nextConfig, {
-  org: "rentrate",
-  project: "rentrate",
-  silent: true,
-  widenClientFileUpload: true,
-  sourcemaps: { disable: true },
-  webpack: {
-    treeshake: { removeDebugLogging: true },
-  },
-});
+const sentryEnabled = !!process.env.NEXT_PUBLIC_SENTRY_DSN;
+
+export default sentryEnabled
+  ? withSentryConfig(nextConfig, {
+      org: "rentrate",
+      project: "rentrate",
+      silent: true,
+      widenClientFileUpload: true,
+      sourcemaps: { disable: true },
+    })
+  : nextConfig;
