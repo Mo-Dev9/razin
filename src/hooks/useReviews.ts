@@ -85,7 +85,7 @@ export function useReviews() {
             const b = buildingSnap.data() as Building;
             const count = b.reviewCount;
             const newAvg = (key: keyof ReviewRatings) => {
-              const old = b.averageRatings[key] * count;
+              const old = (b.averageRatings[key] || 0) * count;
               return (old + ratings[key]) / (count + 1);
             };
 

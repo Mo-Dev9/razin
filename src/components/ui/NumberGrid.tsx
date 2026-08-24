@@ -31,8 +31,8 @@ export function NumberGrid({ value, onChange, label, icon }: NumberGridProps) {
         ))}
       </div>
       <div className="flex justify-between w-full mt-1">
-        <span className="text-[10px] text-[var(--color-text-muted)]">ممتاز</span>
         <span className="text-[10px] text-[var(--color-text-muted)]">سيء</span>
+        <span className="text-[10px] text-[var(--color-text-muted)]">ممتاز</span>
       </div>
     </div>
   );
