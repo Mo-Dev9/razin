@@ -22,12 +22,17 @@ function AddAndRateForm() {
   const [newCity, setNewCity] = useState('');
   const [newArea, setNewArea] = useState('');
   const [ratings, setRatings] = useState<ReviewRatings>({
-    noise: 3,
+    zahma: 3,
     humidity: 3,
     landlord: 3,
     neighbors: 3,
     lighting: 3,
     safety: 3,
+    services: 3,
+    annoyance: 3,
+    elevator: 3,
+    maintenance: 3,
+    ventilation: 3,
   });
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -95,7 +100,7 @@ function AddAndRateForm() {
               setNewAddress('');
               setNewCity('');
               setNewArea('');
-              setRatings({ noise: 3, humidity: 3, landlord: 3, neighbors: 3, lighting: 3, safety: 3 });
+              setRatings({ zahma: 3, humidity: 3, landlord: 3, neighbors: 3, lighting: 3, safety: 3, services: 3, annoyance: 3, elevator: 3, maintenance: 3, ventilation: 3 });
               setComment('');
               setSubmitted(false);
             }}
@@ -121,7 +126,7 @@ function AddAndRateForm() {
           أضف المبنى وقيّمه دلوقتي
         </h1>
         <p className="text-sm text-[var(--color-text-secondary)] max-w-md mx-auto">
-          اكتب بيانات المبنى اللي ساكن فيه، ثم قيّمه على المعايير الستة — كله في مكان واحد.
+          اكتب بيانات المبنى اللي ساكن فيه، ثم قيّمه على المعايير الحادية عشرة — كله في مكان واحد.
         </p>
       </div>
 
@@ -159,7 +164,7 @@ function AddAndRateForm() {
 
       <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 mb-5">
         <div className="mb-4">
-          <p className="text-xs text-[var(--color-accent-dark)] font-medium mb-1">قيّم المبنى على المعايير الستة</p>
+          <p className="text-xs text-[var(--color-accent-dark)] font-medium mb-1">قيّم المبنى على المعايير الحادية عشرة</p>
           <h2 className="text-sm font-semibold text-[var(--color-text)]">كيف كانت تجربتك في المبنى؟</h2>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">

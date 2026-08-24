@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
       return {
         title: `${address} — تقييمات السكان | RentRate`,
-        description: `تقييمات مجهولة لمبنى ${address} في ${location}: الطرقبة، الأمان، الجيران وتعاون المالك. اقرأ التجارب قبل ما توقّع عقد الإيجار.`,
+        description: `تقييمات مجهولة لمبنى ${address} في ${location}: الزحمة، الأمان، الجيران، تعاون المالك والخدمات. اقرأ التجارب قبل ما توقّع عقد الإيجار.`,
         openGraph: {
           title: `${address} — تقييمات السكان | RentRate`,
           description: `تقييمات مجهولة من مستأجرين سابقين في ${address}، ${location}.`,

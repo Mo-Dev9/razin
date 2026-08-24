@@ -6,7 +6,7 @@ import SearchPageInner from './SearchPageInner';
 
 export const metadata: Metadata = {
   title: 'اكتشف المباني — RentRate',
-  description: 'ابحث عن أي مبنى أو حي في مصر واطلع على تقييمات مجهولة من السكان: الطرقبة، الرطوبة، الأمان وتعاون المالك. قارن قبل قرار الإيجار.',
+  description: 'ابحث عن أي مبنى أو حي في مصر واطلع على تقييمات مجهولة من السكان: الزحمة، الرطوبة، الأمان، تعاون المالك والخدمات. قارن قبل قرار الإيجار.',
 };
 
 export default function SearchPage() {

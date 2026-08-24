@@ -24,12 +24,17 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
 
   const [building, setBuilding] = useState<Building | null>(null);
   const [ratings, setRatings] = useState<ReviewRatings>({
-    noise: 3,
+    zahma: 3,
     humidity: 3,
     landlord: 3,
     neighbors: 3,
     lighting: 3,
     safety: 3,
+    services: 3,
+    annoyance: 3,
+    elevator: 3,
+    maintenance: 3,
+    ventilation: 3,
   });
   const [comment, setComment] = useState('');
   const [buildingNumber, setBuildingNumber] = useState('');
@@ -279,14 +284,14 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
               <h3 className="text-[var(--color-accent)] font-bold text-sm mb-4">المحصلة</h3>
               <div className="mb-4">
                 <div className="flex justify-between text-xs text-white/60 mb-1">
-                  <span>{filledCount} من 6</span>
+                  <span>                    {filledCount} من 11</span>
                   <span>{(overall).toFixed(1)} / 5</span>
                 </div>
-                <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-[var(--color-accent)] rounded-full transition-all"
-                    style={{ width: `${(filledCount / 6) * 100}%` }}
-                  ></div>
+                  <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-[var(--color-accent)] rounded-full transition-all"
+                      style={{ width: `${(filledCount / 11) * 100}%` }}
+                    ></div>
                 </div>
               </div>
               <div className="flex gap-1 mb-4">
@@ -296,7 +301,7 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
               </div>
               <div className="border-t border-white/10 pt-4 space-y-3">
                 <p className="text-xs text-white/50 leading-relaxed">
-                  متوسط تقييمات الست جوانب يعطيك صورة حقيقية عن الحياة في المبنى.
+                  متوسط تقييمات المعايير الحادية عشرة يعطيك صورة حقيقية عن الحياة في المبنى.
                 </p>
                 <p className="text-xs text-white/50 leading-relaxed">
                   كل تقييم مجهول الهوية ويُحسب مرة واحدة فقط لكل مستخدم.

@@ -91,12 +91,17 @@ export function useReviews() {
 
             transaction.update(buildingRef, {
               averageRatings: {
-                noise: newAvg('noise'),
+                zahma: newAvg('zahma'),
                 humidity: newAvg('humidity'),
                 landlord: newAvg('landlord'),
                 neighbors: newAvg('neighbors'),
                 lighting: newAvg('lighting'),
                 safety: newAvg('safety'),
+                services: newAvg('services'),
+                annoyance: newAvg('annoyance'),
+                elevator: newAvg('elevator'),
+                maintenance: newAvg('maintenance'),
+                ventilation: newAvg('ventilation'),
                 overall: (b.averageRatings.overall * count + overall) / (count + 1),
               },
               reviewCount: increment(1),

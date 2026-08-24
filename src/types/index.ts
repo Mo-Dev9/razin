@@ -16,12 +16,17 @@ export interface Building {
 }
 
 export interface RatingAverages {
-  noise: number;
+  zahma: number;
   humidity: number;
   landlord: number;
   neighbors: number;
   lighting: number;
   safety: number;
+  services: number;
+  annoyance: number;
+  elevator: number;
+  maintenance: number;
+  ventilation: number;
   overall: number;
 }
 
@@ -39,12 +44,17 @@ export interface Review {
 }
 
 export interface ReviewRatings {
-  noise: number;
+  zahma: number;
   humidity: number;
   landlord: number;
   neighbors: number;
   lighting: number;
   safety: number;
+  services: number;
+  annoyance: number;
+  elevator: number;
+  maintenance: number;
+  ventilation: number;
 }
 
 export interface UserProfile {
@@ -60,10 +70,15 @@ export interface UserProfile {
 }
 
 export const RATING_LABELS: Record<keyof ReviewRatings, { ar: string; icon: string }> = {
-  noise: { ar: 'الطرقبة', icon: '🚗' },
+  zahma: { ar: 'الزحمة', icon: '🚗' },
   humidity: { ar: 'الرطوبة', icon: '💧' },
   landlord: { ar: 'تعاون المالك', icon: '🤝' },
   neighbors: { ar: 'الجيران', icon: '👥' },
   safety: { ar: 'الأمان', icon: '🛡️' },
   lighting: { ar: 'الإضاءة', icon: '💡' },
+  services: { ar: 'الخدمات', icon: '🏪' },
+  annoyance: { ar: 'الإزعاج', icon: '🔊' },
+  elevator: { ar: 'المصعد', icon: '🛗' },
+  maintenance: { ar: 'الصيانة', icon: '🔧' },
+  ventilation: { ar: 'التهوية', icon: '🌀' },
 };

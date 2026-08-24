@@ -93,7 +93,7 @@ export function useBuildings() {
     try {
       const docRef = await addDoc(collection(getDb(), 'buildings'), {
         ...data,
-        averageRatings: { noise: 0, humidity: 0, landlord: 0, neighbors: 0, lighting: 0, safety: 0, overall: 0 },
+        averageRatings: { zahma: 0, humidity: 0, landlord: 0, neighbors: 0, lighting: 0, safety: 0, services: 0, annoyance: 0, elevator: 0, maintenance: 0, ventilation: 0, overall: 0 },
         reviewCount: 0,
         createdAt: Date.now(),
       });
