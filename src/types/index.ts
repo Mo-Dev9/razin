@@ -20,13 +20,13 @@ export interface RatingAverages {
   humidity: number;
   landlord: number;
   neighbors: number;
-  lighting: number;
+  cleanliness: number;
   safety: number;
   services: number;
   annoyance: number;
   elevator: number;
   maintenance: number;
-  ventilation: number;
+  ac: number;
   overall: number;
 }
 
@@ -48,13 +48,13 @@ export interface ReviewRatings {
   humidity: number;
   landlord: number;
   neighbors: number;
-  lighting: number;
+  cleanliness: number;
   safety: number;
   services: number;
   annoyance: number;
   elevator: number;
   maintenance: number;
-  ventilation: number;
+  ac: number;
 }
 
 export interface UserProfile {
@@ -74,11 +74,11 @@ export const RATING_LABELS: Record<keyof ReviewRatings, { ar: string; icon: stri
   humidity: { ar: 'الرطوبة', icon: '💧' },
   landlord: { ar: 'تعاون المالك', icon: '🤝' },
   neighbors: { ar: 'الجيران', icon: '👥' },
+  cleanliness: { ar: 'النظافة', icon: '🧹' },
   safety: { ar: 'الأمان', icon: '🛡️' },
-  lighting: { ar: 'الإضاءة', icon: '💡' },
   services: { ar: 'الخدمات', icon: '🏪' },
   annoyance: { ar: 'الإزعاج', icon: '🔊' },
   elevator: { ar: 'المصعد', icon: '🛗' },
   maintenance: { ar: 'الصيانة', icon: '🔧' },
-  ventilation: { ar: 'التهوية', icon: '🌀' },
+  ac: { ar: 'التكيف', icon: '❄️' },
 };

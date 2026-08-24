@@ -6,12 +6,17 @@ interface BuildingRatingsProps {
 }
 
 const RATING_ICONS: Record<string, string> = {
-  trafficNoise: '🚗',
-  quietness: '🤫',
+  zahma: '🚗',
+  humidity: '💧',
+  landlord: '🤝',
   neighbors: '👥',
-  ownerCooperation: '🤝',
+  cleanliness: '🧹',
   safety: '🛡️',
-  lighting: '💡',
+  services: '🏪',
+  annoyance: '🔊',
+  elevator: '🛗',
+  maintenance: '🔧',
+  ac: '❄️',
 };
 
 export function BuildingRatings({ reviews }: BuildingRatingsProps) {

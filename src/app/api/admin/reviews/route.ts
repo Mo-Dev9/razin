@@ -60,7 +60,7 @@ export async function DELETE(req: NextRequest) {
 
     if (remaining.length === 0) {
       await db.collection('buildings').doc(buildingId).update({
-        averageRatings: { zahma: 0, humidity: 0, landlord: 0, neighbors: 0, lighting: 0, safety: 0, services: 0, annoyance: 0, elevator: 0, maintenance: 0, ventilation: 0, overall: 0 },
+        averageRatings: { zahma: 0, humidity: 0, landlord: 0, neighbors: 0, cleanliness: 0, safety: 0, services: 0, annoyance: 0, elevator: 0, maintenance: 0, ac: 0, overall: 0 },
         reviewCount: 0,
         lastReviewAt: null,
       });
@@ -73,13 +73,13 @@ export async function DELETE(req: NextRequest) {
           humidity: avg('humidity'),
           landlord: avg('landlord'),
           neighbors: avg('neighbors'),
-          lighting: avg('lighting'),
+          cleanliness: avg('cleanliness'),
           safety: avg('safety'),
           services: avg('services'),
           annoyance: avg('annoyance'),
           elevator: avg('elevator'),
           maintenance: avg('maintenance'),
-          ventilation: avg('ventilation'),
+          ac: avg('ac'),
           overall,
         },
         reviewCount: remaining.length,

@@ -28,13 +28,13 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
     humidity: 3,
     landlord: 3,
     neighbors: 3,
-    lighting: 3,
+    cleanliness: 3,
     safety: 3,
     services: 3,
     annoyance: 3,
     elevator: 3,
     maintenance: 3,
-    ventilation: 3,
+    ac: 3,
   });
   const [comment, setComment] = useState('');
   const [buildingNumber, setBuildingNumber] = useState('');

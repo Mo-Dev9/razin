@@ -40,7 +40,7 @@ export default function PrivacyPolicyPage() {
           <div className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-soft p-5 mb-4">
             <h3 className="font-bold text-[var(--color-text)] mb-2">أ) بيانات التقييم</h3>
             <ul className="list-disc ps-6 space-y-2 leading-8 text-[var(--color-text-secondary)]">
-              <li>درجات التقييم من ١ إلى ٥ على المعايير الحادية عشرة: الزحمة، الرطوبة، تعاون المالك، الجيران، الأمان، الإضاءة، الخدمات، الإزعاج، المصعد، الصيانة والتهوية.</li>
+              <li>درجات التقييم من ١ إلى ٥ على المعايير الحادية عشرة: الزحمة، الرطوبة، تعاون المالك، الجيران، النظافة، الأمان، الخدمات، الإزعاج، المصعد، الصيانة والتكيف.</li>
               <li>تعليق نصي اختياري تكتبه أنت.</li>
               <li>معلومات المبنى محل التقييم: المدينة والمنطقة والحي.</li>
               <li><strong className="text-[var(--color-text)]">اسم عرض مجهول</strong> يظهر بجوار تقييمك بدلًا من هويتك الحقيقية.</li>
