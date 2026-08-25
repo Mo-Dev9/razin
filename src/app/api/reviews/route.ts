@@ -48,66 +48,53 @@ export async function POST(req: NextRequest) {
     const db = getAdminDb();
     const reviewDocId = `${buildingId}_${uid}`;
 
-    await db.runTransaction(async (transaction) => {
-      const buildingRef = db.collection('buildings').doc(buildingId);
-      const buildingSnap = await transaction.get(buildingRef);
-      if (!buildingSnap.exists) {
-        throw new Error('Building not found');
-      }
+    const buildingRef = db.collection('buildings').doc(buildingId);
+    const buildingSnap = await buildingRef.get();
 
-      const reviewRef = db.collection('reviews').doc(reviewDocId);
-      const existingSnap = await transaction.get(reviewRef);
-      if (existingSnap.exists) {
-        throw new Error('Already reviewed');
-      }
+    if (!buildingSnap.exists) {
+      return NextResponse.json({ error: 'المبنى غير موجود' }, { status: 404 });
+    }
 
-      const overall = RATING_KEYS.reduce((sum, k) => sum + ratings[k], 0) / RATING_KEYS.length;
+    const reviewRef = db.collection('reviews').doc(reviewDocId);
+    const existingSnap = await reviewRef.get();
 
-      transaction.set(reviewRef, {
-        buildingId,
-        userId: uid,
-        ratings,
-        overall,
-        comment,
-        buildingNumber,
-        floor,
-        apartmentNumber,
-        createdAt: Date.now(),
-      });
+    if (existingSnap.exists) {
+      return NextResponse.json({ error: 'لقد قيّمت هذا المبنى بالفعل' }, { status: 409 });
+    }
 
-      const b = buildingSnap.data()!;
-      const count = b.reviewCount || 0;
-      const avgRatings = b.averageRatings as Record<string, number> || {};
+    const overall = RATING_KEYS.reduce((sum, k) => sum + ratings[k], 0) / RATING_KEYS.length;
 
-      const avgObj: Record<string, number> = {};
-      for (const k of RATING_KEYS) {
-        const old = (avgRatings[k] || 0) * count;
-        avgObj[k] = (old + ratings[k]) / (count + 1);
-      }
-      avgObj.overall = ((avgRatings.overall || 0) * count + overall) / (count + 1);
+    await reviewRef.set({
+      buildingId,
+      userId: uid,
+      ratings,
+      overall,
+      comment,
+      buildingNumber,
+      floor,
+      apartmentNumber,
+      createdAt: Date.now(),
+    });
 
-      transaction.update(buildingRef, {
-        averageRatings: avgObj,
-        reviewCount: count + 1,
-        lastReviewAt: Date.now(),
-      });
+    const b = buildingSnap.data()!;
+    const count = b.reviewCount || 0;
+    const avgRatings = (b.averageRatings || {}) as Record<string, number>;
 
-      const userRef = db.collection('users').doc(uid);
-      const userSnap = await transaction.get(userRef);
-      transaction.set(userRef, {
-        reviewCount: (userSnap.exists ? (userSnap.data()?.reviewCount || 0) : 0) + 1,
-      }, { merge: true });
+    const avgObj: Record<string, number> = {};
+    for (const k of RATING_KEYS) {
+      const old = (avgRatings[k] || 0) * count;
+      avgObj[k] = (old + ratings[k]) / (count + 1);
+    }
+    avgObj.overall = ((avgRatings.overall || 0) * count + overall) / (count + 1);
+
+    await buildingRef.update({
+      averageRatings: avgObj,
+      reviewCount: count + 1,
+      lastReviewAt: Date.now(),
     });
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : '';
-    if (msg === 'Building not found') {
-      return NextResponse.json({ error: 'المبنى غير موجود' }, { status: 404 });
-    }
-    if (msg === 'Already reviewed') {
-      return NextResponse.json({ error: 'لقد قيّمت هذا المبنى بالفعل' }, { status: 409 });
-    }
     console.error('Submit review API failed:', err);
     return NextResponse.json({ error: 'فشل حفظ التقييم' }, { status: 500 });
   }

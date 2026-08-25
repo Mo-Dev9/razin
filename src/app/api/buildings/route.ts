@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ buildingId: dupSnap.docs[0].id, duplicate: true });
       }
     } catch (dupErr) {
-      console.warn('Duplicate detection query failed (continuing with create):', dupErr);
+      console.warn('Duplicate detection query failed:', dupErr);
     }
 
     const docRef = await db.collection('buildings').add({
@@ -83,9 +83,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ buildingId: docRef.id });
   } catch (err) {
     console.error('Add building API error:', err);
-    return NextResponse.json(
-      { error: 'خطأ داخلي في السيرفر' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'خطأ داخلي في السيرفر' }, { status: 500 });
   }
 }
