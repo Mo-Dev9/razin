@@ -6,6 +6,7 @@ import {
   orderBy,
   getDocs,
   doc,
+  getDoc,
   runTransaction,
   increment,
 } from 'firebase/firestore';
@@ -33,13 +34,10 @@ export function useReviews() {
 
   const hasUserReviewed = useCallback(async (buildingId: string, userId: string): Promise<boolean> => {
     try {
-      const q = query(
-        collection(getDb(), 'reviews'),
-        where('buildingId', '==', buildingId),
-        where('userId', '==', userId)
-      );
-      const snapshot = await getDocs(q);
-      return !snapshot.empty;
+      const reviewDocId = `${buildingId}_${userId}`;
+      const docRef = doc(getDb(), 'reviews', reviewDocId);
+      const docSnap = await getDoc(docRef);
+      return docSnap.exists();
     } catch {
       return false;
     }
@@ -54,13 +52,21 @@ export function useReviews() {
         await runTransaction(getDb(), async (transaction) => {
           const buildingRef = doc(getDb(), 'buildings', buildingId);
           const buildingSnap = await transaction.get(buildingRef);
-          if (!buildingSnap.exists()) return;
+          if (!buildingSnap.exists()) {
+            throw new Error('Building not found');
+          }
+
+          const reviewDocId = `${buildingId}_${userId}`;
+          const existingRef = doc(getDb(), 'reviews', reviewDocId);
+          const existingSnap = await transaction.get(existingRef);
+          if (existingSnap.exists()) {
+            throw new Error('Already reviewed');
+          }
 
           const b = buildingSnap.data() as Building;
           const count = b.reviewCount;
 
-          const reviewRef = doc(collection(getDb(), 'reviews'));
-          transaction.set(reviewRef, {
+          transaction.set(existingRef, {
             buildingId,
             userId,
             ratings,

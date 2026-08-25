@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminDb } from '@/lib/firebase-admin';
-import { getAuth } from 'firebase-admin/auth';
+import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 
 export async function POST(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
@@ -10,7 +9,7 @@ export async function POST(req: NextRequest) {
 
   let uid: string;
   try {
-    const decoded = await getAuth().verifyIdToken(authHeader.slice(7));
+    const decoded = await getAdminAuth().verifyIdToken(authHeader.slice(7));
     uid = decoded.uid;
   } catch {
     return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
@@ -29,6 +28,10 @@ export async function POST(req: NextRequest) {
 
   if (!address || !city || !area) {
     return NextResponse.json({ error: 'العنوان والمدينة والحي مطلوبين' }, { status: 400 });
+  }
+
+  if (address.length > 200 || city.length > 100 || area.length > 100) {
+    return NextResponse.json({ error: 'البيانات أطول من المسموح' }, { status: 400 });
   }
 
   try {

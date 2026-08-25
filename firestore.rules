@@ -14,7 +14,20 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.keys().hasAll(['buildingId','userId','ratings','overall','comment','createdAt'])
-        && request.resource.data.overall >= 1 && request.resource.data.overall <= 5;
+        && request.resource.data.overall >= 1 && request.resource.data.overall <= 5
+        && request.resource.data.ratings is map
+        && request.resource.data.ratings.keys().hasAll(['zahma','humidity','landlord','neighbors','cleanliness','safety','services','annoyance','elevator','maintenance','ac'])
+        && request.resource.data.ratings.zahma >= 1 && request.resource.data.ratings.zahma <= 5
+        && request.resource.data.ratings.humidity >= 1 && request.resource.data.ratings.humidity <= 5
+        && request.resource.data.ratings.landlord >= 1 && request.resource.data.ratings.landlord <= 5
+        && request.resource.data.ratings.neighbors >= 1 && request.resource.data.ratings.neighbors <= 5
+        && request.resource.data.ratings.cleanliness >= 1 && request.resource.data.ratings.cleanliness <= 5
+        && request.resource.data.ratings.safety >= 1 && request.resource.data.ratings.safety <= 5
+        && request.resource.data.ratings.services >= 1 && request.resource.data.ratings.services <= 5
+        && request.resource.data.ratings.annoyance >= 1 && request.resource.data.ratings.annoyance <= 5
+        && request.resource.data.ratings.elevator >= 1 && request.resource.data.ratings.elevator <= 5
+        && request.resource.data.ratings.maintenance >= 1 && request.resource.data.ratings.maintenance <= 5
+        && request.resource.data.ratings.ac >= 1 && request.resource.data.ratings.ac <= 5;
       allow update, delete: if request.auth != null
         && resource.data.userId == request.auth.uid;
     }

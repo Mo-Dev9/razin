@@ -63,7 +63,10 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
 
   useEffect(() => {
     if (buildingId) {
-      getBuilding(buildingId).then(setBuilding);
+      getBuilding(buildingId).then((b) => {
+        if (!b) setError('المبنى غير موجود');
+        setBuilding(b);
+      });
     }
   }, [buildingId, getBuilding]);
 
