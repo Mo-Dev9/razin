@@ -21,6 +21,9 @@ function AddAndRateForm() {
   const [newAddress, setNewAddress] = useState('');
   const [newCity, setNewCity] = useState('');
   const [newArea, setNewArea] = useState('');
+  const [buildingNumber, setBuildingNumber] = useState('');
+  const [floor, setFloor] = useState('');
+  const [apartmentNumber, setApartmentNumber] = useState('');
   const [ratings, setRatings] = useState<ReviewRatings>({
     zahma: 3,
     humidity: 3,
@@ -63,7 +66,14 @@ function AddAndRateForm() {
         return;
       }
 
-      const result = await submitReview(buildingId, ratings, comment || undefined);
+      const result = await submitReview(
+        buildingId,
+        ratings,
+        comment || undefined,
+        buildingNumber.trim() || undefined,
+        floor.trim() || undefined,
+        apartmentNumber.trim() || undefined
+      );
       if (result.ok) {
         setSubmitted(true);
       } else {
@@ -105,6 +115,9 @@ function AddAndRateForm() {
               setNewAddress('');
               setNewCity('');
               setNewArea('');
+              setBuildingNumber('');
+              setFloor('');
+              setApartmentNumber('');
               setRatings({ zahma: 3, humidity: 3, landlord: 3, neighbors: 3, cleanliness: 3, safety: 3, services: 3, annoyance: 3, elevator: 3, maintenance: 3, ac: 3 });
               setComment('');
               setSubmitted(false);
@@ -191,6 +204,29 @@ function AddAndRateForm() {
               className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
             />
           </div>
+          <div className="grid grid-cols-3 gap-3">
+            <input
+              type="text"
+              value={buildingNumber}
+              onChange={(e) => setBuildingNumber(e.target.value)}
+              placeholder="رقم العمارة"
+              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+            />
+            <input
+              type="text"
+              value={floor}
+              onChange={(e) => setFloor(e.target.value)}
+              placeholder="الدور"
+              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+            />
+            <input
+              type="text"
+              value={apartmentNumber}
+              onChange={(e) => setApartmentNumber(e.target.value)}
+              placeholder="رقم الشقة"
+              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+            />
+          </div>
         </div>
       </div>
 
@@ -269,11 +305,10 @@ export default function SearchPageInner() {
   const searchParams = useSearchParams();
   const q = searchParams.get('q') || '';
   const addMode = searchParams.get('add') === 'true';
-  const { searchBuildings, searchBuildingsAdvanced, getAllCities, getAllDistricts, loading } = useBuildings();
+  const { searchBuildings, searchBuildingsAdvanced, getAllDistricts, loading } = useBuildings();
   const [query, setQuery] = useState(q);
   const [results, setResults] = useState<Building[]>([]);
   const [searched, setSearched] = useState(false);
-  const [cities, setCities] = useState<string[]>([]);
   const [districts, setDistricts] = useState<string[]>([]);
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
@@ -281,9 +316,8 @@ export default function SearchPageInner() {
   const [showAddForm, setShowAddForm] = useState(false);
 
   useEffect(() => {
-    getAllCities().then(setCities);
     getAllDistricts().then(setDistricts);
-  }, [getAllCities, getAllDistricts]);
+  }, [getAllDistricts]);
 
   useEffect(() => {
     if (selectedCity) {
@@ -412,9 +446,33 @@ export default function SearchPageInner() {
         <div className="flex flex-col sm:flex-row gap-3 mt-3">
           <select value={selectedCity} onChange={(e) => handleCityChange(e.target.value)} className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-3 py-2.5 text-sm text-[var(--color-text)] cursor-pointer">
             <option value="">كل المدن</option>
-            {cities.map((city) => (
-              <option key={city} value={city}>{city}</option>
-            ))}
+            <option value="القاهرة">القاهرة</option>
+            <option value="الجيزة">الجيزة</option>
+            <option value="الإسكندرية">الإسكندرية</option>
+            <option value="الدقهلية">الدقهلية</option>
+            <option value="البحيرة">البحيرة</option>
+            <option value="الشرقية">الشرقية</option>
+            <option value="كفر الشيخ">كفر الشيخ</option>
+            <option value="الغربية">الغربية</option>
+            <option value="المنوفية">المنوفية</option>
+            <option value="القليوبية">القليوبية</option>
+            <option value="بني سويف">بني سويف</option>
+            <option value="الفيوم">الفيوم</option>
+            <option value="المنيا">المنيا</option>
+            <option value="أسيوط">أسيوط</option>
+            <option value="سوهاج">سوهاج</option>
+            <option value="قنا">قنا</option>
+            <option value="الأقصر">الأقصر</option>
+            <option value="أسوان">أسوان</option>
+            <option value="البحر الأحمر">البحر الأحمر</option>
+            <option value="الوادي الجديد">الوادي الجديد</option>
+            <option value="مطروح">مطروح</option>
+            <option value="شمال سيناء">شمال سيناء</option>
+            <option value="جنوب سيناء">جنوب سيناء</option>
+            <option value="بورسعيد">بورسعيد</option>
+            <option value="الإسماعيلية">الإسماعيلية</option>
+            <option value="السويس">السويس</option>
+            <option value="دمياط">دمياط</option>
           </select>
           <select value={selectedDistrict} onChange={(e) => handleDistrictChange(e.target.value)} className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-3 py-2.5 text-sm text-[var(--color-text)] cursor-pointer">
             <option value="">كل الأحياء</option>
