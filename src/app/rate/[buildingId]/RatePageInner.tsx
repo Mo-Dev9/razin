@@ -82,12 +82,13 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
   const handleSubmit = async () => {
     if (authLoading) return;
     if (!user) return;
+    if (!building) return;
     setError('');
-    const ok = await submitReview(buildingId, user.uid, ratings, comment || undefined, buildingNumber || undefined, floor || undefined, apartmentNumber || undefined);
-    if (ok) {
+    const result = await submitReview(buildingId, ratings, comment || undefined, buildingNumber || undefined, floor || undefined, apartmentNumber || undefined);
+    if (result.ok) {
       setSubmitted(true);
     } else {
-      setError('فشل حفظ التقييم. حاول مرة أخرى.');
+      setError(result.error || 'فشل حفظ التقييم. حاول مرة أخرى.');
     }
   };
 
@@ -275,7 +276,7 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
 
             <button
               onClick={handleSubmit}
-              disabled={loading || authLoading}
+              disabled={loading || authLoading || !building}
               className="w-full bg-[var(--color-primary)] text-white py-[18px] rounded-full text-sm font-bold hover:bg-[var(--color-primary-dark)] hover:shadow-[0_10px_25px_-5px_rgb(15_44_44/0.3)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
             >
               {loading || authLoading ? (

@@ -15,7 +15,7 @@ type ActiveChip = 'all' | 'withReviews' | 'topRated';
 function AddAndRateForm() {
   const router = useRouter();
   const { addBuilding, loading: buildingLoading } = useBuildings();
-  const { submitReview, loading: reviewLoading } = useReviews();
+  const { submitReview, hasUserReviewed, loading: reviewLoading } = useReviews();
   const { user, loading: authLoading } = useAuth();
 
   const [newAddress, setNewAddress] = useState('');
@@ -62,12 +62,21 @@ function AddAndRateForm() {
         return;
       }
 
-      const ok = await submitReview(buildingId, user.uid, ratings, comment || undefined);
-      if (ok) {
+      const already = await hasUserReviewed(buildingId, user.uid);
+      if (already) {
+        setError('لقد قيّمت هذا المبنى بالفعل.');
+        setSubmitting(false);
+        return;
+      }
+
+      const result = await submitReview(buildingId, ratings, comment || undefined);
+      if (result.ok) {
         setSubmitted(true);
       } else {
-        setError('تم إضافة المبنى لكن فشل حفظ التقييم. حاول من صفحة المبنى.');
-        setTimeout(() => router.push(`/building/${buildingId}`), 2000);
+        setError(result.error || 'تم إضافة المبنى لكن فشل حفظ التقييم. حاول من صفحة المبنى.');
+        if (!result.error) {
+          setTimeout(() => router.push(`/building/${buildingId}`), 2000);
+        }
       }
     } catch {
       setError('حدث خطأ غير متوقع. حاول مرة أخرى.');

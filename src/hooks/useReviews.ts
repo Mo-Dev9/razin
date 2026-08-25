@@ -7,12 +7,10 @@ import {
   getDocs,
   doc,
   getDoc,
-  runTransaction,
-  increment,
 } from 'firebase/firestore';
-import { getDb } from '@/lib/firebase';
+import { getDb, getFirebaseAuth } from '@/lib/firebase';
 import { clearBuildingsCache } from '@/hooks/useBuildings';
-import type { Review, ReviewRatings, Building } from '@/types';
+import type { Review, ReviewRatings } from '@/types';
 
 export function useReviews() {
   const [loading, setLoading] = useState(false);
@@ -34,8 +32,7 @@ export function useReviews() {
 
   const hasUserReviewed = useCallback(async (buildingId: string, userId: string): Promise<boolean> => {
     try {
-      const reviewDocId = `${buildingId}_${userId}`;
-      const docRef = doc(getDb(), 'reviews', reviewDocId);
+      const docRef = doc(getDb(), 'reviews', `${buildingId}_${userId}`);
       const docSnap = await getDoc(docRef);
       return docSnap.exists();
     } catch {
@@ -44,78 +41,46 @@ export function useReviews() {
   }, []);
 
   const submitReview = useCallback(
-    async (buildingId: string, userId: string, ratings: ReviewRatings, comment?: string, buildingNumber?: string, floor?: string, apartmentNumber?: string): Promise<boolean> => {
+    async (
+      buildingId: string,
+      ratings: ReviewRatings,
+      comment?: string,
+      buildingNumber?: string,
+      floor?: string,
+      apartmentNumber?: string
+    ): Promise<{ ok: boolean; error?: string }> => {
       setLoading(true);
       try {
-        const overall = Object.values(ratings).reduce((a, b) => a + b, 0) / Object.keys(ratings).length;
+        const auth = getFirebaseAuth();
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) return { ok: false, error: 'غير مصرح' };
 
-        await runTransaction(getDb(), async (transaction) => {
-          const buildingRef = doc(getDb(), 'buildings', buildingId);
-          const buildingSnap = await transaction.get(buildingRef);
-          if (!buildingSnap.exists()) {
-            throw new Error('Building not found');
-          }
-
-          const reviewDocId = `${buildingId}_${userId}`;
-          const existingRef = doc(getDb(), 'reviews', reviewDocId);
-          const existingSnap = await transaction.get(existingRef);
-          if (existingSnap.exists()) {
-            throw new Error('Already reviewed');
-          }
-
-          const b = buildingSnap.data() as Building;
-          const count = b.reviewCount;
-
-          transaction.set(existingRef, {
+        const res = await fetch('/api/reviews', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
             buildingId,
-            userId,
             ratings,
-            overall,
-            comment: comment || '',
-            buildingNumber: buildingNumber || '',
-            floor: floor || '',
-            apartmentNumber: apartmentNumber || '',
-            createdAt: Date.now(),
-          });
-
-          const newAvg = (key: keyof ReviewRatings) => {
-            const old = (b.averageRatings[key] || 0) * count;
-            return (old + ratings[key]) / (count + 1);
-          };
-
-          transaction.update(buildingRef, {
-            averageRatings: {
-              zahma: newAvg('zahma'),
-              humidity: newAvg('humidity'),
-              landlord: newAvg('landlord'),
-              neighbors: newAvg('neighbors'),
-              cleanliness: newAvg('cleanliness'),
-              safety: newAvg('safety'),
-              services: newAvg('services'),
-              annoyance: newAvg('annoyance'),
-              elevator: newAvg('elevator'),
-              maintenance: newAvg('maintenance'),
-              ac: newAvg('ac'),
-              overall: ((b.averageRatings.overall || 0) * count + overall) / (count + 1),
-            },
-            reviewCount: increment(1),
-            lastReviewAt: Date.now(),
-          });
-
-          const userRef = doc(getDb(), 'users', userId);
-          const userSnap = await transaction.get(userRef);
-          if (userSnap.exists()) {
-            transaction.update(userRef, {
-              reviewCount: increment(1),
-            });
-          }
+            comment,
+            buildingNumber,
+            floor,
+            apartmentNumber,
+          }),
         });
 
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          return { ok: false, error: data.error || 'فشل حفظ التقييم' };
+        }
+
         clearBuildingsCache();
-        return true;
+        return { ok: true };
       } catch (err) {
         console.error('Submit review failed:', err);
-        return false;
+        return { ok: false, error: 'حدث خطأ غير متوقع' };
       } finally {
         setLoading(false);
       }
