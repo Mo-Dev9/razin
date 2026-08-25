@@ -92,12 +92,15 @@ export function useBuildings() {
     city: string;
     area: string;
     district?: string;
-  }): Promise<string | null> => {
+  }): Promise<string> => {
     setLoading(true);
     try {
       const auth = getFirebaseAuth();
       const token = await auth.currentUser?.getIdToken();
-      if (!token) return null;
+      if (!token) {
+        console.error('addBuilding: No auth token — currentUser is null');
+        throw new Error('يجب تسجيل الدخول أولاً');
+      }
 
       const res = await fetch('/api/buildings', {
         method: 'POST',
@@ -105,14 +108,20 @@ export function useBuildings() {
         body: JSON.stringify(data),
       });
 
-      if (!res.ok) return null;
-
       const result = await res.json();
+
+      if (!res.ok) {
+        console.error(`addBuilding API error ${res.status}:`, result);
+        throw new Error(result.error || `خطأ ${res.status}`);
+      }
+
+      if (!result.buildingId) {
+        console.error('addBuilding: API returned ok but no buildingId', result);
+        throw new Error('لم يتم إرجاع رقم المبنى');
+      }
+
       allBuildingsCache = null;
-      return result.buildingId ?? null;
-    } catch (err) {
-      console.error('Add building failed:', err);
-      return null;
+      return result.buildingId;
     } finally {
       setLoading(false);
     }

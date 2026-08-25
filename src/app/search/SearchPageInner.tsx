@@ -56,12 +56,6 @@ function AddAndRateForm() {
         area: newArea.trim(),
       });
 
-      if (!buildingId) {
-        setError('فشل إضافة المبنى. حاول مرة أخرى.');
-        setSubmitting(false);
-        return;
-      }
-
       const already = await hasUserReviewed(buildingId, user.uid);
       if (already) {
         setError('لقد قيّمت هذا المبنى بالفعل.');
@@ -78,8 +72,10 @@ function AddAndRateForm() {
           setTimeout(() => router.push(`/building/${buildingId}`), 2000);
         }
       }
-    } catch {
-      setError('حدث خطأ غير متوقع. حاول مرة أخرى.');
+    } catch (err) {
+      console.error('handleSubmit error:', err);
+      const msg = err instanceof Error ? err.message : 'حدث خطأ غير متوقع. حاول مرة أخرى.';
+      setError(msg);
     } finally {
       setSubmitting(false);
     }
