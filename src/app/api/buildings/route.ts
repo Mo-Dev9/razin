@@ -39,17 +39,21 @@ export async function POST(req: NextRequest) {
 
     const now = Date.now();
     const oneDayAgo = now - 24 * 60 * 60 * 1000;
-    const dupSnap = await db
-      .collection('buildings')
-      .where('address', '==', address)
-      .where('city', '==', city)
-      .where('area', '==', area)
-      .where('createdAt', '>', oneDayAgo)
-      .limit(1)
-      .get();
+    try {
+      const dupSnap = await db
+        .collection('buildings')
+        .where('address', '==', address)
+        .where('city', '==', city)
+        .where('area', '==', area)
+        .where('createdAt', '>', oneDayAgo)
+        .limit(1)
+        .get();
 
-    if (!dupSnap.empty) {
-      return NextResponse.json({ buildingId: dupSnap.docs[0].id, duplicate: true });
+      if (!dupSnap.empty) {
+        return NextResponse.json({ buildingId: dupSnap.docs[0].id, duplicate: true });
+      }
+    } catch (dupErr) {
+      console.warn('Duplicate detection query failed (continuing with create):', dupErr);
     }
 
     const docRef = await db.collection('buildings').add({

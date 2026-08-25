@@ -24,19 +24,23 @@ export function useAuth() {
       if (firebaseUser) {
         setUser(firebaseUser);
 
-        const userDoc = await getDoc(doc(getDb(), 'users', firebaseUser.uid));
-        if (userDoc.exists()) {
-          setProfile(userDoc.data() as UserProfile);
-        } else {
-          const newProfile: UserProfile = {
-            uid: firebaseUser.uid,
-            isAnonymous: firebaseUser.isAnonymous,
-            displayName: generateAnonymousName(firebaseUser.uid),
-            reviewCount: 0,
-            createdAt: Date.now(),
-          };
-          await setDoc(doc(getDb(), 'users', firebaseUser.uid), newProfile);
-          setProfile(newProfile);
+        try {
+          const userDoc = await getDoc(doc(getDb(), 'users', firebaseUser.uid));
+          if (userDoc.exists()) {
+            setProfile(userDoc.data() as UserProfile);
+          } else {
+            const newProfile: UserProfile = {
+              uid: firebaseUser.uid,
+              isAnonymous: firebaseUser.isAnonymous,
+              displayName: generateAnonymousName(firebaseUser.uid),
+              reviewCount: 0,
+              createdAt: Date.now(),
+            };
+            await setDoc(doc(getDb(), 'users', firebaseUser.uid), newProfile);
+            setProfile(newProfile);
+          }
+        } catch (err) {
+          console.warn('Failed to load/create user profile:', err);
         }
       } else {
         try {
