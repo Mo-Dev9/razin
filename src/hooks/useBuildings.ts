@@ -1,9 +1,13 @@
 import { useState, useCallback } from 'react';
-import { collection, getDocs, doc, getDoc, addDoc } from 'firebase/firestore';
-import { getDb } from '@/lib/firebase';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { getDb, getFirebaseAuth } from '@/lib/firebase';
 import type { Building } from '@/types';
 
 let allBuildingsCache: Building[] | null = null;
+
+export function clearBuildingsCache() {
+  allBuildingsCache = null;
+}
 
 async function getAllBuildings(): Promise<Building[]> {
   if (allBuildingsCache) return allBuildingsCache;
@@ -91,14 +95,21 @@ export function useBuildings() {
   }): Promise<string | null> => {
     setLoading(true);
     try {
-      const docRef = await addDoc(collection(getDb(), 'buildings'), {
-        ...data,
-        averageRatings: { zahma: 0, humidity: 0, landlord: 0, neighbors: 0, cleanliness: 0, safety: 0, services: 0, annoyance: 0, elevator: 0, maintenance: 0, ac: 0, overall: 0 },
-        reviewCount: 0,
-        createdAt: Date.now(),
+      const auth = getFirebaseAuth();
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) return null;
+
+      const res = await fetch('/api/buildings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(data),
       });
+
+      if (!res.ok) return null;
+
+      const result = await res.json();
       allBuildingsCache = null;
-      return docRef.id;
+      return result.buildingId ?? null;
     } catch (err) {
       console.error('Add building failed:', err);
       return null;

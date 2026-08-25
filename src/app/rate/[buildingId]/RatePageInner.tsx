@@ -42,6 +42,7 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
   const [apartmentNumber, setApartmentNumber] = useState('');
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
 
   const handleShare = useCallback(async () => {
@@ -78,8 +79,13 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
   const handleSubmit = async () => {
     if (authLoading) return;
     if (!user) return;
+    setError('');
     const ok = await submitReview(buildingId, user.uid, ratings, comment || undefined, buildingNumber || undefined, floor || undefined, apartmentNumber || undefined);
-    if (ok) setSubmitted(true);
+    if (ok) {
+      setSubmitted(true);
+    } else {
+      setError('فشل حفظ التقييم. حاول مرة أخرى.');
+    }
   };
 
   if (submitted) {
@@ -101,7 +107,11 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
               <Button onClick={() => router.push(`/building/${buildingId}`)}>
                 رجوع للمبنى
               </Button>
-              <button
+            {error && (
+              <p className="text-xs text-red-600 bg-red-50 rounded-xl px-4 py-2 mb-4">{error}</p>
+            )}
+
+            <button
                 onClick={handleShare}
                 className="flex items-center gap-2 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text)] px-5 py-3 rounded-full text-sm font-semibold hover:bg-[var(--color-surface-warm)] hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
@@ -255,6 +265,10 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
                 <span className="text-[10px] text-[var(--color-text-muted)]">{comment.length}/500</span>
               </div>
             </div>
+
+            {error && (
+              <p className="text-xs text-red-600 bg-red-50 rounded-xl px-4 py-2 mb-4">{error}</p>
+            )}
 
             <button
               onClick={handleSubmit}
