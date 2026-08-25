@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 
 export async function POST(req: NextRequest) {
   try {
-    const { getAdminDb, getAdminAuth } = await import('@/lib/firebase-admin');
-
     const authHeader = req.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
