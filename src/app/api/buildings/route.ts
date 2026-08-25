@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 
 export async function POST(req: NextRequest) {
   try {
+    const { getAdminDb, getAdminAuth } = await import('@/lib/firebase-admin');
+
     const authHeader = req.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
@@ -82,7 +83,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ buildingId: docRef.id });
   } catch (err) {
-    console.error('Add building API unhandled error:', err);
+    console.error('Add building API error:', err);
     return NextResponse.json(
       { error: 'خطأ داخلي في السيرفر' },
       { status: 500 }
