@@ -48,5 +48,5 @@ next-env.d.ts
 scripts/service-account.json
 
 # unnecessary files
-LOGO-PROMPT.md
-public/logo-original.webp
+AGENTS.md
+CLAUDE.md
