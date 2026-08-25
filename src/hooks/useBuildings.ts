@@ -108,11 +108,16 @@ export function useBuildings() {
         body: JSON.stringify(data),
       });
 
-      const result = await res.json();
+      let result: Record<string, unknown>;
+      try {
+        result = await res.json();
+      } catch {
+        throw new Error(`خطأ ${res.status}: السيرفر لم يرد بشكل صحيح`);
+      }
 
       if (!res.ok) {
         console.error(`addBuilding API error ${res.status}:`, result);
-        throw new Error(result.error || `خطأ ${res.status}`);
+        throw new Error((result.error as string) || `خطأ ${res.status}`);
       }
 
       if (!result.buildingId) {
@@ -121,7 +126,7 @@ export function useBuildings() {
       }
 
       allBuildingsCache = null;
-      return result.buildingId;
+      return result.buildingId as string;
     } finally {
       setLoading(false);
     }
