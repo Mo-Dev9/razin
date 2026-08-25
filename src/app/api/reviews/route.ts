@@ -4,47 +4,47 @@ import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 const RATING_KEYS = ['zahma', 'humidity', 'landlord', 'neighbors', 'cleanliness', 'safety', 'services', 'annoyance', 'elevator', 'maintenance', 'ac'] as const;
 
 export async function POST(req: NextRequest) {
-  const authHeader = req.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
-  }
-
   try {
-    await getAdminAuth().verifyIdToken(authHeader.slice(7));
-  } catch {
-    return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
-  }
-
-  const uid = (await getAdminAuth().verifyIdToken(authHeader.slice(7))).uid;
-
-  let body: Record<string, unknown>;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: 'طلب غير صالح' }, { status: 400 });
-  }
-
-  const buildingId = body.buildingId as string | undefined;
-  const rawRatings = body.ratings as Record<string, unknown> | undefined;
-  const comment = (body.comment as string || '').slice(0, 500);
-  const buildingNumber = (body.buildingNumber as string || '').slice(0, 50);
-  const floor = (body.floor as string || '').slice(0, 20);
-  const apartmentNumber = (body.apartmentNumber as string || '').slice(0, 20);
-
-  if (!buildingId || !rawRatings) {
-    return NextResponse.json({ error: 'بيانات ناقصة' }, { status: 400 });
-  }
-
-  const ratings: Record<string, number> = {};
-  for (const key of RATING_KEYS) {
-    const val = rawRatings[key];
-    if (typeof val !== 'number' || val < 1 || val > 5) {
-      return NextResponse.json({ error: 'تقييمات غير صالحة' }, { status: 400 });
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
     }
-    ratings[key] = val;
-  }
 
-  try {
+    let uid: string;
+    try {
+      const decoded = await getAdminAuth().verifyIdToken(authHeader.slice(7));
+      uid = decoded.uid;
+    } catch {
+      return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
+    }
+
+    let body: Record<string, unknown>;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: 'طلب غير صالح' }, { status: 400 });
+    }
+
+    const buildingId = body.buildingId as string | undefined;
+    const rawRatings = body.ratings as Record<string, unknown> | undefined;
+    const comment = (body.comment as string || '').slice(0, 500);
+    const buildingNumber = (body.buildingNumber as string || '').slice(0, 50);
+    const floor = (body.floor as string || '').slice(0, 20);
+    const apartmentNumber = (body.apartmentNumber as string || '').slice(0, 20);
+
+    if (!buildingId || !rawRatings) {
+      return NextResponse.json({ error: 'بيانات ناقصة' }, { status: 400 });
+    }
+
+    const ratings: Record<string, number> = {};
+    for (const key of RATING_KEYS) {
+      const val = rawRatings[key];
+      if (typeof val !== 'number' || val < 1 || val > 5) {
+        return NextResponse.json({ error: 'تقييمات غير صالحة' }, { status: 400 });
+      }
+      ratings[key] = val;
+    }
+
     const db = getAdminDb();
     const reviewDocId = `${buildingId}_${uid}`;
 
