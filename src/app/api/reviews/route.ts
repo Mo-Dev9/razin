@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const RATING_KEYS = ['zahma', 'humidity', 'landlord', 'neighbors', 'cleanliness', 'safety', 'services', 'annoyance', 'elevator', 'maintenance', 'ac'] as const;
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    const { allowed, retryAfterMs } = checkRateLimit(`reviews:${ip}`, 30, 60_000);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil(retryAfterMs / 1000)) } }
+      );
+    }
+
     const authHeader = req.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
