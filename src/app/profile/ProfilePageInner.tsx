@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
@@ -8,12 +8,43 @@ import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
+import { useReviews } from '@/hooks/useReviews';
+import { useBuildings } from '@/hooks/useBuildings';
+import type { Review, Building } from '@/types';
 
 export default function ProfilePageInner() {
   const router = useRouter();
   const { profile, loading, isLinkedWithGoogle, signInWithGoogle, signOut } = useAuth();
+  const { getUserReviews } = useReviews();
+  const { getBuilding } = useBuildings();
   const [linking, setLinking] = useState(false);
   const [linkError, setLinkError] = useState('');
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [buildings, setBuildings] = useState<Record<string, Building | null>>({});
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!loading && profile?.uid) {
+      let cancelled = false;
+      setReviewsLoading(true);
+      getUserReviews(profile.uid).then(async (revs) => {
+        if (cancelled) return;
+        setReviews(revs);
+        const bMap: Record<string, Building | null> = {};
+        await Promise.all(
+          revs.map(async (r) => {
+            const b = await getBuilding(r.buildingId).catch(() => null);
+            bMap[r.buildingId] = b || null;
+          })
+        );
+        if (!cancelled) setBuildings(bMap);
+        setReviewsLoading(false);
+      });
+      return () => {
+        cancelled = true;
+      };
+    }
+  }, [loading, profile?.uid, getUserReviews, getBuilding]);
 
   if (loading) {
     return (
@@ -193,24 +224,63 @@ export default function ProfilePageInner() {
             <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 hover:shadow-soft transition-all">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-sm text-[var(--color-text)]">تقييماتك</h3>
-                <span className="text-xs text-[var(--color-text-muted)]">{profile?.reviewCount || 0} تجربة</span>
+                <span className="text-xs text-[var(--color-text-muted)]">{reviews.length} تجربة</span>
               </div>
-              <div className="border-2 border-dashed border-[var(--color-border)] rounded-2xl p-8 text-center">
-                <div className="w-12 h-12 rounded-2xl bg-[var(--color-accent)]/15 flex items-center justify-center mx-auto mb-3 hover:scale-110 transition-transform" style={{ animation: 'pulse-glow 3s ease-in-out infinite' }}>
-                  <span className="text-2xl">😊</span>
+              {reviewsLoading ? (
+                <div className="py-8 text-center">
+                  <div className="w-6 h-6 border-2 border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto"></div>
                 </div>
-                <h4 className="font-semibold text-sm text-[var(--color-text)] mb-1">
-                  {(profile?.reviewCount || 0) > 0 ? 'تقييماتك' : 'لم تقيّم بعد'}
-                </h4>
-                <p className="text-xs text-[var(--color-text-secondary)] mb-3">
-                  {(profile?.reviewCount || 0) > 0
-                    ? 'تقييماتك تظهر هنا'
-                    : 'ابدأ من مبنى تعرفه، تجربتك اليومية هي أكثر ما يحتاجه هذا الدليل.'}
-                </p>
-                <Button size="sm" onClick={() => router.push('/search')}>
-                  اكتب أول تقييم
-                </Button>
-              </div>
+              ) : reviews.length === 0 ? (
+                <div className="border-2 border-dashed border-[var(--color-border)] rounded-2xl p-8 text-center">
+                  <div className="w-12 h-12 rounded-2xl bg-[var(--color-accent)]/15 flex items-center justify-center mx-auto mb-3 hover:scale-110 transition-transform" style={{ animation: 'pulse-glow 3s ease-in-out infinite' }}>
+                    <span className="text-2xl">😊</span>
+                  </div>
+                  <h4 className="font-semibold text-sm text-[var(--color-text)] mb-1">لم تقيّم بعد</h4>
+                  <p className="text-xs text-[var(--color-text-secondary)] mb-3">
+                    ابدأ من مبنى تعرفه، تجربتك اليومية هي أكثر ما يحتاجه هذا الدليل.
+                  </p>
+                  <Button size="sm" onClick={() => router.push('/search')}>
+                    اكتب أول تقييم
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {reviews.map((review) => {
+                    const building = buildings[review.buildingId];
+                    const avgStr = review.overall ? review.overall.toFixed(1) : '—';
+                    return (
+                      <Link
+                        key={review.id}
+                        href={`/building/${review.buildingId}`}
+                        className="block rounded-2xl border border-[var(--color-border)] p-3 hover:border-[var(--color-accent)] hover:bg-[var(--color-surface-warm)] transition-all"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-semibold text-[var(--color-text)] truncate">
+                            {building?.address || 'مبنى'}
+                          </span>
+                          <span className="flex items-center gap-1 text-sm font-bold text-[var(--color-primary)]">
+                            {avgStr}
+                            <span className="text-[var(--color-accent)] text-xs">★</span>
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-[var(--color-text-muted)] truncate">
+                            {building ? [building.area, building.city].filter(Boolean).join('، ') : ''}
+                          </span>
+                          <span className="text-[10px] text-[var(--color-text-muted)] shrink-0">
+                            {new Date(review.createdAt).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' })}
+                          </span>
+                        </div>
+                        {review.comment && (
+                          <p className="text-xs text-[var(--color-text-secondary)] italic mt-2 line-clamp-2">
+                            «{review.comment}»
+                          </p>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             <button

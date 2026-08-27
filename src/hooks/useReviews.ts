@@ -40,6 +40,21 @@ export function useReviews() {
     }
   }, []);
 
+  const getUserReviews = useCallback(async (userId: string): Promise<Review[]> => {
+    try {
+      const q = query(
+        collection(getDb(), 'reviews'),
+        where('userId', '==', userId),
+        orderBy('createdAt', 'desc')
+      );
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Review));
+    } catch (err) {
+      console.error('Get user reviews failed:', err);
+      return [];
+    }
+  }, []);
+
   const submitReview = useCallback(
     async (
       buildingId: string,
@@ -88,5 +103,5 @@ export function useReviews() {
     []
   );
 
-  return { getBuildingReviews, hasUserReviewed, submitReview, loading };
+  return { getBuildingReviews, getUserReviews, hasUserReviewed, submitReview, loading };
 }
