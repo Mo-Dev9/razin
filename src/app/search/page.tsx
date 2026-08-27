@@ -7,6 +7,20 @@ import SearchPageInner from './SearchPageInner';
 export const metadata: Metadata = {
   title: 'اكتشف المباني — RentRate',
   description: 'ابحث عن أي مبنى أو حي في مصر واطلع على تقييمات مجهولة من السكان: الزحمة، الرطوبة، الأمان، النظافة وتعاون المالك. قارن قبل قرار الإيجار.',
+  alternates: { canonical: '/search' },
+  openGraph: {
+    title: 'اكتشف المباني — RentRate',
+    description: 'ابحث عن أي مبنى أو حي في مصر واطلع على تقييمات مجهولة من السكان.',
+    url: 'https://rentrate-zeta.vercel.app/search',
+    siteName: 'RentRate',
+    locale: 'ar_EG',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'اكتشف المباني — RentRate',
+    description: 'ابحث عن أي مبنى أو حي في مصر واطلع على تقييمات مجهولة من السكان.',
+  },
 };
 
 export default function SearchPage() {

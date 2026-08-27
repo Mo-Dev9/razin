@@ -6,6 +6,16 @@ export const metadata: Metadata = {
   title: 'شروط الاستخدام',
   description:
     'شروط استخدام منصة RentRate: قواعد نشر التقييمات المجهولة، حقوقك ومسؤولياتك كمستخدم، وإخلاء المسؤولية. اقرأها قبل أن تنشر تقييمك الأول.',
+  alternates: { canonical: '/terms' },
+  robots: { index: false, follow: false },
+  openGraph: {
+    title: 'شروط الاستخدام — RentRate',
+    description: 'شروط استخدام منصة RentRate: قواعد نشر التقييمات المجهولة، حقوقك ومسؤولياتك.',
+    url: 'https://rentrate-zeta.vercel.app/terms',
+    siteName: 'RentRate',
+    locale: 'ar_EG',
+    type: 'website',
+  },
 };
 
 export default function TermsPage() {

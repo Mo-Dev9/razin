@@ -6,6 +6,20 @@ export const metadata: Metadata = {
   title: 'تواصل معنا',
   description:
     'تواصل مع فريق RentRate لأي سؤال أو اقتراح أو بلاغ عن محتوى مخالف. نقرأ كل رسالة بأنفسنا ونسعد دائمًا بسماع رأيك في المنصة.',
+  alternates: { canonical: '/contact' },
+  openGraph: {
+    title: 'تواصل مع RentRate',
+    description: 'تواصل مع فريق RentRate لأي سؤال أو اقتراح أو بلاغ عن محتوى مخالف.',
+    url: 'https://rentrate-zeta.vercel.app/contact',
+    siteName: 'RentRate',
+    locale: 'ar_EG',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'تواصل مع RentRate',
+    description: 'تواصل مع فريق RentRate لأي سؤال أو اقتراح أو بلاغ عن محتوى مخالف.',
+  },
 };
 
 const CONTACT_EMAIL = 'rentrate.eg@outlook.com';

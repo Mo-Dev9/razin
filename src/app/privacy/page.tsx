@@ -7,6 +7,16 @@ export const metadata: Metadata = {
   title: 'سياسة الخصوصية',
   description:
     'سياسة خصوصية RentRate: نجمع بيانات التقييمات المجهولة فقط، ولا نبيعها ولا نشاركها مع أي طرف ثالث. اعرف بالتفصيل ماذا نخزّن وكيف تتحكم في بياناتك.',
+  alternates: { canonical: '/privacy' },
+  robots: { index: false, follow: false },
+  openGraph: {
+    title: 'سياسة الخصوصية — RentRate',
+    description: 'سياسة خصوصية RentRate: نجمع بيانات التقييمات المجهولة فقط، ولا نبيعها ولا نشاركها.',
+    url: 'https://rentrate-zeta.vercel.app/privacy',
+    siteName: 'RentRate',
+    locale: 'ar_EG',
+    type: 'website',
+  },
 };
 
 export default function PrivacyPolicyPage() {
