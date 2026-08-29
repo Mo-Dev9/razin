@@ -44,6 +44,8 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [buildingLoading, setBuildingLoading] = useState(true);
+  const [buildingNotFound, setBuildingNotFound] = useState(false);
 
   const handleShare = useCallback(async () => {
     const url = `${window.location.origin}/building/${buildingId}`;
@@ -64,8 +66,12 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
   useEffect(() => {
     if (buildingId) {
       getBuilding(buildingId).then((b) => {
-        if (!b) setError('المبنى غير موجود');
-        setBuilding(b);
+        if (!b) {
+          setBuildingNotFound(true);
+        } else {
+          setBuilding(b);
+        }
+        setBuildingLoading(false);
       });
     }
   }, [buildingId, getBuilding]);
@@ -91,6 +97,41 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
       setError(result.error || 'فشل حفظ التقييم. حاول مرة أخرى.');
     }
   };
+
+  if (buildingLoading) {
+    return (
+      <>
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-sm text-[var(--color-text-secondary)]">جاري تحميل المبنى...</p>
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  if (buildingNotFound) {
+    return (
+      <>
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-4xl mb-4">❌</div>
+            <h1 className="text-lg font-bold mb-2">المبنى غير موجود</h1>
+            <p className="text-sm text-[var(--color-text-secondary)] mb-6">
+              يبدو أن هذا المبنى لم يُضف بعد أو تمت إزالته.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button onClick={() => router.push('/search')}>الذهاب للبحث</Button>
+              <Button variant="outline" onClick={() => router.back()}>رجوع</Button>
+            </div>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   if (submitted) {
     return (
