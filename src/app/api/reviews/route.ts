@@ -1,8 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { recomputeBuildingStats } from '@/lib/review-stats';
 
-const RATING_KEYS = ['zahma', 'humidity', 'landlord', 'neighbors', 'cleanliness', 'safety', 'services', 'annoyance', 'elevator', 'maintenance', 'ac'] as const;
+const RATING_KEYS = [
+  'zahma', 'humidity', 'landlord', 'neighbors', 'cleanliness',
+  'safety', 'services', 'annoyance', 'elevator', 'maintenance', 'ac',
+] as const;
+
+function parseRatings(rawRatings: unknown): Record<string, number> | null {
+  if (!rawRatings || typeof rawRatings !== 'object') return null;
+  const ratings: Record<string, number> = {};
+  for (const key of RATING_KEYS) {
+    const val = (rawRatings as Record<string, unknown>)[key];
+    if (typeof val !== 'number' || val < 1 || val > 5) return null;
+    ratings[key] = val;
+  }
+  return ratings;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -36,23 +51,18 @@ export async function POST(req: NextRequest) {
     }
 
     const buildingId = body.buildingId as string | undefined;
-    const rawRatings = body.ratings as Record<string, unknown> | undefined;
     const comment = (body.comment as string || '').slice(0, 500);
     const buildingNumber = (body.buildingNumber as string || '').slice(0, 50);
     const floor = (body.floor as string || '').slice(0, 20);
     const apartmentNumber = (body.apartmentNumber as string || '').slice(0, 20);
 
-    if (!buildingId || !rawRatings) {
+    if (!buildingId) {
       return NextResponse.json({ error: 'بيانات ناقصة' }, { status: 400 });
     }
 
-    const ratings: Record<string, number> = {};
-    for (const key of RATING_KEYS) {
-      const val = rawRatings[key];
-      if (typeof val !== 'number' || val < 1 || val > 5) {
-        return NextResponse.json({ error: 'تقييمات غير صالحة' }, { status: 400 });
-      }
-      ratings[key] = val;
+    const ratings = parseRatings(body.ratings);
+    if (!ratings) {
+      return NextResponse.json({ error: 'تقييمات غير صالحة' }, { status: 400 });
     }
 
     const db = getAdminDb();
@@ -107,5 +117,134 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error('Submit review API failed:', err);
     return NextResponse.json({ error: 'فشل حفظ التقييم' }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    const { allowed, retryAfterMs } = checkRateLimit(`reviews:${ip}`, 60, 60_000);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil(retryAfterMs / 1000)) } }
+      );
+    }
+
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
+    }
+
+    let uid: string;
+    try {
+      const decoded = await getAdminAuth().verifyIdToken(authHeader.slice(7));
+      uid = decoded.uid;
+    } catch {
+      return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
+    }
+
+    let body: Record<string, unknown>;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: 'طلب غير صالح' }, { status: 400 });
+    }
+
+    const buildingId = body.buildingId as string | undefined;
+    const comment = (body.comment as string || '').slice(0, 500);
+    const buildingNumber = (body.buildingNumber as string || '').slice(0, 50);
+    const floor = (body.floor as string || '').slice(0, 20);
+    const apartmentNumber = (body.apartmentNumber as string || '').slice(0, 20);
+
+    if (!buildingId) {
+      return NextResponse.json({ error: 'بيانات ناقصة' }, { status: 400 });
+    }
+
+    const ratings = parseRatings(body.ratings);
+    if (!ratings) {
+      return NextResponse.json({ error: 'تقييمات غير صالحة' }, { status: 400 });
+    }
+
+    const overall = RATING_KEYS.reduce((sum, k) => sum + ratings[k], 0) / RATING_KEYS.length;
+
+    const db = getAdminDb();
+    const reviewRef = db.collection('reviews').doc(`${buildingId}_${uid}`);
+    const reviewSnap = await reviewRef.get();
+
+    if (!reviewSnap.exists) {
+      return NextResponse.json({ error: 'التقييم غير موجود' }, { status: 404 });
+    }
+    if (reviewSnap.data()!.userId !== uid) {
+      return NextResponse.json({ error: 'غير مصرح' }, { status: 403 });
+    }
+
+    await reviewRef.update({
+      ratings,
+      overall,
+      comment,
+      buildingNumber,
+      floor,
+      apartmentNumber,
+    });
+
+    await recomputeBuildingStats(buildingId);
+
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error('Update review API failed:', err);
+    return NextResponse.json({ error: 'فشل تحديث التقييم' }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    const { allowed, retryAfterMs } = checkRateLimit(`reviews:${ip}`, 60, 60_000);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil(retryAfterMs / 1000)) } }
+      );
+    }
+
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
+    }
+
+    let uid: string;
+    try {
+      const decoded = await getAdminAuth().verifyIdToken(authHeader.slice(7));
+      uid = decoded.uid;
+    } catch {
+      return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
+    }
+
+    const url = new URL(req.url);
+    const buildingId = url.searchParams.get('buildingId');
+    if (!buildingId) {
+      return NextResponse.json({ error: 'بيانات ناقصة' }, { status: 400 });
+    }
+
+    const db = getAdminDb();
+    const reviewRef = db.collection('reviews').doc(`${buildingId}_${uid}`);
+    const reviewSnap = await reviewRef.get();
+
+    if (!reviewSnap.exists) {
+      return NextResponse.json({ error: 'التقييم غير موجود' }, { status: 404 });
+    }
+    if (reviewSnap.data()!.userId !== uid) {
+      return NextResponse.json({ error: 'غير مصرح' }, { status: 403 });
+    }
+
+    await reviewRef.delete();
+
+    await recomputeBuildingStats(buildingId);
+
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error('Delete review API failed:', err);
+    return NextResponse.json({ error: 'فشل حذف التقييم' }, { status: 500 });
   }
 }

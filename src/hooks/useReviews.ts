@@ -103,5 +103,85 @@ export function useReviews() {
     []
   );
 
-  return { getBuildingReviews, getUserReviews, hasUserReviewed, submitReview, loading };
+  const updateReview = useCallback(
+    async (
+      buildingId: string,
+      ratings: ReviewRatings,
+      comment?: string,
+      buildingNumber?: string,
+      floor?: string,
+      apartmentNumber?: string
+    ): Promise<{ ok: boolean; error?: string }> => {
+      setLoading(true);
+      try {
+        const auth = getFirebaseAuth();
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) return { ok: false, error: 'غير مصرح' };
+
+        const res = await fetch('/api/reviews', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            buildingId,
+            ratings,
+            comment,
+            buildingNumber,
+            floor,
+            apartmentNumber,
+          }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          return { ok: false, error: data.error || 'فشل تحديث التقييم' };
+        }
+
+        clearBuildingsCache();
+        return { ok: true };
+      } catch (err) {
+        console.error('Update review failed:', err);
+        return { ok: false, error: 'حدث خطأ غير متوقع' };
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  const deleteReview = useCallback(
+    async (buildingId: string): Promise<{ ok: boolean; error?: string }> => {
+      setLoading(true);
+      try {
+        const auth = getFirebaseAuth();
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) return { ok: false, error: 'غير مصرح' };
+
+        const res = await fetch(`/api/reviews?buildingId=${encodeURIComponent(buildingId)}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          return { ok: false, error: data.error || 'فشل حذف التقييم' };
+        }
+
+        clearBuildingsCache();
+        return { ok: true };
+      } catch (err) {
+        console.error('Delete review failed:', err);
+        return { ok: false, error: 'حدث خطأ غير متوقع' };
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  return { getBuildingReviews, getUserReviews, hasUserReviewed, submitReview, updateReview, deleteReview, loading };
 }

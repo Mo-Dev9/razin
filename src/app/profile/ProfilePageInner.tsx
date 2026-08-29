@@ -15,7 +15,7 @@ import type { Review, Building } from '@/types';
 export default function ProfilePageInner() {
   const router = useRouter();
   const { profile, loading, isLinkedWithGoogle, signInWithGoogle, signOut } = useAuth();
-  const { getUserReviews } = useReviews();
+  const { getUserReviews, deleteReview } = useReviews();
   const { getBuilding } = useBuildings();
   const [linking, setLinking] = useState(false);
   const [linkError, setLinkError] = useState('');
@@ -249,34 +249,62 @@ export default function ProfilePageInner() {
                     const building = buildings[review.buildingId];
                     const avgStr = review.overall ? review.overall.toFixed(1) : '—';
                     return (
-                      <Link
-                        key={review.id}
-                        href={`/building/${review.buildingId}`}
-                        className="block rounded-2xl border border-[var(--color-border)] p-3 hover:border-[var(--color-accent)] hover:bg-[var(--color-surface-warm)] transition-all"
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-semibold text-[var(--color-text)] truncate">
-                            {building?.address || 'مبنى'}
-                          </span>
-                          <span className="flex items-center gap-1 text-sm font-bold text-[var(--color-primary)]">
-                            {avgStr}
-                            <span className="text-[var(--color-accent)] text-xs">★</span>
-                          </span>
+                      <div key={review.id} className="rounded-2xl border border-[var(--color-border)] p-3 hover:border-[var(--color-accent)] transition-all">
+                        <Link
+                          href={`/building/${review.buildingId}`}
+                          className="block"
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-sm font-semibold text-[var(--color-text)] truncate">
+                              {building?.address || 'مبنى'}
+                            </span>
+                            <span className="flex items-center gap-1 text-sm font-bold text-[var(--color-primary)]">
+                              {avgStr}
+                              <span className="text-[var(--color-accent)] text-xs">★</span>
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-[var(--color-text-muted)] truncate">
+                              {building ? [building.area, building.city].filter(Boolean).join('، ') : ''}
+                            </span>
+                            <span className="text-[10px] text-[var(--color-text-muted)] shrink-0">
+                              {new Date(review.createdAt).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            </span>
+                          </div>
+                          {review.comment && (
+                            <p className="text-xs text-[var(--color-text-secondary)] italic mt-2 line-clamp-2">
+                              «{review.comment}»
+                            </p>
+                          )}
+                        </Link>
+                        <div className="flex items-center gap-4 mt-3 pt-2 border-t border-[var(--color-border)]">
+                          <button
+                            onClick={() => router.push(`/rate/${review.buildingId}?edit=1`)}
+                            className="text-xs font-medium text-[var(--color-primary)] hover:underline underline-offset-4"
+                          >
+                            تعديل
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (!window.confirm('متأكد إنك عايز تحذف تقييمك نهائياً؟')) return;
+                              const res = await deleteReview(review.buildingId);
+                              if (res.ok) {
+                                setReviews((prev) => prev.filter((r) => r.id !== review.id));
+                                setReviewsLoading(true);
+                                getUserReviews(profile!.uid).then((revs) => {
+                                  setReviews(revs);
+                                  setReviewsLoading(false);
+                                });
+                              } else {
+                                window.alert(res.error || 'فشل حذف التقييم');
+                              }
+                            }}
+                            className="text-xs font-medium text-red-600 hover:underline underline-offset-4"
+                          >
+                            حذف
+                          </button>
                         </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-[var(--color-text-muted)] truncate">
-                            {building ? [building.area, building.city].filter(Boolean).join('، ') : ''}
-                          </span>
-                          <span className="text-[10px] text-[var(--color-text-muted)] shrink-0">
-                            {new Date(review.createdAt).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' })}
-                          </span>
-                        </div>
-                        {review.comment && (
-                          <p className="text-xs text-[var(--color-text-secondary)] italic mt-2 line-clamp-2">
-                            «{review.comment}»
-                          </p>
-                        )}
-                      </Link>
+                      </div>
                     );
                   })}
                 </div>

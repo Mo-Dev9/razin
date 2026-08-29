@@ -19,7 +19,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RatePage({ params }: { params: Promise<{ buildingId: string }> }) {
+export default async function RatePage({ params, searchParams }: { params: Promise<{ buildingId: string }>, searchParams: Promise<{ edit?: string }> }) {
   const { buildingId } = await params;
-  return <RatePageInner buildingId={buildingId} />;
+  const { edit } = await searchParams;
+  return <RatePageInner buildingId={buildingId} isEditing={edit === '1'} />;
 }

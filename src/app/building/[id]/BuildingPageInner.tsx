@@ -11,16 +11,44 @@ import { BuildingRatings } from '@/components/building/BuildingRatings';
 import { ReviewCard } from '@/components/review/ReviewCard';
 import { useBuildings } from '@/hooks/useBuildings';
 import { useReviews } from '@/hooks/useReviews';
+import { useAuth } from '@/hooks/useAuth';
 import type { Building, Review } from '@/types';
 
 interface BuildingPageInnerProps {
   buildingId: string;
 }
 
+function ReviewActions({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void }) {
+  const [busy, setBusy] = useState(false);
+  return (
+    <div className="flex items-center gap-2 mt-3">
+      <button
+        onClick={onEdit}
+        className="text-xs font-medium text-[var(--color-primary)] hover:underline underline-offset-4"
+      >
+        تعديل
+      </button>
+      <button
+        onClick={async () => {
+          if (busy) return;
+          if (!window.confirm('متأكد إنك عايز تحذف تقييمك نهائياً؟')) return;
+          setBusy(true);
+          await onDelete();
+          setBusy(false);
+        }}
+        className="text-xs font-medium text-red-600 hover:underline underline-offset-4"
+      >
+        {busy ? '...' : 'حذف'}
+      </button>
+    </div>
+  );
+}
+
 export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps) {
   const router = useRouter();
   const { getBuilding } = useBuildings();
-  const { getBuildingReviews } = useReviews();
+  const { getBuildingReviews, deleteReview } = useReviews();
+  const { user } = useAuth();
 
   const [building, setBuilding] = useState<Building | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -126,9 +154,29 @@ export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps
           </div>
         ) : (
           <div className="space-y-3 pb-10">
-            {reviews.map((review) => (
-              <ReviewCard key={review.id} review={review} />
-            ))}
+            {reviews.map((review) => {
+              const isMine = !!user && review.userId === user.uid;
+              return (
+                <div key={review.id}>
+                  <ReviewCard review={review} />
+                  {isMine && (
+                    <ReviewActions
+                      onEdit={() => router.push(`/rate/${building.id}?edit=1`)}
+                      onDelete={async () => {
+                        const res = await deleteReview(buildingId);
+                        if (res.ok) {
+                          const [b, r] = await Promise.all([getBuilding(buildingId), getBuildingReviews(buildingId)]);
+                          setBuilding(b);
+                          setReviews(r);
+                        } else {
+                          window.alert(res.error || 'فشل حذف التقييم');
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </main>

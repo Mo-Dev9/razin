@@ -14,13 +14,14 @@ import type { Building, ReviewRatings } from '@/types';
 
 interface RatePageInnerProps {
   buildingId: string;
+  isEditing?: boolean;
 }
 
-export default function RatePageInner({ buildingId }: RatePageInnerProps) {
+export default function RatePageInner({ buildingId, isEditing = false }: RatePageInnerProps) {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const { getBuilding } = useBuildings();
-  const { submitReview, hasUserReviewed, loading } = useReviews();
+  const { submitReview, updateReview, deleteReview, hasUserReviewed, getBuildingReviews, loading } = useReviews();
 
   const [building, setBuilding] = useState<Building | null>(null);
   const [ratings, setRatings] = useState<ReviewRatings>({
@@ -46,6 +47,8 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
   const [copied, setCopied] = useState(false);
   const [buildingLoading, setBuildingLoading] = useState(true);
   const [buildingNotFound, setBuildingNotFound] = useState(false);
+  const [editingLoaded, setEditingLoaded] = useState(false);
+  const [editingError, setEditingError] = useState('');
 
   const handleShare = useCallback(async () => {
     const url = `${window.location.origin}/building/${buildingId}`;
@@ -78,9 +81,25 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
 
   useEffect(() => {
     if (buildingId && user) {
-      hasUserReviewed(buildingId, user.uid).then(setAlreadyReviewed);
+      if (isEditing) {
+        getBuildingReviews(buildingId).then((reviews) => {
+          const mine = reviews.find((r) => r.userId === user.uid);
+          if (mine) {
+            setRatings({ ...mine.ratings });
+            setComment(mine.comment || '');
+            setBuildingNumber(mine.buildingNumber || '');
+            setFloor(mine.floor || '');
+            setApartmentNumber(mine.apartmentNumber || '');
+            setEditingLoaded(true);
+          } else {
+            setEditingError('لم نعثر على التقييم المطلوب تعديله');
+          }
+        });
+      } else {
+        hasUserReviewed(buildingId, user.uid).then(setAlreadyReviewed);
+      }
     }
-  }, [buildingId, user, hasUserReviewed]);
+  }, [buildingId, user, isEditing, hasUserReviewed, getBuildingReviews]);
 
   const overall = Object.values(ratings).reduce((a, b) => a + b, 0) / Object.keys(ratings).length;
   const filledCount = Object.values(ratings).filter((v) => v !== 0).length;
@@ -90,11 +109,25 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
     if (!user) return;
     if (!building) return;
     setError('');
-    const result = await submitReview(buildingId, ratings, comment || undefined, buildingNumber || undefined, floor || undefined, apartmentNumber || undefined);
+    const result = isEditing
+      ? await updateReview(buildingId, ratings, comment || undefined, buildingNumber || undefined, floor || undefined, apartmentNumber || undefined)
+      : await submitReview(buildingId, ratings, comment || undefined, buildingNumber || undefined, floor || undefined, apartmentNumber || undefined);
     if (result.ok) {
       setSubmitted(true);
     } else {
       setError(result.error || 'فشل حفظ التقييم. حاول مرة أخرى.');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!user || !building) return;
+    if (!window.confirm('متأكد إنك عايز تحذف تقييمك نهائياً؟')) return;
+    setError('');
+    const result = await deleteReview(buildingId);
+    if (result.ok) {
+      router.push(`/building/${buildingId}`);
+    } else {
+      setError(result.error || 'فشل حذف التقييم. حاول مرة أخرى.');
     }
   };
 
@@ -187,7 +220,7 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
     );
   }
 
-  if (alreadyReviewed) {
+  if (!isEditing && alreadyReviewed) {
     return (
       <>
         <Header />
@@ -196,6 +229,35 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
             <div className="text-4xl mb-4">⚠️</div>
             <h2 className="text-lg font-bold mb-2">لقد قيّمت هذا المبنى بالفعل</h2>
             <Button variant="ghost" onClick={() => router.back()}>رجوع</Button>
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  if (isEditing && editingError) {
+    return (
+      <>
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-4xl mb-4">⚠️</div>
+            <h2 className="text-lg font-bold mb-2">{editingError}</h2>
+            <Button variant="ghost" onClick={() => router.back()}>رجوع</Button>
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  if (isEditing && !editingLoaded) {
+    return (
+      <>
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-sm text-[var(--color-text-secondary)]">جاري تحميل تقييمك...</p>
           </div>
         </main>
       </>
@@ -214,7 +276,7 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
             صوتك مهم
           </span>
           <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-2">
-            احك لنا عن المكان كما هو.
+            {isEditing ? 'عدّل تقييمك.' : 'احك لنا عن المكان كما هو.'}
           </h1>
           <p className="text-sm text-[var(--color-text-secondary)]">
             تقييمك مجهول الهوية، لكن أثره يساعد شخصاً آخر ياخذ قرار أفضل. قيّم كل جانب من 1 إلى 5.
@@ -324,13 +386,22 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               ) : (
                 <>
-                  احفظ التقييم
+                  {isEditing ? 'حفظ التعديلات' : 'احفظ التقييم'}
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </>
               )}
             </button>
+            {isEditing && (
+              <button
+                onClick={handleDelete}
+                disabled={loading}
+                className="w-full mt-3 border-2 border-red-200 text-red-600 py-3 rounded-full text-sm font-bold hover:bg-red-50 hover:border-red-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                حذف التقييم نهائياً
+              </button>
+            )}
             {!authLoading && !user && (
               <p className="text-xs text-red-600 text-center mt-2">
                 حدث خطأ في تحميل الحساب. حاول تحديث الصفحة.
