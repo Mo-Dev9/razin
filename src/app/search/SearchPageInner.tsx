@@ -204,27 +204,27 @@ function AddAndRateForm() {
               className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
             />
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2">
             <input
               type="text"
               value={buildingNumber}
               onChange={(e) => setBuildingNumber(e.target.value)}
-              placeholder="رقم العمارة"
-              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+              placeholder="عمارة"
+              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-2 sm:px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
             />
             <input
               type="text"
               value={floor}
               onChange={(e) => setFloor(e.target.value)}
               placeholder="الدور"
-              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-2 sm:px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
             />
             <input
               type="text"
               value={apartmentNumber}
               onChange={(e) => setApartmentNumber(e.target.value)}
-              placeholder="رقم الشقة"
-              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+              placeholder="شقة"
+              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-2 sm:px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
             />
           </div>
         </div>

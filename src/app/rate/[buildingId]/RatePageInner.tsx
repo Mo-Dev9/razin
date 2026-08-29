@@ -197,15 +197,15 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
 
             <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 mb-5">
               <label className="text-sm font-semibold text-[var(--color-text)] block mb-3">تفاصيل الوحدة (اختياري)</label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
                 <div>
                   <label className="text-xs text-[var(--color-text-muted)] block mb-1">عمارة</label>
                   <input
                     type="text"
                     value={buildingNumber}
                     onChange={(e) => setBuildingNumber(e.target.value)}
-                    placeholder="رقم العمارة"
-                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-3 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+                    placeholder="رقم"
+                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-2 sm:px-3 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
                   />
                 </div>
                 <div>
@@ -214,8 +214,8 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
                     type="text"
                     value={floor}
                     onChange={(e) => setFloor(e.target.value)}
-                    placeholder="رقم الدور"
-                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-3 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+                    placeholder="رقم"
+                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-2 sm:px-3 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
                   />
                 </div>
                 <div>
@@ -224,8 +224,8 @@ export default function RatePageInner({ buildingId }: RatePageInnerProps) {
                     type="text"
                     value={apartmentNumber}
                     onChange={(e) => setApartmentNumber(e.target.value)}
-                    placeholder="رقم الشقة"
-                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-3 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+                    placeholder="رقم"
+                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-2 sm:px-3 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
                   />
                 </div>
               </div>
