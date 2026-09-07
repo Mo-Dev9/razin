@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Logo } from '@/components/ui/Logo';
@@ -48,7 +49,7 @@ export function Header() {
                 className="flex items-center gap-2 rounded-full hover:bg-[var(--color-surface-warm)] p-1.5 transition-colors"
               >
                 {profile?.photoURL ? (
-                  <img src={profile.photoURL} alt="" className="w-8 h-8 rounded-full border-2 border-[var(--color-accent)]" />
+                  <Image src={profile.photoURL} alt="" width={32} height={32} className="w-8 h-8 rounded-full border-2 border-[var(--color-accent)]" />
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-[var(--color-accent)] flex items-center justify-center text-xs font-bold text-[var(--color-primary)]">
                     {userInitial}
@@ -117,7 +118,7 @@ export function Header() {
           {isLinkedWithGoogle && profile && (
             <div className="flex items-center gap-3 pb-3 border-b border-[var(--color-border)]">
               {profile.photoURL ? (
-                <img src={profile.photoURL} alt="" className="w-10 h-10 rounded-full border-2 border-[var(--color-accent)]" />
+                <Image src={profile.photoURL} alt="" width={40} height={40} className="w-10 h-10 rounded-full border-2 border-[var(--color-accent)]" />
               ) : (
                 <div className="w-10 h-10 rounded-full bg-[var(--color-accent)] flex items-center justify-center text-sm font-bold text-[var(--color-primary)]">
                   {userInitial}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
@@ -21,12 +22,11 @@ export default function ProfilePageInner() {
   const [linkError, setLinkError] = useState('');
   const [reviews, setReviews] = useState<Review[]>([]);
   const [buildings, setBuildings] = useState<Record<string, Building | null>>({});
-  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
 
   useEffect(() => {
     if (!loading && profile?.uid) {
       let cancelled = false;
-      setReviewsLoading(true);
       getUserReviews(profile.uid).then(async (revs) => {
         if (cancelled) return;
         setReviews(revs);
@@ -99,7 +99,7 @@ export default function ProfilePageInner() {
               </span>
               <div className="flex items-center gap-4 mb-4">
                 {profile?.photoURL ? (
-                  <img src={profile.photoURL} alt="" className="w-14 h-14 rounded-2xl border-2 border-[var(--color-accent)]" />
+                  <Image src={profile.photoURL} alt="" width={56} height={56} className="w-14 h-14 rounded-2xl border-2 border-[var(--color-accent)]" />
                 ) : (
                   <div className="w-14 h-14 rounded-2xl bg-[var(--color-accent)] flex items-center justify-center text-xl font-bold text-[var(--color-primary)]">
                     {initial}

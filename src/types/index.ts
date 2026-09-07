@@ -42,7 +42,11 @@ export interface Review {
   buildingNumber?: string;
   floor?: string;
   apartmentNumber?: string;
+  upvotes?: number;
+  downvotes?: number;
 }
+
+export type VoteType = 'up' | 'down';
 
 export interface ReviewRatings {
   zahma: number;

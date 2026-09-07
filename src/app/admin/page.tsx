@@ -34,7 +34,7 @@ export default function AdminDashboard() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [stats, setStats] = useState<Stats>({ buildings: 0, reviews: 0 });
   const [loaded, setLoaded] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedBuilding, setSelectedBuilding] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -54,33 +54,59 @@ export default function AdminDashboard() {
   const [buildingSearch, setBuildingSearch] = useState('');
   const [reviewSearch, setReviewSearch] = useState('');
 
+  const fetchData = useCallback(async () => {
+    const [bRes, rRes] = await Promise.all([
+      fetch('/api/admin/buildings'),
+      fetch('/api/admin/reviews'),
+    ]);
+    if (bRes.status === 401) return null;
+    const bData = await bRes.json();
+    const rData = await rRes.json();
+    return { buildings: bData.buildings || [], reviews: rData.reviews || [] };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const result = await fetchData();
+        if (cancelled) return;
+        if (!result) {
+          router.push('/admin/login');
+          return;
+        }
+        setBuildings(result.buildings);
+        setReviews(result.reviews);
+        setStats({ buildings: result.buildings.length, reviews: result.reviews.length });
+        setLoaded(true);
+      } catch {
+        if (!cancelled) setMessage({ type: 'error', text: 'فشل تحميل البيانات' });
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchData, router]);
+
   const loadData = useCallback(async () => {
-    setLoading(true);
     try {
-      const [bRes, rRes] = await Promise.all([
-        fetch('/api/admin/buildings'),
-        fetch('/api/admin/reviews'),
-      ]);
-      if (bRes.status === 401) {
+      const result = await fetchData();
+      if (!result) {
         router.push('/admin/login');
         return;
       }
-      const bData = await bRes.json();
-      const rData = await rRes.json();
-      setBuildings(bData.buildings || []);
-      setReviews(rData.reviews || []);
-      setStats({ buildings: (bData.buildings || []).length, reviews: (rData.reviews || []).length });
+      setBuildings(result.buildings);
+      setReviews(result.reviews);
+      setStats({ buildings: result.buildings.length, reviews: result.reviews.length });
       setLoaded(true);
     } catch {
       setMessage({ type: 'error', text: 'فشل تحميل البيانات' });
     } finally {
       setLoading(false);
     }
-  }, [router]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  }, [fetchData, router]);
 
   const deleteBuilding = async (buildingId: string) => {
     if (!confirm('هل أنت متأكد من حذف هذا المبنى وجميع تقييماته؟')) return;
@@ -234,7 +260,7 @@ export default function AdminDashboard() {
             {tab === 'overview' && (
               <>
                 <Button size="sm" onClick={openAdd}>+ إضافة مبنى</Button>
-                <Button variant="ghost" size="sm" onClick={loadData} loading={loading}>تحديث</Button>
+                <Button variant="ghost" size="sm" onClick={() => { setLoading(true); loadData(); }} loading={loading}>تحديث</Button>
               </>
             )}
             <LogoutButton />

@@ -13,7 +13,7 @@ import { ReviewCard } from '@/components/review/ReviewCard';
 import { useBuildings } from '@/hooks/useBuildings';
 import { useReviews } from '@/hooks/useReviews';
 import { useAuth } from '@/hooks/useAuth';
-import type { Building, Review } from '@/types';
+import type { Building, Review, VoteType } from '@/types';
 
 const BuildingMap = dynamic(() => import('@/components/map/BuildingMap').then((m) => m.BuildingMap), {
   ssr: false,
@@ -57,22 +57,30 @@ function ReviewActions({ onEdit, onDelete }: { onEdit: () => void; onDelete: () 
 export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps) {
   const router = useRouter();
   const { getBuilding } = useBuildings();
-  const { getBuildingReviews, deleteReview } = useReviews();
+  const { getBuildingReviews, deleteReview, getBuildingUserVotes, voteReview } = useReviews();
   const { user } = useAuth();
 
   const [building, setBuilding] = useState<Building | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [userVotes, setUserVotes] = useState<Record<string, VoteType>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (buildingId) {
+    if (buildingId && user) {
+      Promise.all([getBuilding(buildingId), getBuildingReviews(buildingId), getBuildingUserVotes(buildingId, user.uid)]).then(([b, r, v]) => {
+        setBuilding(b);
+        setReviews(r);
+        setUserVotes(v);
+        setLoading(false);
+      });
+    } else if (buildingId) {
       Promise.all([getBuilding(buildingId), getBuildingReviews(buildingId)]).then(([b, r]) => {
         setBuilding(b);
         setReviews(r);
         setLoading(false);
       });
     }
-  }, [buildingId, getBuilding, getBuildingReviews]);
+  }, [buildingId, user, getBuilding, getBuildingReviews, getBuildingUserVotes]);
 
   if (loading) {
     return (
@@ -175,7 +183,20 @@ export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps
               const isMine = !!user && review.userId === user.uid;
               return (
                 <div key={review.id}>
-                  <ReviewCard review={review} />
+                  <ReviewCard
+                    review={review}
+                    buildingId={building.id}
+                    userVote={userVotes[review.id] ?? null}
+                    onVote={async (reviewId, type) => {
+                      if (!user) return { ok: false, error: 'غير مصرح' };
+                      const res = await voteReview(reviewId, building.id, type);
+                      if (res.ok) {
+                        const v = await getBuildingUserVotes(building.id, user.uid);
+                        setUserVotes(v);
+                      }
+                      return res;
+                    }}
+                  />
                   {isMine && (
                     <ReviewActions
                       onEdit={() => router.push(`/rate/${building.id}?edit=1`)}

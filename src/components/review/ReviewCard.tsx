@@ -1,11 +1,15 @@
-import type { Review } from '@/types';
+import type { Review, VoteType } from '@/types';
 import { RATING_LABELS } from '@/types';
+import { VoteButtons } from '@/components/review/VoteButtons';
 
 interface ReviewCardProps {
   review: Review;
+  buildingId?: string;
+  userVote?: VoteType | null;
+  onVote?: (reviewId: string, type: VoteType) => Promise<{ ok: boolean; error?: string }>;
 }
 
-export function ReviewCard({ review }: ReviewCardProps) {
+export function ReviewCard({ review, buildingId, userVote = null, onVote }: ReviewCardProps) {
   const keys = Object.keys(RATING_LABELS) as (keyof typeof RATING_LABELS)[];
   const vals = keys.map((k) => review.ratings[k]).filter((v): v is number => v != null);
   const avg = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) : '—';
@@ -49,6 +53,18 @@ export function ReviewCard({ review }: ReviewCardProps) {
         <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed italic">
           «{review.comment}»
         </p>
+      )}
+
+      {buildingId && onVote && (
+        <div className="mt-3 flex items-center justify-end">
+          <VoteButtons
+            reviewId={review.id}
+            upvotes={review.upvotes ?? 0}
+            downvotes={review.downvotes ?? 0}
+            userVote={userVote}
+            onVote={onVote}
+          />
+        </div>
       )}
     </div>
   );

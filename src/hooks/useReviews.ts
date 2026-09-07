@@ -10,7 +10,7 @@ import {
 } from 'firebase/firestore';
 import { getDb, getFirebaseAuth } from '@/lib/firebase';
 import { clearBuildingsCache } from '@/hooks/useBuildings';
-import type { Review, ReviewRatings } from '@/types';
+import type { Review, ReviewRatings, VoteType } from '@/types';
 
 export function useReviews() {
   const [loading, setLoading] = useState(false);
@@ -54,6 +54,65 @@ export function useReviews() {
       return [];
     }
   }, []);
+
+  const getBuildingUserVotes = useCallback(
+    async (buildingId: string, userId: string): Promise<Record<string, VoteType>> => {
+      try {
+        const q = query(collection(getDb(), 'votes'), where('userId', '==', userId));
+        const snapshot = await getDocs(q);
+        const votes: Record<string, VoteType> = {};
+        snapshot.docs.forEach((d) => {
+          const data = d.data() as { buildingId: string; reviewId: string; type: VoteType };
+          if (
+            data.buildingId === buildingId &&
+            data.reviewId &&
+            (data.type === 'up' || data.type === 'down')
+          ) {
+            votes[data.reviewId] = data.type;
+          }
+        });
+        return votes;
+      } catch (err) {
+        console.error('Get building user votes failed:', err);
+        return {};
+      }
+    },
+    []
+  );
+
+  const voteReview = useCallback(
+    async (
+      reviewId: string,
+      buildingId: string,
+      type: VoteType
+    ): Promise<{ ok: boolean; error?: string }> => {
+      try {
+        const auth = getFirebaseAuth();
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) return { ok: false, error: 'غير مصرح' };
+
+        const res = await fetch('/api/reviews/vote', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ reviewId, buildingId, type }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          return { ok: false, error: data.error || 'فشل التصويت' };
+        }
+
+        return { ok: true };
+      } catch (err) {
+        console.error('Vote review failed:', err);
+        return { ok: false, error: 'حدث خطأ غير متوقع' };
+      }
+    },
+    []
+  );
 
   const submitReview = useCallback(
     async (
@@ -183,5 +242,15 @@ export function useReviews() {
     []
   );
 
-  return { getBuildingReviews, getUserReviews, hasUserReviewed, submitReview, updateReview, deleteReview, loading };
+  return {
+    getBuildingReviews,
+    getUserReviews,
+    hasUserReviewed,
+    getBuildingUserVotes,
+    voteReview,
+    submitReview,
+    updateReview,
+    deleteReview,
+    loading,
+  };
 }

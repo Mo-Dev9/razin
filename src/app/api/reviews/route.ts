@@ -228,7 +228,8 @@ export async function DELETE(req: NextRequest) {
     }
 
     const db = getAdminDb();
-    const reviewRef = db.collection('reviews').doc(`${buildingId}_${uid}`);
+    const reviewId = `${buildingId}_${uid}`;
+    const reviewRef = db.collection('reviews').doc(reviewId);
     const reviewSnap = await reviewRef.get();
 
     if (!reviewSnap.exists) {
@@ -239,6 +240,19 @@ export async function DELETE(req: NextRequest) {
     }
 
     await reviewRef.delete();
+
+    // Clean up orphaned votes referencing this review (posts from other users)
+    try {
+      const votesSnap = await db
+        .collection('votes')
+        .where('reviewId', '==', reviewId)
+        .get();
+      const batch = db.batch();
+      votesSnap.forEach((vDoc) => batch.delete(vDoc.ref));
+      if (votesSnap.size > 0) await batch.commit();
+    } catch (err) {
+      console.warn('Failed to clean up votes for deleted review:', err);
+    }
 
     await recomputeBuildingStats(buildingId);
 

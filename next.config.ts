@@ -4,6 +4,14 @@ import { withSentryConfig } from "@sentry/nextjs";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   serverExternalPackages: ['firebase-admin'],
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.googleusercontent.com',
+      },
+    ],
+  },
 };
 
 const sentryEnabled = !!process.env.NEXT_PUBLIC_SENTRY_DSN;
