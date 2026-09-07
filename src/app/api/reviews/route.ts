@@ -5,7 +5,7 @@ import { recomputeBuildingStats } from '@/lib/review-stats';
 
 const RATING_KEYS = [
   'zahma', 'humidity', 'landlord', 'neighbors', 'cleanliness',
-  'safety', 'services', 'annoyance', 'elevator', 'maintenance', 'ac',
+  'safety', 'services', 'annoyance', 'elevator', 'maintenance', 'ac', 'condition',
 ] as const;
 
 function parseRatings(rawRatings: unknown): Record<string, number> | null {

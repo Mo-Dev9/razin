@@ -46,6 +46,7 @@ function AddAndRateForm() {
     elevator: 3,
     maintenance: 3,
     ac: 3,
+    condition: 3,
   });
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -135,7 +136,7 @@ function AddAndRateForm() {
               setFloor('');
               setApartmentNumber('');
               setLocation(null);
-              setRatings({ zahma: 3, humidity: 3, landlord: 3, neighbors: 3, cleanliness: 3, safety: 3, services: 3, annoyance: 3, elevator: 3, maintenance: 3, ac: 3 });
+              setRatings({ zahma: 3, humidity: 3, landlord: 3, neighbors: 3, cleanliness: 3, safety: 3, services: 3, annoyance: 3, elevator: 3, maintenance: 3, ac: 3, condition: 3 });
               setComment('');
               setSubmitted(false);
             }}

@@ -19,7 +19,7 @@ export default function AboutPageInner() {
               كل باب في القاهرة<strong className="text-[var(--color-primary)]"> قصة.</strong>
             </h1>
             <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed">
-              إحنا مجموعة شباب مصري عايشين في نفس الضغط اللي بتعيش فيه — بنقعد ساعات ندور على شقة، وندخلها وندم.
+              إحنا شباب مصريين عايشين في نفس الضغط — بنقعد ساعات ندور على شقة، ولما ندخلها نندم.
             </p>
           </div>
 
@@ -34,10 +34,10 @@ export default function AboutPageInner() {
                   بنتعاقد على كلام مش واقع
                 </h2>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed mb-3">
-                  صاحب العقار بيوريك الشقة نضيفة، والعميل بيقول &quot;إن شاء الله&quot;، وبعد ما تدخل — تكتشف إن الصوت من الشارع مش نايم، والمكيف مش شغال، والجيران بيعملوا حفلة كل جمعة.
+                  صاحب العقار أو الوكيل بيوريك شقة نضيفة ومتظبطة، وبيطمنك إن كل حاجة تمام. لكن بعد ما توقّع العقد وتسكن — تلاقي الصوت من الشارع مش نايم، والمكيف مش شغال، والجيران بيعملوا حفلة كل جمعة.
                 </p>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  مفيش مكان تعرف فيه الحقيقة قبل ما تدفع. مش بنك، مش صحيفة، مش حتى جارك — لأنه جارك الحالي مبيحبش يتكلم.
+                  مفيش مكان تعرف فيه الحقيقة قبل ما تدفع. الإعلانات بتبان حلوة، والوكيل بيبيعك كلام، وحتى جارك الحالي مبيحبش يتكلم عن اللي وراه.
                 </p>
               </div>
             </div>
@@ -52,10 +52,10 @@ export default function AboutPageInner() {
                   عملنا مكان واحد تسمع فيه كل حاجة
                 </h2>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed mb-3">
-                  RentRate مش مجرد موقع تقييم — هو دليلك الصادق. هنا السكان بيتقيموا المبنى على 11 معيار حقيقي: الزحمة، نظافة المبنى، تعاون المالك، أمان الحي، النظافة، حالة الشقة، الخدمات، الإزعاج، المصعد، الصيانة والتكيف.
+                  RentRate مش مجرد موقع تقييم — هو دليلك الصادق. هنا السكان بيقيّموا المبنى على 12 معيار حقيقي: الزحمة، الرطوبة، تعاون المالك، الجيران، النظافة، الأمان، الخدمات، الإزعاج، المصعد، الصيانة، التكيف، وحالة الشقة.
                 </p>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  التقييمات مجهولة الهوية بالكامل. مفيش اسم، مفيش صورة، مفيش ردود فعل. عشان تعرف الحقيقة، لازم الناس تحس بالحرية إنها تتكلم.
+                  التقييمات مجهولة الهوية بالكامل. مفيش اسم، مفيش صورة، مفيش ردود فعل. عشان الناس تحس بالحرية إنها تقول الحقيقة.
                 </p>
               </div>
             </div>
@@ -67,13 +67,13 @@ export default function AboutPageInner() {
                   البداية
                 </span>
                 <h2 className="text-xl font-bold text-[var(--color-text)] mb-3">
-                  ابدأ من بكره — بدون ما تدفع حاجة
+                  ابدأ من النهاردة — من غير ما تدفع حاجة
                 </h2>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed mb-3">
                   الموقع مفتوح للجميع. مفيش اشتراك، مفيش حساب مطلوب. كل اللي عليك تدور على العنوان، أو تضيف مبناك لو مش موجود.
                 </p>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  وابدأ تقرأ اللي الناس الحقيقية بتقوله — مش اللي صاحب العقار عايزك تسمعه.
+                  وتبدأ تقرأ اللي الناس الحقيقية بتقوله — مش اللي صاحب العقار عايزك تسمعه.
                 </p>
               </div>
             </div>
@@ -81,10 +81,10 @@ export default function AboutPageInner() {
 
           <div className="mt-16 bg-[var(--color-primary)] rounded-3xl p-8 md:p-12 text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              قبل متـ Rent... Rate
+              قبل ما توقّع، اعرف الحقيقة
             </h2>
             <p className="text-[#94B4B0] text-sm leading-relaxed mb-8 max-w-md mx-auto">
-              اعرف الحقيقة من ناس عايشين هناك. قرارك مبني على واقع مش وعود.
+              اعرف الحقيقة من ناس عايشين هناك — قرارك مبني على واقع مش وعود.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link

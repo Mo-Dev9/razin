@@ -2,7 +2,7 @@ import { getAdminDb } from '@/lib/firebase-admin';
 
 const RATING_KEYS = [
   'zahma', 'humidity', 'landlord', 'neighbors', 'cleanliness',
-  'safety', 'services', 'annoyance', 'elevator', 'maintenance', 'ac',
+  'safety', 'services', 'annoyance', 'elevator', 'maintenance', 'ac', 'condition',
 ] as const;
 
 export function computeAverages(

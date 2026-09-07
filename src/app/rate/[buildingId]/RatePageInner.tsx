@@ -17,6 +17,21 @@ interface RatePageInnerProps {
   isEditing?: boolean;
 }
 
+const DEFAULT_RATINGS: ReviewRatings = {
+  zahma: 3,
+  humidity: 3,
+  landlord: 3,
+  neighbors: 3,
+  cleanliness: 3,
+  safety: 3,
+  services: 3,
+  annoyance: 3,
+  elevator: 3,
+  maintenance: 3,
+  ac: 3,
+  condition: 3,
+};
+
 export default function RatePageInner({ buildingId, isEditing = false }: RatePageInnerProps) {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
@@ -24,19 +39,7 @@ export default function RatePageInner({ buildingId, isEditing = false }: RatePag
   const { submitReview, updateReview, deleteReview, hasUserReviewed, getBuildingReviews, loading } = useReviews();
 
   const [building, setBuilding] = useState<Building | null>(null);
-  const [ratings, setRatings] = useState<ReviewRatings>({
-    zahma: 3,
-    humidity: 3,
-    landlord: 3,
-    neighbors: 3,
-    cleanliness: 3,
-    safety: 3,
-    services: 3,
-    annoyance: 3,
-    elevator: 3,
-    maintenance: 3,
-    ac: 3,
-  });
+  const [ratings, setRatings] = useState<ReviewRatings>(DEFAULT_RATINGS);
   const [comment, setComment] = useState('');
   const [buildingNumber, setBuildingNumber] = useState('');
   const [floor, setFloor] = useState('');
@@ -85,7 +88,7 @@ export default function RatePageInner({ buildingId, isEditing = false }: RatePag
         getBuildingReviews(buildingId).then((reviews) => {
           const mine = reviews.find((r) => r.userId === user.uid);
           if (mine) {
-            setRatings({ ...mine.ratings });
+            setRatings({ ...DEFAULT_RATINGS, ...mine.ratings });
             setComment(mine.comment || '');
             setBuildingNumber(mine.buildingNumber || '');
             setFloor(mine.floor || '');
@@ -414,13 +417,13 @@ export default function RatePageInner({ buildingId, isEditing = false }: RatePag
               <h3 className="text-[var(--color-accent)] font-bold text-sm mb-4">المحصلة</h3>
               <div className="mb-4">
                 <div className="flex justify-between text-xs text-white/60 mb-1">
-                  <span>                    {filledCount} من 11</span>
+                  <span>                    {filledCount} من 12</span>
                   <span>{(overall).toFixed(1)} / 5</span>
                 </div>
                   <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-[var(--color-accent)] rounded-full transition-all"
-                      style={{ width: `${(filledCount / 11) * 100}%` }}
+                      style={{ width: `${(filledCount / 12) * 100}%` }}
                     ></div>
                 </div>
               </div>
@@ -431,7 +434,7 @@ export default function RatePageInner({ buildingId, isEditing = false }: RatePag
               </div>
               <div className="border-t border-white/10 pt-4 space-y-3">
                 <p className="text-xs text-white/50 leading-relaxed">
-                  متوسط تقييمات المعايير الحادية عشرة يعطيك صورة حقيقية عن الحياة في المبنى.
+                  متوسط تقييمات المعايير الاثني عشر يعطيك صورة حقيقية عن الحياة في المبنى.
                 </p>
                 <p className="text-xs text-white/50 leading-relaxed">
                   كل تقييم مجهول الهوية ويُحسب مرة واحدة فقط لكل مستخدم.

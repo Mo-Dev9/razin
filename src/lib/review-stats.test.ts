@@ -3,7 +3,7 @@ import { computeAverages } from '@/lib/review-stats';
 
 const KEYS = [
   'zahma', 'humidity', 'landlord', 'neighbors', 'cleanliness',
-  'safety', 'services', 'annoyance', 'elevator', 'maintenance', 'ac',
+  'safety', 'services', 'annoyance', 'elevator', 'maintenance', 'ac', 'condition',
 ] as const;
 
 describe('computeAverages', () => {

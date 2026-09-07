@@ -17,6 +17,7 @@ const RATING_ICONS: Record<string, string> = {
   elevator: '🛗',
   maintenance: '🔧',
   ac: '❄️',
+  condition: '🏠',
 };
 
 export function BuildingRatings({ reviews }: BuildingRatingsProps) {

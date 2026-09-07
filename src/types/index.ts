@@ -28,6 +28,7 @@ export interface RatingAverages {
   elevator: number;
   maintenance: number;
   ac: number;
+  condition: number;
   overall: number;
 }
 
@@ -60,6 +61,7 @@ export interface ReviewRatings {
   elevator: number;
   maintenance: number;
   ac: number;
+  condition: number;
 }
 
 export interface UserProfile {
@@ -86,4 +88,5 @@ export const RATING_LABELS: Record<keyof ReviewRatings, { ar: string; icon: stri
   elevator: { ar: 'المصعد', icon: '🛗' },
   maintenance: { ar: 'الصيانة', icon: '🔧' },
   ac: { ar: 'التكيف', icon: '❄️' },
+  condition: { ar: 'حالة الشقة', icon: '🏠' },
 };
