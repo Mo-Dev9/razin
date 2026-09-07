@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { applyVote } from '@/lib/vote-logic';
 
 interface VoteDoc {
   reviewId: string;
@@ -77,15 +78,18 @@ export async function POST(req: NextRequest) {
         down: reviewData.downvotes && typeof reviewData.downvotes === 'number' ? (reviewData.downvotes as number) : 0,
       });
 
-      // Toggle logic: same vote again removes it; different vote switches; nothing -> add
-      if (existing === type) {
+      const applied = applyVote({
+        existing,
+        requested: type,
+        upvotes: current.up,
+        downvotes: current.down,
+      });
+
+      // userVote === null -> vote removed; otherwise -> added or switched
+      if (applied.userVote === null) {
         await tx.delete(voteRef);
-        current[type] = Math.max(0, current[type] - 1);
       } else {
-        if (existing) {
-          await tx.delete(voteRef);
-          current[existing] = Math.max(0, current[existing] - 1);
-        }
+        if (existing) await tx.delete(voteRef);
         await tx.set(voteRef, {
           reviewId,
           buildingId,
@@ -93,16 +97,15 @@ export async function POST(req: NextRequest) {
           type,
           createdAt: Date.now(),
         });
-        current[type] += 1;
       }
 
-      await tx.update(reviewRef, { upvotes: current.up, downvotes: current.down });
+      await tx.update(reviewRef, { upvotes: applied.upvotes, downvotes: applied.downvotes });
 
       return {
-        upvotes: current.up,
-        downvotes: current.down,
-        userVote: existing === type ? null : type,
-        net: current.up - current.down,
+        upvotes: applied.upvotes,
+        downvotes: applied.downvotes,
+        userVote: applied.userVote,
+        net: applied.upvotes - applied.downvotes,
       };
     });
 
