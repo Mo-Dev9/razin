@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdmin } from '@/lib/admin';
 import { getAdminDb } from '@/lib/firebase-admin';
+import { recomputeBuildingStats } from '@/lib/review-stats';
 
 export async function GET(req: NextRequest) {
   if (!(await isAdmin())) {
@@ -55,36 +56,7 @@ export async function DELETE(req: NextRequest) {
 
     await reviewRef.delete();
 
-    const reviewsSnap = await db.collection('reviews').where('buildingId', '==', buildingId).get();
-    const remaining = reviewsSnap.docs.map((d) => d.data());
-
-    if (remaining.length === 0) {
-      await db.collection('buildings').doc(buildingId).update({
-        averageRatings: { zahma: 0, humidity: 0, landlord: 0, neighbors: 0, cleanliness: 0, safety: 0, services: 0, annoyance: 0, elevator: 0, maintenance: 0, ac: 0, overall: 0 },
-        reviewCount: 0,
-        lastReviewAt: null,
-      });
-    } else {
-      const avg = (key: string) => remaining.reduce((sum, r) => sum + ((r.ratings as Record<string, number>)[key] || 0), 0) / remaining.length;
-      const overall = remaining.reduce((sum, r) => sum + (r.overall || 0), 0) / remaining.length;
-      await db.collection('buildings').doc(buildingId).update({
-        averageRatings: {
-          zahma: avg('zahma'),
-          humidity: avg('humidity'),
-          landlord: avg('landlord'),
-          neighbors: avg('neighbors'),
-          cleanliness: avg('cleanliness'),
-          safety: avg('safety'),
-          services: avg('services'),
-          annoyance: avg('annoyance'),
-          elevator: avg('elevator'),
-          maintenance: avg('maintenance'),
-          ac: avg('ac'),
-          overall,
-        },
-        reviewCount: remaining.length,
-      });
-    }
+    await recomputeBuildingStats(buildingId);
 
     return NextResponse.json({ ok: true });
   } catch (err) {
