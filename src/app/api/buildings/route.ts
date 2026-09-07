@@ -19,10 +19,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
     }
 
-    let uid: string;
     try {
-      const decoded = await getAdminAuth().verifyIdToken(authHeader.slice(7));
-      uid = decoded.uid;
+      await getAdminAuth().verifyIdToken(authHeader.slice(7));
     } catch {
       return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
     }

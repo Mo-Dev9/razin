@@ -24,8 +24,8 @@ const MapPicker = dynamic(() => import('@/components/map/MapPicker').then((m) =>
 
 function AddAndRateForm() {
   const router = useRouter();
-  const { addBuilding, loading: buildingLoading } = useBuildings();
-  const { submitReview, hasUserReviewed, loading: reviewLoading } = useReviews();
+  const { addBuilding } = useBuildings();
+  const { submitReview, hasUserReviewed } = useReviews();
   const { user, loading: authLoading } = useAuth();
 
   const [newAddress, setNewAddress] = useState('');
@@ -331,7 +331,6 @@ function AddAndRateForm() {
 }
 
 export default function SearchPageInner() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const q = searchParams.get('q') || '';
   const addMode = searchParams.get('add') === 'true';
