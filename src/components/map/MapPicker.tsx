@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import type { LatLng } from 'leaflet';
 
@@ -18,6 +18,8 @@ const markerIcon = L.icon({
 interface MapPickerProps {
   value?: { lat: number; lng: number };
   onChange: (loc: { lat: number; lng: number }) => void;
+  target?: { lat: number; lng: number } | null;
+  targetNonce?: number;
 }
 
 function ClickHandler({ value, onChange }: { value?: { lat: number; lng: number }; onChange: (loc: { lat: number; lng: number }) => void }) {
@@ -29,9 +31,19 @@ function ClickHandler({ value, onChange }: { value?: { lat: number; lng: number 
   return value ? <Marker position={[value.lat, value.lng]} icon={markerIcon} /> : null;
 }
 
+function MapController({ target, targetNonce }: { target?: { lat: number; lng: number } | null; targetNonce?: number }) {
+  const map = useMap();
+  useEffect(() => {
+    if (target && typeof targetNonce === 'number') {
+      map.flyTo([target.lat, target.lng], 13, { duration: 0.8 });
+    }
+  }, [target, targetNonce, map]);
+  return null;
+}
+
 const defaultCenter: LatLng = { lat: 30.0444, lng: 31.2357 } as LatLng;
 
-export function MapPicker({ value, onChange }: MapPickerProps) {
+export function MapPicker({ value, onChange, target, targetNonce }: MapPickerProps) {
   const [hasMoved, setHasMoved] = useState(false);
 
   return (
@@ -48,6 +60,7 @@ export function MapPicker({ value, onChange }: MapPickerProps) {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <ClickHandler value={value} onChange={(loc) => { onChange(loc); setHasMoved(true); }} />
+          <MapController target={target} targetNonce={targetNonce} />
         </MapContainer>
       </div>
       <p className="text-xs text-[var(--color-text-muted)] mt-2">

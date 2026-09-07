@@ -23,6 +23,45 @@ interface Analytics {
     reviewCount: number;
     overall: number;
   }[];
+  visitsToday: number;
+  visitsLast7Days: number;
+  visitsLast30Days: number;
+  visitsByDay: Record<string, number>;
+  topPages: { path: string; count: number }[];
+}
+
+function BarChart({ data, title, emptyText }: { data: Record<string, number>; title: string; emptyText: string }) {
+  const days = Object.keys(data);
+  const values = Object.values(data);
+  const maxVal = Math.max(...values, 1);
+
+  return (
+    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-5">
+      <h3 className="font-semibold text-sm mb-4">{title}</h3>
+      <div className="flex items-end gap-1 h-32">
+        {days.map((day) => {
+          const val = data[day];
+          const height = maxVal > 0 ? (val / maxVal) * 100 : 0;
+          const label = day.length > 5 ? day.slice(5) : day;
+          return (
+            <div key={day} className="flex-1 flex flex-col items-center gap-1 group relative">
+              <div
+                className="w-full rounded-t-md bg-[var(--color-primary)] transition-all group-hover:bg-[var(--color-accent)]"
+                style={{ height: `${Math.max(height, 2)}%` }}
+              ></div>
+              <span className="text-[9px] text-[var(--color-text-muted)] hidden sm:block">{label}</span>
+              <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[var(--color-primary)] text-white text-[10px] px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                {val}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {days.length === 0 && (
+        <p className="text-xs text-[var(--color-text-muted)] text-center py-8">{emptyText}</p>
+      )}
+    </div>
+  );
 }
 
 export function AnalyticsPanel() {
@@ -65,10 +104,6 @@ export function AnalyticsPanel() {
     );
   }
 
-  const days = Object.keys(data.reviewsByDay);
-  const values = Object.values(data.reviewsByDay);
-  const maxVal = Math.max(...values, 1);
-
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -84,27 +119,45 @@ export function AnalyticsPanel() {
         <StatCard label="مقيّمين فريدين" value={data.uniqueReviewers} />
       </div>
 
-      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-5">
-        <h3 className="font-semibold text-sm mb-4">التقييمات — آخر 14 يوم</h3>
-        <div className="flex items-end gap-1 h-32">
-          {days.map((day) => {
-            const val = data.reviewsByDay[day];
-            const height = maxVal > 0 ? (val / maxVal) * 100 : 0;
-            const label = day.slice(5);
-            return (
-              <div key={day} className="flex-1 flex flex-col items-center gap-1 group relative">
-                <div
-                  className="w-full rounded-t-md bg-[var(--color-primary)] transition-all group-hover:bg-[var(--color-accent)]"
-                  style={{ height: `${Math.max(height, 2)}%` }}
-                ></div>
-                <span className="text-[9px] text-[var(--color-text-muted)] hidden sm:block">{label}</span>
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[var(--color-primary)] text-white text-[10px] px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                  {val} تقييم
-                </div>
-              </div>
-            );
-          })}
+      <BarChart data={data.reviewsByDay} title="التقييمات — آخر 14 يوم" emptyText="لا توجد تقييمات بعد" />
+
+      <div className="bg-[var(--color-primary)] rounded-2xl p-5 text-white">
+        <h3 className="font-semibold text-sm mb-4">زيارات الموقع</h3>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="text-center">
+            <div className="text-2xl font-bold">{data.visitsToday}</div>
+            <div className="text-[10px] text-[#94B4B0] mt-0.5">النهاردة</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold">{data.visitsLast7Days}</div>
+            <div className="text-[10px] text-[#94B4B0] mt-0.5">آخر 7 أيام</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold">{data.visitsLast30Days}</div>
+            <div className="text-[10px] text-[#94B4B0] mt-0.5">آخر 30 يوم</div>
+          </div>
         </div>
+      </div>
+
+      <BarChart data={data.visitsByDay} title="الزيارات — آخر 14 يوم" emptyText="لا توجد زيارات بعد — تظهر الزيارات فور دخول أي زائر الموقع" />
+
+      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-5">
+        <h3 className="font-semibold text-sm mb-3">أكثر الصفحات زيارة</h3>
+        {data.topPages.length === 0 ? (
+          <p className="text-xs text-[var(--color-text-muted)]">لا توجد بيانات بعد</p>
+        ) : (
+          <div className="space-y-2">
+            {data.topPages.map((p, i) => (
+              <div key={p.path} className="flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--color-surface-warm)]">
+                <span className="text-xs font-bold text-[var(--color-accent)] w-5 text-center">#{i + 1}</span>
+                <code className="flex-1 min-w-0 text-xs text-[var(--color-text-secondary)] truncate" dir="ltr">
+                  {p.path}
+                </code>
+                <span className="text-sm font-bold text-[var(--color-primary)] shrink-0">{p.count} زيارة</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-5">

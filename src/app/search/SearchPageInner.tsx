@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BuildingCard } from '@/components/building/BuildingCard';
@@ -9,6 +9,8 @@ import { useBuildings } from '@/hooks/useBuildings';
 import { useReviews } from '@/hooks/useReviews';
 import { useAuth } from '@/hooks/useAuth';
 import { RATING_LABELS } from '@/types';
+import { EGYPT_CITIES, findCityCenter } from '@/lib/egypt-cities';
+import { reverseGeocode } from '@/lib/geocode';
 import type { Building, ReviewRatings } from '@/types';
 
 type ActiveChip = 'all' | 'withReviews' | 'topRated';
@@ -53,6 +55,9 @@ function AddAndRateForm() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapTarget, setMapTarget] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapNonce, setMapNonce] = useState(0);
+  const geoSeq = useRef(0);
 
   const overall = Object.values(ratings).reduce((a, b) => a + b, 0) / Object.keys(ratings).length;
   const keys = Object.keys(RATING_LABELS) as (keyof ReviewRatings)[];
@@ -162,7 +167,7 @@ function AddAndRateForm() {
           أضف المبنى وقيّمه دلوقتي
         </h1>
         <p className="text-sm text-[var(--color-text-secondary)] max-w-md mx-auto">
-          اكتب بيانات المبنى اللي ساكن فيه، ثم قيّمه على المعايير الحادية عشرة — كله في مكان واحد.
+          اكتب بيانات المبنى اللي ساكن فيه، ثم قيّمه على المعايير الاثني عشر — كله في مكان واحد.
         </p>
       </div>
 
@@ -180,38 +185,24 @@ function AddAndRateForm() {
           <div className="grid grid-cols-2 gap-3">
             <select
               value={newCity}
-              onChange={(e) => setNewCity(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setNewCity(value);
+                const center = findCityCenter(value);
+                if (center) {
+                  setMapTarget(center);
+                  setMapNonce((n) => n + 1);
+                }
+              }}
               required
               className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] cursor-pointer"
             >
               <option value="">اختر المدينة</option>
-              <option value="القاهرة">القاهرة</option>
-              <option value="الجيزة">الجيزة</option>
-              <option value="الإسكندرية">الإسكندرية</option>
-              <option value="الدقهلية">الدقهلية</option>
-              <option value="البحيرة">البحيرة</option>
-              <option value="الشرقية">الشرقية</option>
-              <option value="كفر الشيخ">كفر الشيخ</option>
-              <option value="الغربية">الغربية</option>
-              <option value="المنوفية">المنوفية</option>
-              <option value="القليوبية">القليوبية</option>
-              <option value="بني سويف">بني سويف</option>
-              <option value="الفيوم">الفيوم</option>
-              <option value="المنيا">المنيا</option>
-              <option value="أسيوط">أسيوط</option>
-              <option value="سوهاج">سوهاج</option>
-              <option value="قنا">قنا</option>
-              <option value="الأقصر">الأقصر</option>
-              <option value="أسوان">أسوان</option>
-              <option value="البحر الأحمر">البحر الأحمر</option>
-              <option value="الوادي الجديد">الوادي الجديد</option>
-              <option value="مطروح">مطروح</option>
-              <option value="شمال سيناء">شمال سيناء</option>
-              <option value="جنوب سيناء">جنوب سيناء</option>
-              <option value="بورسعيد">بورسعيد</option>
-              <option value="الإسماعيلية">الإسماعيلية</option>
-              <option value="السويس">السويس</option>
-              <option value="دمياط">دمياط</option>
+              {EGYPT_CITIES.map((city) => (
+                <option key={city.name} value={city.name}>
+                  {city.name}
+                </option>
+              ))}
             </select>
             <input
               type="text"
@@ -250,7 +241,20 @@ function AddAndRateForm() {
             <label className="text-sm font-semibold text-[var(--color-text)] block mb-2">
               حدد موقع المبنى على الخريطة
             </label>
-            <MapPicker value={location ?? undefined} onChange={setLocation} />
+            <MapPicker
+              value={location ?? undefined}
+              target={mapTarget}
+              targetNonce={mapNonce}
+              onChange={(loc) => {
+                setLocation(loc);
+                const seq = ++geoSeq.current;
+                void reverseGeocode(loc.lat, loc.lng).then((result) => {
+                  if (seq !== geoSeq.current) return;
+                  if (result.city) setNewCity(result.city);
+                  if (result.area) setNewArea(result.area);
+                });
+              }}
+            />
             {!location && (
               <p className="text-xs text-[var(--color-accent-dark)] mt-2 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]"></span>
@@ -263,7 +267,7 @@ function AddAndRateForm() {
 
       <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 mb-5">
         <div className="mb-4">
-          <p className="text-xs text-[var(--color-accent-dark)] font-medium mb-1">قيّم المبنى على المعايير الحادية عشرة</p>
+          <p className="text-xs text-[var(--color-accent-dark)] font-medium mb-1">قيّم المبنى على المعايير الاثني عشر</p>
           <h2 className="text-sm font-semibold text-[var(--color-text)]">كيف كانت تجربتك في المبنى؟</h2>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">

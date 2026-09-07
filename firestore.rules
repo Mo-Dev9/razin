@@ -25,5 +25,16 @@ service cloud.firestore {
       allow read: if true;
       allow write: if false;
     }
+
+    // Visits — read any, no client writes (all writes via server API + Admin SDK)
+    match /visitDays/{day} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /visitPages/{page} {
+      allow read: if true;
+      allow write: if false;
+    }
   }
 }

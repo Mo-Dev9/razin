@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/Button';
 import { AnalyticsPanel } from '@/components/admin/AnalyticsPanel';
 import { LogoutButton } from '@/components/admin/LogoutButton';
 import { ReviewDetails } from '@/components/admin/ReviewDetails';
+import { EGYPT_CITIES, findCityCenter } from '@/lib/egypt-cities';
+import { reverseGeocode } from '@/lib/geocode';
 import type { Building, Review } from '@/types';
 
 const MapPicker = dynamic(() => import('@/components/map/MapPicker').then((m) => m.MapPicker), {
@@ -40,6 +42,8 @@ export default function AdminDashboard() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [mapTarget, setMapTarget] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapNonce, setMapNonce] = useState(0);
   const [savingForm, setSavingForm] = useState(false);
   const [form, setForm] = useState({
     address: '',
@@ -460,13 +464,26 @@ export default function AdminDashboard() {
                   className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
                 />
                 <div className="grid grid-cols-2 gap-3">
-                  <input
-                    type="text"
+                  <select
                     value={form.city}
-                    onChange={(e) => setForm({ ...form, city: e.target.value })}
-                    placeholder="المدينة"
-                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
-                  />
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setForm({ ...form, city: value });
+                      const center = findCityCenter(value);
+                      if (center) {
+                        setMapTarget(center);
+                        setMapNonce((n) => n + 1);
+                      }
+                    }}
+                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] cursor-pointer"
+                  >
+                    <option value="">اختر المدينة</option>
+                    {EGYPT_CITIES.map((city) => (
+                      <option key={city.name} value={city.name}>
+                        {city.name}
+                      </option>
+                    ))}
+                  </select>
                   <input
                     type="text"
                     value={form.area}
@@ -508,7 +525,23 @@ export default function AdminDashboard() {
 
                 <div className="pt-1">
                   <label className="text-sm font-semibold text-[var(--color-text)] block mb-2">حدد موقع المبنى على الخريطة</label>
-                  <MapPicker value={form.location ?? undefined} onChange={(loc) => setForm({ ...form, location: loc })} />
+                  <MapPicker
+                  value={form.location ?? undefined}
+                  target={mapTarget}
+                  targetNonce={mapNonce}
+                  onChange={(loc) => {
+                    setForm({ ...form, location: loc });
+                    void reverseGeocode(loc.lat, loc.lng).then((result) => {
+                      if (result.city || result.area) {
+                        setForm((f) => ({
+                          ...f,
+                          city: result.city && result.city !== f.city ? result.city : f.city,
+                          area: result.area ? result.area : f.area,
+                        }));
+                      }
+                    });
+                  }}
+                />
                   {!form.location && (
                     <p className="text-xs text-[var(--color-accent-dark)] mt-2">
                       حط علامة على مكان المبنى — مطلوب لضمان الدقة

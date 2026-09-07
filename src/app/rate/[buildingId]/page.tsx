@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: 'شارك تجربتك في سكن أي مبنى بمجهول تام: قيّم الزحمة، الرطوبة، الجيران، الأمان، النظافة والإزعاج من 5 وساعد غيرك ياخذ قرار صح.',
   openGraph: {
     title: 'قيّم تجربتك — RentRate',
-    description: 'شارك تجربتك في سكن أي مبنى بمجهول تام وقيّم المعايير الحادية عشرة.',
+    description: 'شارك تجربتك في سكن أي مبنى بمجهول تام وقيّم المعايير الاثني عشر.',
     url: 'https://rentrate-zeta.vercel.app/rate',
     siteName: 'RentRate',
     locale: 'ar_EG',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary',
     title: 'قيّم تجربتك — RentRate',
-    description: 'شارك تجربتك في سكن أي مبنى بمجهول تام وقيّم المعايير الحادية عشرة.',
+    description: 'شارك تجربتك في سكن أي مبنى بمجهول تام وقيّم المعايير الاثني عشر.',
   },
 };
 

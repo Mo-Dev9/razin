@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { isAdmin } from '@/lib/admin';
 import { getAdminDb } from '@/lib/firebase-admin';
+import { cairoDateString } from '@/lib/date';
 
 export const dynamic = 'force-dynamic';
 
@@ -82,6 +83,33 @@ export async function GET() {
       };
     });
 
+    // Visitor statistics
+    const todayDate = cairoDateString();
+    const visitDaysSnap = await db.collection('visitDays').get();
+    const visitsByDay: Record<string, number> = {};
+    const todayStart = new Date(`${todayDate}T00:00:00+02:00`).getTime();
+    const sevenDaysStart = todayStart - 6 * 24 * 60 * 60 * 1000;
+    const thirtyDaysStart = todayStart - 29 * 24 * 60 * 60 * 1000;
+    let visitsToday = 0;
+    let visitsLast7Days = 0;
+    let visitsLast30Days = 0;
+
+    visitDaysSnap.docs.forEach((doc) => {
+      const count = doc.data().count || 0;
+      if (count <= 0) return;
+      const dayMs = new Date(`${doc.id}T00:00:00+02:00`).getTime();
+      if (Number.isFinite(dayMs) && dayMs >= thirtyDaysStart) visitsLast30Days += count;
+      if (Number.isFinite(dayMs) && dayMs >= sevenDaysStart) visitsLast7Days += count;
+      if (doc.id === todayDate) visitsToday += count;
+      visitsByDay[doc.id] = (visitsByDay[doc.id] || 0) + count;
+    });
+
+    const topPagesSnap = await db.collection('visitPages').orderBy('count', 'desc').limit(10).get();
+    const topPages = topPagesSnap.docs.map((d) => {
+      const data = d.data();
+      return { path: data.path || d.id, count: data.count || 0 };
+    });
+
     return NextResponse.json({
       totalUsers,
       totalBuildings,
@@ -95,6 +123,11 @@ export async function GET() {
       conversionRate: totalUsers > 0 ? Math.round((uniqueReviewerIds.size / totalUsers) * 100) : 0,
       reviewsByDay,
       topBuildings,
+      visitsToday,
+      visitsLast7Days,
+      visitsLast30Days,
+      visitsByDay,
+      topPages,
     });
   } catch (err) {
     console.error('Admin analytics failed:', err);

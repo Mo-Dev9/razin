@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
+import { VisitTracker } from '@/components/layout/VisitTracker';
 import 'leaflet/dist/leaflet.css';
 import './globals.css';
 
@@ -72,6 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="flex flex-col min-h-screen">
         {children}
         <ServiceWorkerRegistration />
+        <VisitTracker />
         <Analytics />
         <SpeedInsights />
       </body>
