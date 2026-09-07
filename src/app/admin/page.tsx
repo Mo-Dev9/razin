@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
@@ -45,6 +45,7 @@ export default function AdminDashboard() {
   const [mapTarget, setMapTarget] = useState<{ lat: number; lng: number } | null>(null);
   const [mapNonce, setMapNonce] = useState(0);
   const [savingForm, setSavingForm] = useState(false);
+  const geoSeq = useRef(0);
   const [form, setForm] = useState({
     address: '',
     city: '',
@@ -531,7 +532,10 @@ export default function AdminDashboard() {
                   targetNonce={mapNonce}
                   onChange={(loc) => {
                     setForm({ ...form, location: loc });
+                    const seq = ++geoSeq.current;
                     void reverseGeocode(loc.lat, loc.lng).then((result) => {
+                      // Ignore stale responses from an older pin drop.
+                      if (seq !== geoSeq.current) return;
                       if (result.city || result.area) {
                         setForm((f) => ({
                           ...f,

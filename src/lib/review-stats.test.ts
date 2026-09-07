@@ -7,11 +7,12 @@ const KEYS = [
 ] as const;
 
 describe('computeAverages', () => {
-  it('returns zeros for no reviews', () => {
+  it('returns empty ratings for no reviews', () => {
     const { averageRatings, reviewCount } = computeAverages([]);
     expect(reviewCount).toBe(0);
-    for (const k of KEYS) expect(averageRatings[k]).toBe(0);
     expect(averageRatings.overall).toBe(0);
+    // No rated key → no key is present (not zeroed).
+    for (const k of KEYS) expect(averageRatings[k]).toBeUndefined();
   });
 
   it('averages a single complete review', () => {
@@ -37,12 +38,13 @@ describe('computeAverages', () => {
     expect(averageRatings.overall).toBe(4);
   });
 
-  it('treats a missing rating key as 0 contribution', () => {
+  it('ignores a missing rating key instead of counting it as 0', () => {
     const { averageRatings } = computeAverages([
       { ratings: { zahma: 2 }, overall: 2 },
       { ratings: {}, overall: 2 },
     ]);
-    expect(averageRatings.zahma).toBe(1); // (2 + 0) / 2
+    expect(averageRatings.zahma).toBe(2); // rated in 1 of 2 reviews
+    expect(averageRatings.humidity).toBeUndefined();
   });
 
   it('ignores non-number rating values', () => {
@@ -50,15 +52,24 @@ describe('computeAverages', () => {
       { ratings: { zahma: 2, humidity: 'bad' as unknown as number, safety: null as unknown as number }, overall: 2 },
     ]);
     expect(averageRatings.zahma).toBe(2);
-    expect(averageRatings.humidity).toBe(0);
-    expect(averageRatings.safety).toBe(0);
+    expect(averageRatings.humidity).toBeUndefined();
+    expect(averageRatings.safety).toBeUndefined();
   });
 
-  it('contributes 0 to overall when missing', () => {
+  it('still computes overall when per-key data is missing', () => {
     const { averageRatings } = computeAverages([
       { ratings: {}, overall: 4 },
       { ratings: {} },
     ]);
     expect(averageRatings.overall).toBe(2);
+  });
+
+  it('omits condition for legacy reviews that predate it', () => {
+    const { averageRatings } = computeAverages([
+      { ratings: { zahma: 3, humidity: 2 }, overall: 3 },
+      { ratings: { zahma: 5, humidity: 4 }, overall: 4 },
+    ]);
+    expect(averageRatings.zahma).toBe(4);
+    expect(averageRatings.condition).toBeUndefined();
   });
 });

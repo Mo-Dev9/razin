@@ -26,8 +26,15 @@ export async function GET(req: Request) {
   }
 
   const { searchParams } = new URL(req.url);
-  const lat = Number(searchParams.get('lat'));
-  const lng = Number(searchParams.get('lng'));
+  const latRaw = searchParams.get('lat');
+  const lngRaw = searchParams.get('lng');
+
+  if (latRaw === null || lngRaw === null) {
+    return NextResponse.json({ error: 'إحداثيات ناقصة' }, { status: 400 });
+  }
+
+  const lat = Number(latRaw);
+  const lng = Number(lngRaw);
 
   if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) {
     return NextResponse.json({ error: 'إحداثيات غير صالحة' }, { status: 400 });

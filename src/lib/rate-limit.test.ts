@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { checkRateLimit } from '@/lib/rate-limit';
+import { checkRateLimit, resetRateLimit } from '@/lib/rate-limit';
 
 describe('checkRateLimit (in-memory sliding-fixed window)', () => {
   it('allows requests within the limit then blocks', () => {
@@ -24,5 +24,13 @@ describe('checkRateLimit (in-memory sliding-fixed window)', () => {
     const key = `expiry-key-${Date.now()}`;
     checkRateLimit(key, 1, -1); // negative window means already expired
     expect(checkRateLimit(key, 1, -1).allowed).toBe(true);
+  });
+
+  it('resetRateLimit clears an exhausted key', () => {
+    const key = `reset-key-${Date.now()}`;
+    expect(checkRateLimit(key, 1, 60_000).allowed).toBe(true);
+    expect(checkRateLimit(key, 1, 60_000).allowed).toBe(false);
+    resetRateLimit(key);
+    expect(checkRateLimit(key, 1, 60_000).allowed).toBe(true);
   });
 });

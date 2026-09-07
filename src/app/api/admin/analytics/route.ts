@@ -34,7 +34,7 @@ export async function GET() {
       db.collection('users').where('createdAt', '>=', thirtyDaysAgo).count().get(),
     ]);
 
-    // Reviews per day (last 14 days) for chart
+    // Reviews per day (last 14 Cairo days) for chart
     const fourteenDaysAgo = Date.now() - 14 * 24 * 60 * 60 * 1000;
     const reviewsSnap14 = await db
       .collection('reviews')
@@ -44,11 +44,11 @@ export async function GET() {
 
     const reviewsByDay: Record<string, number> = {};
     for (let i = 13; i >= 0; i--) {
-      const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
-      reviewsByDay[d.toISOString().split('T')[0]] = 0;
+      const dayMs = Date.now() - i * 24 * 60 * 60 * 1000;
+      reviewsByDay[cairoDateString(dayMs)] = 0;
     }
     reviewsSnap14.docs.forEach((doc) => {
-      const date = new Date(doc.data().createdAt).toISOString().split('T')[0];
+      const date = cairoDateString(doc.data().createdAt || 0);
       if (reviewsByDay[date] !== undefined) reviewsByDay[date]++;
     });
 

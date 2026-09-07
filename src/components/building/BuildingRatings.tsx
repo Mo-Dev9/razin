@@ -35,9 +35,9 @@ export function BuildingRatings({ reviews }: BuildingRatingsProps) {
             <div className="w-10 h-10 rounded-full bg-[var(--color-accent)] flex items-center justify-center mx-auto">
               <span className="text-lg">{RATING_ICONS[key] || '⭐'}</span>
             </div>
-            <div className="text-lg font-bold text-[var(--color-primary)] mt-1">{avg.toFixed(1)}</div>
+            <div className="text-lg font-bold text-[var(--color-primary)] mt-1">{vals.length ? avg.toFixed(1) : '—'}</div>
             <div className="text-xs text-[var(--color-text-secondary)] mt-0.5">{RATING_LABELS[key].ar}</div>
-            <div className="text-[10px] text-[var(--color-text-muted)]">{vals.length} تقييم</div>
+            <div className="text-[10px] text-[var(--color-text-muted)]">{vals.length ? `${vals.length} تقييم` : 'لا تقييمات'}</div>
           </div>
         );
       })}

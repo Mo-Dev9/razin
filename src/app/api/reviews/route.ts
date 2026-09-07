@@ -19,6 +19,12 @@ function parseRatings(rawRatings: unknown): Record<string, number> | null {
   return ratings;
 }
 
+class ReviewApiError extends Error {
+  constructor(public code: 'BUILDING_NOT_FOUND' | 'ALREADY_REVIEWED') {
+    super(code);
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
@@ -67,51 +73,75 @@ export async function POST(req: NextRequest) {
 
     const db = getAdminDb();
     const reviewDocId = `${buildingId}_${uid}`;
-
-    const buildingRef = db.collection('buildings').doc(buildingId);
-    const buildingSnap = await buildingRef.get();
-
-    if (!buildingSnap.exists) {
-      return NextResponse.json({ error: 'المبنى غير موجود' }, { status: 404 });
-    }
-
-    const reviewRef = db.collection('reviews').doc(reviewDocId);
-    const existingSnap = await reviewRef.get();
-
-    if (existingSnap.exists) {
-      return NextResponse.json({ error: 'لقد قيّمت هذا المبنى بالفعل' }, { status: 409 });
-    }
-
     const overall = RATING_KEYS.reduce((sum, k) => sum + ratings[k], 0) / RATING_KEYS.length;
 
-    await reviewRef.set({
-      buildingId,
-      userId: uid,
-      ratings,
-      overall,
-      comment,
-      buildingNumber,
-      floor,
-      apartmentNumber,
-      createdAt: Date.now(),
-    });
+    // The whole check-and-write is one transaction so the one-review-per-user
+    // rule cannot be bypassed by legacy reviews stored under random doc ids.
+    try {
+      await db.runTransaction(async (tx) => {
+        const buildingRef = db.collection('buildings').doc(buildingId);
+        const buildingSnap = await tx.get(buildingRef);
 
-    const b = buildingSnap.data()!;
-    const count = b.reviewCount || 0;
-    const avgRatings = (b.averageRatings || {}) as Record<string, number>;
+        if (!buildingSnap.exists) {
+          throw new ReviewApiError('BUILDING_NOT_FOUND');
+        }
 
-    const avgObj: Record<string, number> = {};
-    for (const k of RATING_KEYS) {
-      const old = (avgRatings[k] || 0) * count;
-      avgObj[k] = (old + ratings[k]) / (count + 1);
+        const reviewRef = db.collection('reviews').doc(reviewDocId);
+        const existingSnap = await tx.get(reviewRef);
+
+        if (existingSnap.exists) {
+          throw new ReviewApiError('ALREADY_REVIEWED');
+        }
+
+        const dupSnap = await tx.get(
+          db.collection('reviews')
+            .where('buildingId', '==', buildingId)
+            .where('userId', '==', uid)
+            .limit(1)
+        );
+
+        if (!dupSnap.empty) {
+          throw new ReviewApiError('ALREADY_REVIEWED');
+        }
+
+        tx.set(reviewRef, {
+          buildingId,
+          userId: uid,
+          ratings,
+          overall,
+          comment,
+          buildingNumber,
+          floor,
+          apartmentNumber,
+          createdAt: Date.now(),
+        });
+
+        const b = buildingSnap.data()!;
+        const count = b.reviewCount || 0;
+        const avgRatings = (b.averageRatings || {}) as Record<string, number>;
+
+        const avgObj: Record<string, number> = {};
+        for (const k of RATING_KEYS) {
+          const old = (avgRatings[k] || 0) * count;
+          avgObj[k] = (old + ratings[k]) / (count + 1);
+        }
+        avgObj.overall = ((avgRatings.overall || 0) * count + overall) / (count + 1);
+
+        tx.update(buildingRef, {
+          averageRatings: avgObj,
+          reviewCount: count + 1,
+          lastReviewAt: Date.now(),
+        });
+      });
+    } catch (err) {
+      if (err instanceof ReviewApiError) {
+        if (err.code === 'BUILDING_NOT_FOUND') {
+          return NextResponse.json({ error: 'المبنى غير موجود' }, { status: 404 });
+        }
+        return NextResponse.json({ error: 'لقد قيّمت هذا المبنى بالفعل' }, { status: 409 });
+      }
+      throw err;
     }
-    avgObj.overall = ((avgRatings.overall || 0) * count + overall) / (count + 1);
-
-    await buildingRef.update({
-      averageRatings: avgObj,
-      reviewCount: count + 1,
-      lastReviewAt: Date.now(),
-    });
 
     return NextResponse.json({ ok: true });
   } catch (err) {

@@ -1,50 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { createHash, timingSafeEqual } from 'crypto';
+import { checkRateLimit, resetRateLimit } from '@/lib/rate-limit';
 
-const MAX_ATTEMPTS = 2;
+const MAX_ATTEMPTS = 5;
 const LOCKOUT_MS = 30 * 60 * 1000;
 
 function getRateKey(req: NextRequest): string {
   const forwarded = req.headers.get('x-forwarded-for');
   const ip = forwarded?.split(',')[0]?.trim() || 'unknown';
-  return `admin_login_${ip}`;
+  return `admin_login:${ip}`;
+}
+
+function passwordMatches(input: string, expected: string): boolean {
+  const a = createHash('sha256').update(input).digest();
+  const b = createHash('sha256').update(expected).digest();
+  return a.length === b.length && timingSafeEqual(a, b);
 }
 
 export async function POST(req: NextRequest) {
-  const cookieStore = await cookies();
   const rateKey = getRateKey(req);
+  const { allowed, retryAfterMs } = checkRateLimit(rateKey, MAX_ATTEMPTS, LOCKOUT_MS);
 
-  const rateData = cookieStore.get(rateKey);
-  if (rateData) {
-    let rate: { attempts: number; lockedUntil?: number };
-    try {
-      rate = JSON.parse(rateData.value);
-    } catch {
-      rate = { attempts: 0 };
-    }
-    const { attempts, lockedUntil } = rate;
-    if (lockedUntil && Date.now() < lockedUntil) {
-      const remaining = Math.ceil((lockedUntil - Date.now()) / 60000);
-      return NextResponse.json(
-        { error: `محظور. حاول بعد ${remaining} دقيقة` },
-        { status: 429 }
-      );
-    }
-    if (attempts >= MAX_ATTEMPTS) {
-      const lockedUntilMs = Date.now() + LOCKOUT_MS;
-      const res = NextResponse.json(
-        { error: `تم تجاوز الحد. حاول بعد 30 دقيقة` },
-        { status: 429 }
-      );
-      res.cookies.set(rateKey, JSON.stringify({ attempts: 0, lockedUntil: lockedUntilMs }), {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: LOCKOUT_MS / 1000,
-        path: '/',
-      });
-      return res;
-    }
+  if (!allowed) {
+    const minutes = Math.max(1, Math.ceil(retryAfterMs / 60000));
+    return NextResponse.json(
+      { error: `محظور. حاول بعد ${minutes} دقيقة` },
+      { status: 429 }
+    );
   }
 
   let body: { password?: string };
@@ -64,31 +46,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'خدمة الإدارة غير مُعدّة' }, { status: 500 });
   }
 
-  if (password !== adminPassword) {
-    let prev: { attempts: number; lockedUntil?: number };
-    if (rateData) {
-      try {
-        prev = JSON.parse(rateData.value);
-      } catch {
-        prev = { attempts: 0, lockedUntil: 0 };
-      }
-    } else {
-      prev = { attempts: 0, lockedUntil: 0 };
-    }
-    const newAttempts = typeof prev.attempts === 'number' ? prev.attempts + 1 : 1;
-    const res = NextResponse.json(
-      { error: 'كلمة المرور غير صحيحة' },
-      { status: 401 }
-    );
-    res.cookies.set(rateKey, JSON.stringify({ attempts: newAttempts, lockedUntil: 0 }), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: LOCKOUT_MS / 1000,
-      path: '/',
-    });
-    return res;
+  // Server-side, per-IP lockout: no attacker-controlled cookie to delete.
+  if (!passwordMatches(password, adminPassword)) {
+    return NextResponse.json({ error: 'كلمة المرور غير صحيحة' }, { status: 401 });
   }
+
+  resetRateLimit(rateKey);
 
   const res = NextResponse.json({ ok: true });
   res.cookies.set('admin_session', 'authenticated', {
@@ -96,13 +59,6 @@ export async function POST(req: NextRequest) {
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
     maxAge: 24 * 60 * 60,
-    path: '/',
-  });
-  res.cookies.set(rateKey, JSON.stringify({ attempts: 0, lockedUntil: 0 }), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    maxAge: 0,
     path: '/',
   });
   return res;

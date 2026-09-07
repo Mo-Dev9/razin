@@ -9,21 +9,30 @@ export function computeAverages(
   reviews: { ratings?: Record<string, number>; overall?: number }[]
 ): { averageRatings: Record<string, number>; reviewCount: number } {
   const sums: Record<string, number> = {};
-  for (const k of RATING_KEYS) sums[k] = 0;
+  const counts: Record<string, number> = {};
+  for (const k of RATING_KEYS) {
+    sums[k] = 0;
+    counts[k] = 0;
+  }
   let overall = 0;
 
   for (const review of reviews) {
     for (const k of RATING_KEYS) {
       const v = review.ratings?.[k];
-      if (typeof v === 'number') sums[k] += v;
+      if (typeof v === 'number') {
+        sums[k] += v;
+        counts[k]++;
+      }
     }
     overall += review.overall || 0;
   }
 
   const n = reviews.length;
   const averageRatings: Record<string, number> = {};
+  // Per-key denominators: a key is omitted (not zeroed) when no review rated
+  // it, so legacy reviews written before a key existed don't drag it to 0.
   for (const k of RATING_KEYS) {
-    averageRatings[k] = n > 0 ? sums[k] / n : 0;
+    if (counts[k] > 0) averageRatings[k] = sums[k] / counts[k];
   }
   averageRatings.overall = n > 0 ? overall / n : 0;
 
