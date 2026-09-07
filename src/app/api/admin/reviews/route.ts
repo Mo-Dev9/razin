@@ -56,6 +56,18 @@ export async function DELETE(req: NextRequest) {
 
     await reviewRef.delete();
 
+    // Clean up any reports filed against this review.
+    try {
+      const reportsSnap = await db.collection('reports').where('reviewId', '==', reviewId).get();
+      if (reportsSnap.size > 0) {
+        const batch = db.batch();
+        reportsSnap.forEach((d) => batch.delete(d.ref));
+        await batch.commit();
+      }
+    } catch (err) {
+      console.warn('Failed to clean up reports for deleted review:', err);
+    }
+
     await recomputeBuildingStats(buildingId);
 
     return NextResponse.json({ ok: true });

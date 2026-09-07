@@ -11,6 +11,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
 import { useReviews } from '@/hooks/useReviews';
 import { useBuildings } from '@/hooks/useBuildings';
+import { useSavedBuildings } from '@/hooks/useSaves';
 import type { Review, Building } from '@/types';
 
 export default function ProfilePageInner() {
@@ -18,6 +19,7 @@ export default function ProfilePageInner() {
   const { profile, loading, isLinkedWithGoogle, signInWithGoogle, signOut } = useAuth();
   const { getUserReviews, deleteReview } = useReviews();
   const { getBuilding } = useBuildings();
+  const { saved: savedBuildings, loading: savedLoading, unsave } = useSavedBuildings(profile?.uid);
   const [linking, setLinking] = useState(false);
   const [linkError, setLinkError] = useState('');
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -307,6 +309,63 @@ export default function ProfilePageInner() {
                       </div>
                     );
                   })}
+                </div>
+              )}
+            </div>
+
+            <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 hover:shadow-soft transition-all">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-sm text-[var(--color-text)]">المباني المحفوظة</h3>
+                <span className="text-xs text-[var(--color-text-muted)]">{savedBuildings.length} مبنى</span>
+              </div>
+              {savedLoading ? (
+                <div className="py-8 text-center">
+                  <div className="w-6 h-6 border-2 border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto"></div>
+                </div>
+              ) : savedBuildings.length === 0 ? (
+                <div className="border-2 border-dashed border-[var(--color-border)] rounded-2xl p-8 text-center">
+                  <div className="w-12 h-12 rounded-2xl bg-[var(--color-accent)]/15 flex items-center justify-center mx-auto mb-3 hover:scale-110 transition-transform" style={{ animation: 'pulse-glow 3s ease-in-out infinite' }}>
+                    <span className="text-2xl">🔖</span>
+                  </div>
+                  <h4 className="font-semibold text-sm text-[var(--color-text)] mb-1">لسه محفظتش مبانٍ</h4>
+                  <p className="text-xs text-[var(--color-text-secondary)] mb-3">
+                    لما تلاقي مبنى عجبك، اضغط «احفظ المبنى» وهيلاقيك هنا.
+                  </p>
+                  <Button size="sm" onClick={() => router.push('/search')}>
+                    حدّد مكانك
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {savedBuildings.map((s) => (
+                    <div key={s.id} className="rounded-2xl border border-[var(--color-border)] p-3 hover:border-[var(--color-accent)] transition-all">
+                      <Link href={`/building/${s.id}`} className="block">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-semibold text-[var(--color-text)] truncate">
+                            {s.address}
+                          </span>
+                          <span className="flex items-center gap-1 text-sm font-bold text-[var(--color-primary)] shrink-0">
+                            {s.overall > 0 ? s.overall.toFixed(1) : '—'}
+                            <span className="text-[var(--color-accent)] text-xs">★</span>
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-[var(--color-text-muted)] truncate">
+                            {[s.area, s.city].filter(Boolean).join('، ')}
+                          </span>
+                          <span className="text-[10px] text-[var(--color-text-muted)] shrink-0">
+                            {s.reviewCount > 0 ? `${s.reviewCount} تقييم` : 'لا تقييمات'}
+                          </span>
+                        </div>
+                      </Link>
+                      <button
+                        onClick={() => void unsave(s.id)}
+                        className="text-xs font-medium text-red-600 hover:underline underline-offset-4 mt-2"
+                      >
+                        إزالة من المحفوظات
+                      </button>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

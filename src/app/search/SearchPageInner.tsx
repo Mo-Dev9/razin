@@ -8,6 +8,7 @@ import { NumberGrid } from '@/components/ui/NumberGrid';
 import { useBuildings } from '@/hooks/useBuildings';
 import { useReviews } from '@/hooks/useReviews';
 import { useAuth } from '@/hooks/useAuth';
+import { useSavedBuildings } from '@/hooks/useSaves';
 import { RATING_LABELS } from '@/types';
 import { EGYPT_CITIES, findCityCenter } from '@/lib/egypt-cities';
 import { reverseGeocode } from '@/lib/geocode';
@@ -340,6 +341,8 @@ export default function SearchPageInner() {
   const q = searchParams.get('q') || '';
   const addMode = searchParams.get('add') === 'true';
   const { searchBuildings, searchBuildingsAdvanced, getAllDistricts, loading } = useBuildings();
+  const { user } = useAuth();
+  const { toggleSave, isSaved } = useSavedBuildings(user?.uid);
   const [query, setQuery] = useState(q);
   const [results, setResults] = useState<Building[]>([]);
   const [searched, setSearched] = useState(false);
@@ -439,10 +442,10 @@ export default function SearchPageInner() {
           دليل الأحياء
         </span>
         <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-2">
-          المكان الذي تفكر فيه، تعرفه
+          دور على المكان اللي شبهك.
         </h1>
         <p className="text-sm text-[var(--color-text-secondary)] mb-2">
-          ابحث بين تجارب السكان، وقارن تفاصيل المبنى كما عاشها كل يوم.
+          ابحث بالعنوان أو المنطقة أو المدينة، واقرأ تجارب الناس اللي عايشين هناك.
         </p>
         <p className="text-xs text-[var(--color-text-muted)] flex items-center gap-1.5">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -598,7 +601,14 @@ export default function SearchPageInner() {
       ) : (
         <div className="space-y-3 pb-10">
           {results.map((building) => (
-            <BuildingCard key={building.id} building={building} />
+            <BuildingCard
+              key={building.id}
+              building={building}
+              ratingAvg={building.averageRatings?.overall}
+              reviewCount={building.reviewCount}
+              isSaved={isSaved(building.id)}
+              onToggleSave={user ? () => void toggleSave(building) : undefined}
+            />
           ))}
         </div>
       )}

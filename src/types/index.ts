@@ -49,6 +49,29 @@ export interface Review {
 
 export type VoteType = 'up' | 'down';
 
+export const REPORT_REASONS = [
+  { id: 'offensive', ar: 'محتوى مسيء' },
+  { id: 'false_info', ar: 'معلومات غير حقيقية' },
+  { id: 'promotion', ar: 'إعلان أو ترويج' },
+  { id: 'personal_data', ar: 'بيانات شخصية' },
+] as const;
+
+export type ReportReason = (typeof REPORT_REASONS)[number]['id'];
+
+export interface ReportItem {
+  id: string;
+  reviewId: string;
+  buildingId: string;
+  reporterUid: string;
+  reason: ReportReason;
+  status: 'pending';
+  createdAt: number;
+}
+
+export function isReportReason(value: unknown): value is ReportReason {
+  return REPORT_REASONS.some((r) => r.id === value);
+}
+
 export interface ReviewRatings {
   zahma: number;
   humidity: number;

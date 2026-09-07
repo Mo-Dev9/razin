@@ -170,11 +170,22 @@ export default function HomePageInner() {
                   كيف يعمل RentRate
                 </h2>
                 <h3 className="text-2xl md:text-[2rem] font-bold text-[#F1F5F4] leading-tight mb-4">
-                  قرار السكن يستحق معرفة أكثر.
+                  اختيار البيت قرار كبير يستحق معرفة أكثر.
                 </h3>
-                <p className="text-sm text-[#94B4B0] leading-relaxed">
-                  بنساعدك تشوف الصورة كاملة قبل ما تدفع أو تنتقل.
+                <p className="text-sm text-[#94B4B0] leading-relaxed mb-6">
+                  عشان كده بنساعدك تشوف الصورة كاملة قدامك قبل ما تدفع أو تنتقل،
+                  بتجارب يومية مش وعود تسويقية.
                 </p>
+                <Link
+                  href="/search"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#E9B94A] text-[#0F2C2C] px-6 py-3 text-sm font-bold hover:bg-[#d6a83e] hover:scale-105 hover:shadow-[0_10px_30px_-5px_rgba(233,185,74,0.4)] active:scale-95 transition-all"
+                >
+                  ابدأ الاستكشاف
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </Link>
               </div>
 
               <div className="lg:w-3/5 grid grid-cols-1 sm:grid-cols-3 gap-5">

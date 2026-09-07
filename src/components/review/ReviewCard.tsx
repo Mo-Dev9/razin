@@ -7,9 +7,10 @@ interface ReviewCardProps {
   buildingId?: string;
   userVote?: VoteType | null;
   onVote?: (reviewId: string, type: VoteType) => Promise<{ ok: boolean; error?: string }>;
+  onReport?: () => void;
 }
 
-export function ReviewCard({ review, buildingId, userVote = null, onVote }: ReviewCardProps) {
+export function ReviewCard({ review, buildingId, userVote = null, onVote, onReport }: ReviewCardProps) {
   const keys = Object.keys(RATING_LABELS) as (keyof typeof RATING_LABELS)[];
   const vals = keys.map((k) => review.ratings[k]).filter((v): v is number => v != null);
   const avg = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) : '—';
@@ -64,6 +65,19 @@ export function ReviewCard({ review, buildingId, userVote = null, onVote }: Revi
             userVote={userVote}
             onVote={onVote}
           />
+        </div>
+      )}
+
+      {buildingId && onReport && (
+        <div className="mt-2 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={onReport}
+            className="text-xs text-[var(--color-text-muted)] hover:text-red-500 transition-colors flex items-center gap-1"
+          >
+            <span>🚩</span>
+            إبلاغ
+          </button>
         </div>
       )}
     </div>

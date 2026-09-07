@@ -27,7 +27,20 @@ interface Stats {
   reviews: number;
 }
 
-type Tab = 'overview' | 'analytics';
+type Tab = 'overview' | 'analytics' | 'reports';
+
+interface AdminReport {
+  id: string;
+  reviewId: string;
+  buildingId: string;
+  reason: string;
+  reasonLabel: string;
+  createdAt: number;
+  reporterUid: string;
+  reviewComment: string;
+  reviewOverall: number;
+  buildingAddress: string;
+}
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -58,6 +71,8 @@ export default function AdminDashboard() {
   });
   const [buildingSearch, setBuildingSearch] = useState('');
   const [reviewSearch, setReviewSearch] = useState('');
+  const [reports, setReports] = useState<AdminReport[]>([]);
+  const [reportsLoading, setReportsLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
     const [bRes, rRes] = await Promise.all([
@@ -112,6 +127,55 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   }, [fetchData, router]);
+
+  const fetchReports = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/reports');
+      if (res.status === 401) {
+        router.push('/admin/login');
+        return;
+      }
+      const data = await res.json();
+      setReports(data.reports || []);
+    } catch {
+      setMessage({ type: 'error', text: 'فشل تحميل البلاغات' });
+    } finally {
+      setReportsLoading(false);
+    }
+  }, [router]);
+
+  const loadReports = useCallback(async () => {
+    setReportsLoading(true);
+    void fetchReports();
+  }, [fetchReports]);
+
+  const dismissReport = async (reportId: string) => {
+    setActionLoading(`report:${reportId}`);
+    try {
+      const res = await fetch('/api/admin/reports', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reportId }),
+      });
+      if (res.ok) {
+        setReports((prev) => prev.filter((r) => r.id !== reportId));
+        setMessage({ type: 'success', text: 'تم تجاهل البلاغ' });
+      } else {
+        const data = await res.json();
+        setMessage({ type: 'error', text: data.error || 'فشل العملية' });
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'فشل الاتصال بالخادم' });
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleReportedReviewDelete = async (report: AdminReport) => {
+    if (!confirm('حذف هذا التقييم نهائياً؟ التقييم وتصويتاته وبلاغاته ستُحذف.')) return;
+    await deleteReview(report.reviewId, report.buildingId);
+    loadReports();
+  };
 
   const deleteBuilding = async (buildingId: string) => {
     if (!confirm('هل أنت متأكد من حذف هذا المبنى وجميع تقييماته؟')) return;
@@ -293,6 +357,24 @@ export default function AdminDashboard() {
           >
             الإحصائيات
           </button>
+          <button
+            onClick={() => {
+              setTab('reports');
+              if (reports.length === 0) loadReports();
+            }}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+              tab === 'reports'
+                ? 'bg-[var(--color-primary)] text-white'
+                : 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-warm)]'
+            }`}
+          >
+            البلاغات
+            {reports.length > 0 && tab !== 'reports' && (
+              <span className="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-[var(--color-accent)] text-[var(--color-primary)] text-xs font-bold mr-1.5">
+                {reports.length}
+              </span>
+            )}
+          </button>
         </div>
 
         {message && (
@@ -437,6 +519,80 @@ export default function AdminDashboard() {
             )}
           </>
         )}
+
+        {tab === 'reports' && (
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-semibold text-sm">بلاغات المستخدمين ({reports.length})</h2>
+            <Button variant="ghost" size="sm" onClick={loadReports} loading={reportsLoading}>
+              تحديث
+            </Button>
+          </div>
+        )}
+
+        {tab === 'reports' &&
+          (reportsLoading ? (
+            <div className="text-center py-20 text-[var(--color-text-secondary)] text-sm">جاري تحميل البلاغات...</div>
+          ) : reports.length === 0 ? (
+            <div className="border-2 border-dashed border-[var(--color-border)] rounded-3xl p-12 text-center">
+              <div className="text-3xl mb-3">🚩</div>
+              <h3 className="font-semibold text-sm text-[var(--color-text)] mb-1">لا بلاغات معلقة</h3>
+              <p className="text-xs text-[var(--color-text-secondary)]">
+                أي بلاغ من المستخدمين هيظهر هنا للمراجعة.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {reports.map((report) => (
+                <div key={report.id} className="rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="inline-flex items-center rounded-full bg-red-50 text-red-600 px-2.5 py-0.5 text-xs font-medium">
+                          {report.reasonLabel}
+                        </span>
+                        <span className="text-xs text-[var(--color-text-muted)]">
+                          {new Date(report.createdAt).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      <p className="text-sm text-[var(--color-text)] mb-0.5">
+                        {report.buildingAddress}
+                        <span className="text-[var(--color-text-muted)] text-xs"> · ⭐ {Number(report.reviewOverall).toFixed(1)}</span>
+                      </p>
+                      {report.reviewComment ? (
+                        <p className="text-xs text-[var(--color-text-secondary)] line-clamp-2 mb-1">
+                          «{report.reviewComment}»
+                        </p>
+                      ) : (
+                        <p className="text-xs text-[var(--color-text-muted)] mb-1">(تقييم بدون تعليق)</p>
+                      )}
+                      <p className="text-[10px] text-[var(--color-text-muted)] mt-1">
+                        المُبلِّغ: {report.reporterUid.slice(0, 8)}... · التقييم: {report.reviewId.slice(0, 8)}...
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[var(--color-border)]">
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      loading={actionLoading === `report:${report.id}` || actionLoading === report.reviewId}
+                      onClick={() => void handleReportedReviewDelete(report)}
+                    >
+                      احذف التقييم
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      loading={actionLoading === `report:${report.id}`}
+                      onClick={() => void dismissReport(report.id)}
+                    >
+                      تجاهل البلاغ
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+
       </main>
       <Footer />
 
