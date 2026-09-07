@@ -8,6 +8,7 @@ export interface Building {
   floor?: string;
   apartmentNumber?: string;
   geohash?: string;
+  location?: { lat: number; lng: number };
   averageRatings: RatingAverages;
   reviewCount: number;
   lastReviewAt?: number;

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
+import 'leaflet/dist/leaflet.css';
 import './globals.css';
 
 const BASE_URL = 'https://rentrate-zeta.vercel.app';

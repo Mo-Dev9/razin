@@ -50,3 +50,6 @@ scripts/service-account.json
 # unnecessary files
 AGENTS.md
 CLAUDE.md
+
+.vercel
+.env*

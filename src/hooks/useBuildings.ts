@@ -92,6 +92,7 @@ export function useBuildings() {
     city: string;
     area: string;
     district?: string;
+    location: { lat: number; lng: number };
   }): Promise<string> => {
     setLoading(true);
     try {

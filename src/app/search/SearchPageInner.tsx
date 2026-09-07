@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BuildingCard } from '@/components/building/BuildingCard';
 import { NumberGrid } from '@/components/ui/NumberGrid';
@@ -11,6 +12,15 @@ import { RATING_LABELS } from '@/types';
 import type { Building, ReviewRatings } from '@/types';
 
 type ActiveChip = 'all' | 'withReviews' | 'topRated';
+
+const MapPicker = dynamic(() => import('@/components/map/MapPicker').then((m) => m.MapPicker), {
+  ssr: false,
+  loading: () => (
+    <div className="h-72 w-full rounded-2xl border border-[var(--color-border)] flex items-center justify-center text-sm text-[var(--color-text-secondary)]">
+      جاري تحميل الخريطة...
+    </div>
+  ),
+});
 
 function AddAndRateForm() {
   const router = useRouter();
@@ -41,12 +51,17 @@ function AddAndRateForm() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   const overall = Object.values(ratings).reduce((a, b) => a + b, 0) / Object.keys(ratings).length;
   const keys = Object.keys(RATING_LABELS) as (keyof ReviewRatings)[];
 
   const handleSubmit = async () => {
     if (!newAddress.trim() || !newCity.trim() || !newArea.trim()) return;
+    if (!location) {
+      setError('حدد الموقع على الخريطة أولاً لضمان الدقة في التقييم');
+      return;
+    }
     if (authLoading || !user) return;
 
     setSubmitting(true);
@@ -57,6 +72,7 @@ function AddAndRateForm() {
         address: newAddress.trim(),
         city: newCity.trim(),
         area: newArea.trim(),
+        location,
       });
 
       const already = await hasUserReviewed(buildingId, user.uid);
@@ -118,6 +134,7 @@ function AddAndRateForm() {
               setBuildingNumber('');
               setFloor('');
               setApartmentNumber('');
+              setLocation(null);
               setRatings({ zahma: 3, humidity: 3, landlord: 3, neighbors: 3, cleanliness: 3, safety: 3, services: 3, annoyance: 3, elevator: 3, maintenance: 3, ac: 3 });
               setComment('');
               setSubmitted(false);
@@ -226,6 +243,19 @@ function AddAndRateForm() {
               placeholder="شقة"
               className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-2 sm:px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
             />
+          </div>
+
+          <div className="pt-1">
+            <label className="text-sm font-semibold text-[var(--color-text)] block mb-2">
+              حدد موقع المبنى على الخريطة
+            </label>
+            <MapPicker value={location ?? undefined} onChange={setLocation} />
+            {!location && (
+              <p className="text-xs text-[var(--color-accent-dark)] mt-2 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]"></span>
+                حط علامة على مكان المبنى — ده بيمنح دقة تقييم أعلى
+              </p>
+            )}
           </div>
         </div>
       </div>

@@ -16,7 +16,13 @@ export async function POST(req: NextRequest) {
 
   const rateData = cookieStore.get(rateKey);
   if (rateData) {
-    const { attempts, lockedUntil } = JSON.parse(rateData.value);
+    let rate: { attempts: number; lockedUntil?: number };
+    try {
+      rate = JSON.parse(rateData.value);
+    } catch {
+      rate = { attempts: 0 };
+    }
+    const { attempts, lockedUntil } = rate;
     if (lockedUntil && Date.now() < lockedUntil) {
       const remaining = Math.ceil((lockedUntil - Date.now()) / 60000);
       return NextResponse.json(
@@ -59,8 +65,17 @@ export async function POST(req: NextRequest) {
   }
 
   if (password !== adminPassword) {
-    const prev = rateData ? JSON.parse(rateData.value) : { attempts: 0, lockedUntil: 0 };
-    const newAttempts = prev.attempts + 1;
+    let prev: { attempts: number; lockedUntil?: number };
+    if (rateData) {
+      try {
+        prev = JSON.parse(rateData.value);
+      } catch {
+        prev = { attempts: 0, lockedUntil: 0 };
+      }
+    } else {
+      prev = { attempts: 0, lockedUntil: 0 };
+    }
+    const newAttempts = typeof prev.attempts === 'number' ? prev.attempts + 1 : 1;
     const res = NextResponse.json(
       { error: 'كلمة المرور غير صحيحة' },
       { status: 401 }

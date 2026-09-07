@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -13,6 +14,15 @@ import { useBuildings } from '@/hooks/useBuildings';
 import { useReviews } from '@/hooks/useReviews';
 import { useAuth } from '@/hooks/useAuth';
 import type { Building, Review } from '@/types';
+
+const BuildingMap = dynamic(() => import('@/components/map/BuildingMap').then((m) => m.BuildingMap), {
+  ssr: false,
+  loading: () => (
+    <div className="h-72 w-full rounded-2xl border border-[var(--color-border)] flex items-center justify-center text-sm text-[var(--color-text-secondary)]">
+      جاري تحميل الخريطة...
+    </div>
+  ),
+});
 
 interface BuildingPageInnerProps {
   buildingId: string;
@@ -126,6 +136,13 @@ export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps
             </div>
           </div>
         </div>
+
+        {building.location && (
+          <div className="mb-6">
+            <h2 className="font-semibold mb-3 text-sm">موقع المبنى</h2>
+            <BuildingMap location={building.location} />
+          </div>
+        )}
 
         <Card className="p-5 mb-6">
           <h2 className="font-semibold mb-4 text-sm">تفاصيل التقييمات</h2>

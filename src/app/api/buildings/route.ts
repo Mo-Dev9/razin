@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { encodeGeohash } from '@/lib/geohash';
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
     }
 
-    let body: { address?: string; city?: string; area?: string; district?: string };
+    let body: { address?: string; city?: string; area?: string; district?: string; location?: { lat?: number; lng?: number } };
     try {
       body = await req.json();
     } catch {
@@ -39,6 +40,13 @@ export async function POST(req: NextRequest) {
 
     if (!address || !city || !area) {
       return NextResponse.json({ error: 'العنوان والمدينة والحي مطلوبين' }, { status: 400 });
+    }
+
+    const lat = typeof body.location?.lat === 'number' ? body.location.lat : null;
+    const lng = typeof body.location?.lng === 'number' ? body.location.lng : null;
+
+    if (lat === null || lng === null || !isFinite(lat) || !isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      return NextResponse.json({ error: 'الموقع على الخريطة مطلوب لضمان الدقة في التقييم' }, { status: 400 });
     }
 
     if (address.length > 200 || city.length > 100 || area.length > 100) {
@@ -71,6 +79,8 @@ export async function POST(req: NextRequest) {
       city,
       area,
       district: body.district?.trim() || '',
+      location: { lat, lng },
+      geohash: encodeGeohash(lat, lng),
       averageRatings: {
         zahma: 0,
         humidity: 0,
