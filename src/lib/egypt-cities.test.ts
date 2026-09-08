@@ -186,4 +186,67 @@ describe('normalizeSearchText', () => {
     expect(normalizeSearchText('6 أكتوبر')).toBe('6 اكتوبر');
     expect(normalizeSearchText('شارع مصطفى النحاس')).toContain('مصطفي');
   });
+
+  it('strips diacritics (tashkeel) so "مُدينة" matches "مدينة"', () => {
+    expect(normalizeSearchText('مُدينة')).toBe(normalizeSearchText('مدينة'));
+    expect(normalizeSearchText('6 أبريل')).toBe('6 ابريل');
+  });
+
+  it('collapses whitespace and trims', () => {
+    expect(normalizeSearchText('  مدينة   نصر  ')).toBe('مدينه نصر');
+  });
+});
+
+describe('matchesCityFilter — حواف', () => {
+  it('returns false for empty values', () => {
+    expect(matchesCityFilter('', 'القاهرة')).toBe(false);
+    expect(matchesCityFilter('مدينة نصر', '')).toBe(false);
+    expect(matchesCityFilter('', '')).toBe(false);
+  });
+
+  it('fallback: filter outside known data matches the raw name only', () => {
+    expect(matchesCityFilter('هرم', 'هرم')).toBe(true);
+    expect(matchesCityFilter('فيصل', 'غير معروفة')).toBe(false);
+  });
+
+  it('same governorate, different district → false', () => {
+    expect(matchesCityFilter('إمبابة', 'فيصل', 'الجيزة')).toBe(false);
+    expect(matchesCityFilter('الزمالك', 'مدينة نصر', 'القاهرة')).toBe(false);
+  });
+});
+
+describe('governorateOf — تعرّف الحواف', () => {
+  it('returns the first governorate owning an ambiguous name', () => {
+    expect(governorateOf('دار السلام')?.name).toBe('القاهرة');
+  });
+
+  it('requires an exact governorate name for isPlaceIn membership', () => {
+    expect(isPlaceIn('فيصل', 'الجيزة')).toBe(true);
+    expect(isPlaceIn('فيصل', 'محافظة الجيزة')).toBe(false);
+  });
+
+  it('placesOf returns [] for an unknown governorate', () => {
+    expect(placesOf('مجهولة')).toEqual([]);
+  });
+
+  it('governorateOf returns null for empty/unknown', () => {
+    expect(governorateOf('')).toBeNull();
+    expect(governorateOf('نص عشوائي')).toBeNull();
+  });
+});
+
+describe('matchLocation — ترتيب المطابقة', () => {
+  it('resolves the first matching part in order — governorate name matches its own place entry', () => {
+    // «الجيزة» يطابق place الجيزة نفسه (المدينة المركزية) وينتهي عنده
+    expect(matchLocation(['الجيزة', '6 أكتوبر'])).toEqual({ governorate: 'الجيزة', city: 'الجيزة' });
+  });
+
+  it('resolves a city even when it appears late and governorate appears earlier', () => {
+    // عكس الحالة: أول مطابقة تفوز — «6 أكتوبر» مكانٌ فرع محافظة الجيزة
+    expect(matchLocation(['6 أكتوبر', 'الجيزة']).governorate).toBe('الجيزة');
+  });
+
+  it('normalizes whitespace and Arabic variants in parts', () => {
+    expect(matchLocation(['مدينة  6  أكتوبر', '  ']).city).toBe('6 أكتوبر');
+  });
 });

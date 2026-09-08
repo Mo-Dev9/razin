@@ -1,7 +1,8 @@
 import { useState, useCallback } from 'react';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { getDb, getFirebaseAuth } from '@/lib/firebase';
-import { matchesCityFilter, normalizeSearchText } from '@/lib/egypt-cities';
+import { matchesCityFilter } from '@/lib/egypt-cities';
+import { matchesBuildingSearch } from '@/lib/building-search';
 import type { Building } from '@/types';
 
 let allBuildingsCache: Building[] | null = null;
@@ -17,30 +18,14 @@ async function getAllBuildings(): Promise<Building[]> {
   return allBuildingsCache;
 }
 
-function matchesSearch(building: Building, q: string): boolean {
-  const nq = normalizeSearchText(q);
-  if (!nq) return false;
-  const fields = [
-    building.area,
-    building.city,
-    building.address,
-    building.district,
-    building.buildingNumber,
-    building.floor,
-    building.apartmentNumber,
-  ].filter(Boolean).map((f) => normalizeSearchText(f!));
-  return fields.some((f) => f.includes(nq));
-}
-
 export function useBuildings() {
   const [loading, setLoading] = useState(false);
 
   const searchBuildings = useCallback(async (searchQuery: string): Promise<Building[]> => {
     setLoading(true);
     try {
-      const q = searchQuery.toLowerCase().trim();
       const buildings = await getAllBuildings();
-      return buildings.filter((b) => matchesSearch(b, q));
+      return buildings.filter((b) => matchesBuildingSearch(b, searchQuery));
     } catch (err) {
       console.error('Search failed:', err);
       return [];
