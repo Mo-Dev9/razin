@@ -218,9 +218,9 @@ describe('matchesBuildingSearch — بحث في حقول متعددة وحواف
     expect(searchByText(fixtures, 'الحي التاسع').map((b) => b.id)).toEqual(['district-field']);
   });
 
-  it('استعلام فارغ أو مسافات لا يمرر شيئًا', () => {
-    expect(searchByText(fixtures, '')).toEqual([]);
-    expect(searchByText(fixtures, '   ')).toEqual([]);
+  it('استعلام فارغ أو مسافات = بلا قيد → يطابق كل المبانٍ (عقد الصفحة الرئيسية searchBuildings(\'\'))', () => {
+    expect(matchesBuildingSearch(fixtures[0], '')).toBe(true);
+    expect(matchesBuildingSearch(fixtures[0], '   ')).toBe(true);
   });
 
   it('التشكيل في الاستعلام لا يمنع المطابقة مع نص غير مشكول', () => {

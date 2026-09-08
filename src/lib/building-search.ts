@@ -3,7 +3,10 @@ import { normalizeSearchText } from '@/lib/egypt-cities';
 
 export function matchesBuildingSearch(building: Building, query: string): boolean {
   const nq = normalizeSearchText(query);
-  if (!nq) return false;
+  // الاستعلام الفارغ/المسافات = «بلا قيد» → يطابق كل المبانٍ.
+  // هذه هي نفس عقد سابق: «الصفحة الرئيسية» تستدعي searchBuildings('') للحصول على كل المباني
+  // ثم تفلتر تقييمات السكان محليًا (HomePageInner) — لا يجب أن يفشل الاستعلام الفارغ.
+  if (!nq) return true;
   const fields = [
     building.area,
     building.city,
