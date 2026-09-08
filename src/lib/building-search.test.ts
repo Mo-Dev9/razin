@@ -95,6 +95,10 @@ function searchByCity(buildings: Building[], filter: string): Building[] {
   return buildings.filter((b) => matchesCityFilter(b.city, filter, b.governorate));
 }
 
+function searchByCityScoped(buildings: Building[], filter: string, filterGovernorate: string): Building[] {
+  return buildings.filter((b) => matchesCityFilter(b.city, filter, b.governorate, filterGovernorate));
+}
+
 describe('matchesBuildingSearch — بحث نصي بدون فلتر', () => {
   const all = [gizaOctober, cairoNasr, gizaFaysal];
 
@@ -164,13 +168,19 @@ describe('أسماء متكررة عبر المحافظات تُحسم بالم�
     expect(matched.map((b) => b.id)).toEqual(['c-darasalam']);
   });
 
-  it('فلتر المدينة «دار السلام» يطابق الاسم حرفيًا — التمييز الكامل يتم عبر طبقة المحافظة في الواجهة', () => {
-    expect(matchesCityFilter('دار السلام', 'دار السلام', 'سوهاج')).toBe(true);
-    expect(matchesCityFilter('دار السلام', 'دار السلام', 'القاهرة')).toBe(true);
-    expect(searchByCity(all, 'دار السلام').map((b) => b.id).sort()).toEqual([
-      'c-darasalam',
-      's-darasalam',
-    ]);
+  it('فلتر مدينة «دار السلام» تحت سوهاج يمرر السوهاجي فقط (لا يتسرب للقاهرة)', () => {
+    const matched = searchByCityScoped(all, 'دار السلام', 'سوهاج');
+    expect(matched.map((b) => b.id)).toEqual(['s-darasalam']);
+  });
+
+  it('فلتر مدينة «دار السلام» تحت القاهرة يمرر القاهري فقط', () => {
+    const matched = searchByCityScoped(all, 'دار السلام', 'القاهرة');
+    expect(matched.map((b) => b.id)).toEqual(['c-darasalam']);
+  });
+
+  it('فلتر مدينة غامض بلا محافظة فلتر لا يمرر شيئًا (دفاعي — لا يحدث من الواجهة)', () => {
+    // لا يمكن تمييز المحافظة المقصودة بدون تمرير محافظة الفلتر المختارة
+    expect(searchByCity(all, 'دار السلام')).toEqual([]);
   });
 });
 
@@ -213,9 +223,15 @@ describe('matchesBuildingSearch — بحث في حقول متعددة وحواف
     expect(searchByText(fixtures, '   ')).toEqual([]);
   });
 
-  it('التشكيل لا يمنع المطابقة', () => {
-    expect(searchByText(fixtures, 'اَلْمُهِنْدِسِين')).toEqual([]); // لا تطابق لا يرمي خطأ
-    expect(searchByText(fixtures, 'الهن')).toEqual([]);
+  it('التشكيل في الاستعلام لا يمنع المطابقة مع نص غير مشكول', () => {
+    const engineers = makeBuilding({
+      id: 'eng',
+      city: 'الدقي',
+      governorate: 'الجيزة',
+      address: 'أبراج المهندسين',
+    });
+    expect(searchByText([...fixtures, engineers], 'اَلْمُهِنْدِسِين').map((b) => b.id)).toEqual(['eng']);
+    expect(searchByText([...fixtures, engineers], 'أبراج المهندسين').map((b) => b.id)).toEqual(['eng']);
   });
 });
 
@@ -263,10 +279,12 @@ describe('اشتقاق قائمة الأحياء (getAllDistricts) — سينا�
 
   const mixed = [legacyWithDistrict, newFaysal, gizaOctober];
 
-  function districtsUnder(city?: string): string[] {
-    const filtered = city
-      ? mixed.filter((b) => matchesCityFilter(b.city, city, b.governorate))
-      : mixed;
+  function districtsUnder(city?: string, governorate?: string): string[] {
+    const filtered = mixed.filter((b) => {
+      if (city) return matchesCityFilter(b.city, city, b.governorate, governorate);
+      if (governorate) return matchesCityFilter(b.city, governorate, b.governorate);
+      return true;
+    });
     return [...new Set(filtered.map((b) => b.district).filter((d): d is string => !!d))].sort();
   }
 
@@ -285,5 +303,36 @@ describe('اشتقاق قائمة الأحياء (getAllDistricts) — سينا�
     const list = districtsUnder('فيصل');
     expect(list).not.toContain('بولاق الدكرور');
     expect(list).toContain('شارع فيصل');
+  });
+
+  it('اسم حي غامض عبر المحافظات: القائمة تُحدَّ بتمرير محافظة الفلتر المختارة', () => {
+    const sohagDist = makeBuilding({
+      id: 's-dist',
+      city: 'دار السلام',
+      governorate: 'سوهاج',
+      district: 'سوهاج شرق',
+    });
+    const cairoDist = makeBuilding({
+      id: 'c-dist',
+      city: 'دار السلام',
+      governorate: 'القاهرة',
+      district: 'دار السلام المعادي',
+    });
+    const ambiguous = [sohagDist, cairoDist];
+
+    function districtsOf(buildings: Building[], city?: string, governorate?: string): string[] {
+      return [
+        ...new Set(
+          buildings
+            .filter((b) => matchesCityFilter(b.city, city!, b.governorate, governorate))
+            .map((b) => b.district)
+            .filter((d): d is string => !!d)
+        ),
+      ].sort();
+    }
+
+    expect(districtsOf(ambiguous, 'دار السلام', 'سوهاج')).toEqual(['سوهاج شرق']);
+    expect(districtsOf(ambiguous, 'دار السلام', 'القاهرة')).toEqual(['دار السلام المعادي']);
+    expect(districtsOf(ambiguous, 'دار السلام')).toEqual([]); // بلا محافظة فلتر لا تمييز
   });
 });

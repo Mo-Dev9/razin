@@ -384,7 +384,7 @@ export default function SearchPageInner() {
 
   useEffect(() => {
     if (selectedGovernorate || selectedCity) {
-      getAllDistricts(selectedGovernorate || selectedCity).then(setDistricts);
+      getAllDistricts(selectedCity || selectedGovernorate, selectedGovernorate).then(setDistricts);
     } else {
       getAllDistricts().then(setDistricts);
     }
@@ -401,11 +401,13 @@ export default function SearchPageInner() {
 
   const applyFilters = async (textQuery?: string, city?: string, district?: string, chip?: ActiveChip) => {
     const qText = textQuery ?? query;
+    const gov = selectedGovernorate;
     const c = city ?? selectedCity;
     const d = district ?? selectedDistrict;
     const ch = chip ?? activeChip;
+    const cityKey = c || gov;
 
-    if (!qText.trim() && !c && !d && ch === 'all') {
+    if (!qText.trim() && !cityKey && !d && ch === 'all') {
       setResults([]);
       setSearched(false);
       return;
@@ -415,11 +417,23 @@ export default function SearchPageInner() {
 
     if (qText.trim()) {
       filtered = await searchBuildings(qText.trim());
+    } else if (cityKey) {
+      filtered = await searchBuildingsAdvanced({
+        city: c || undefined,
+        governorate: gov || undefined,
+        district: d || undefined,
+      });
     } else {
-      filtered = await searchBuildingsAdvanced({ city: c || undefined, district: d || undefined });
+      filtered = await searchBuildingsAdvanced({ district: d || undefined });
     }
 
-    if (c) filtered = filtered.filter((b) => matchesCityFilter(b.city, c, b.governorate));
+    if (cityKey) {
+      filtered = filtered.filter((b) =>
+        c
+          ? matchesCityFilter(b.city, c, b.governorate, gov || undefined)
+          : matchesCityFilter(b.city, gov, b.governorate)
+      );
+    }
     if (d) filtered = filtered.filter((b) => b.district === d);
     if (ch === 'withReviews') filtered = filtered.filter((b) => b.reviewCount > 0);
     if (ch === 'topRated') filtered = filtered.filter((b) => b.averageRatings.overall >= 4.0);

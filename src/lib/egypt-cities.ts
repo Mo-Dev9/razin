@@ -557,33 +557,47 @@ export function matchLocation(parts: string[]): LocationMatch {
 }
 
 // هل قيمة المدينة المخزنة تتبع فلتر محافظة/مدينة/حي معيّن؟
-// يدعم البيانات القديمة المخزّنة باسم المحافظة نفسها.
-// filterGovernorate (اختياري) = المحافظة الصريحة المخزنة في المبنى،
-// تُستخدم لكسر التعارض بين أسماء الأحياء المكررة عبر المحافظات (مثل «دار السلام»).
+// buildingGovernorate = المحافظة الصريحة المخزنة في المبنى (اختياري).
+// filterGovernorate = المحافظة التي اختارها المستخدم في الفلتر حاليًا (اختياري)
+// — تُستخدم لفكّ تعارض الأسماء المكررة عبر المحافظات (مثل «دار السلام»): لا يمر المبنى إلا إذا
+// تطابقت محافظته المخزنة مع محافظة الفلتر المختارة.
 export function matchesCityFilter(
   buildingCity: string,
   filter: string,
+  buildingGovernorate?: string,
   filterGovernorate?: string
 ): boolean {
   const bn = normalize(buildingCity);
   const fn = normalize(filter);
   if (!bn || !fn) return false;
 
-  const filterGov =
-    GOVERNORATES.find((g) => normalize(g.name) === fn) ??
-    GOVERNORATES.find((g) => g.places.some((p) => normalize(p.name) === fn));
-
-  if (!filterGov) return bn === fn;
-
-  // فلتر يمثل اسم محافظة → كل مبنى يتبع تلك المحافظة.
-  if (normalize(filterGov.name) === fn) {
-    if (filterGovernorate) return normalize(filterGovernorate) === fn;
+  // فلتر يسمّي محافظة صراحةً (تُظهر كل المباني التابعة لتلك المحافظة).
+  const filterGovByName = GOVERNORATES.find((g) => normalize(g.name) === fn);
+  if (filterGovByName) {
+    if (buildingGovernorate) return normalize(buildingGovernorate) === fn;
     if (bn === fn) return true;
-    return filterGov.places.some((p) => normalize(p.name) === bn);
+    return filterGovByName.places.some((p) => normalize(p.name) === bn);
   }
 
-  // فلتر يمثل مدينة/حي داخل المحافظة → المطابقة على المبنى نفسه حصرًا.
-  // لا تُمرَّر مبانٍ من مناطق أخرى داخل نفس المحافظة (حتى القديمة منها
-  // المخزّنة باسم المحافظة) — هذه تظهر فقط تحت فلتر محافظة عام.
-  return bn === fn;
+  // فلتر بمستوى مدينة/حي → مطابقة المبنى نفسه حصرًا (لا مناطق أخرى من نفس المحافظة).
+  if (bn !== fn) return false;
+
+  // الاسم منطبق حرفيًا — هل هو اسم متكرر عبر محافظات (مثل «دار السلام»/«القاهرة» نفسها)؟
+  const owning = GOVERNORATES.filter((g) => g.places.some((p) => normalize(p.name) === bn));
+
+  if (owning.length > 1) {
+    // اسم غامض: التمييز الكامل يتطلب محافظة الفلتر المختارة
+    if (buildingGovernorate) {
+      if (!filterGovernorate) return false;
+      return normalize(buildingGovernorate) === normalize(filterGovernorate);
+    }
+    // بيانات قديمة بلا محافظة مخزنة — المطابقة الاسمية كأفضل جهد
+    return true;
+  }
+
+  // اسم فريد لمحافظة واحدة: عندما نعرف الاثنين نرفض تعارض البيانات الصريح
+  if (buildingGovernorate && filterGovernorate) {
+    return normalize(buildingGovernorate) === normalize(filterGovernorate);
+  }
+  return true;
 }

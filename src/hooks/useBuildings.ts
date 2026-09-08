@@ -34,12 +34,16 @@ export function useBuildings() {
     }
   }, []);
 
-  const searchBuildingsAdvanced = useCallback(async (filters: { city?: string; district?: string; hasReviews?: boolean }): Promise<Building[]> => {
+  const searchBuildingsAdvanced = useCallback(async (filters: { city?: string; governorate?: string; district?: string; hasReviews?: boolean }): Promise<Building[]> => {
     setLoading(true);
     try {
       const buildings = await getAllBuildings();
       return buildings.filter((b) => {
-        if (filters.city && !matchesCityFilter(b.city, filters.city, b.governorate)) return false;
+        if (filters.city) {
+          if (!matchesCityFilter(b.city, filters.city, b.governorate, filters.governorate)) return false;
+        } else if (filters.governorate) {
+          if (!matchesCityFilter(b.city, filters.governorate, b.governorate)) return false;
+        }
         if (filters.district && b.district !== filters.district) return false;
         if (filters.hasReviews && b.reviewCount === 0) return false;
         return true;
@@ -58,9 +62,13 @@ export function useBuildings() {
     return cities.sort();
   }, []);
 
-  const getAllDistricts = useCallback(async (city?: string): Promise<string[]> => {
+  const getAllDistricts = useCallback(async (city?: string, governorate?: string): Promise<string[]> => {
     const buildings = await getAllBuildings();
-    const filtered = city ? buildings.filter((b) => matchesCityFilter(b.city, city)) : buildings;
+    const filtered = buildings.filter((b) => {
+      if (city) return matchesCityFilter(b.city, city, b.governorate, governorate);
+      if (governorate) return matchesCityFilter(b.city, governorate, b.governorate);
+      return true;
+    });
     const districts = [...new Set(filtered.map((b) => b.district).filter((d): d is string => !!d))];
     return districts.sort();
   }, []);
