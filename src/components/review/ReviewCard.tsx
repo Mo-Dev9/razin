@@ -28,22 +28,23 @@ export function ReviewCard({ review, buildingId, userVote = null, onVote, onRepo
 
   return (
     <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 shadow-soft hover:shadow-[0_10px_30px_-5px_rgb(15_44_44/0.15)] hover:-translate-y-1 hover:scale-[1.02] transition-all duration-200">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
-          {details.length > 0 ? (
-            <span>{details.join(' · ')}</span>
-          ) : (
-            <span>تقييم مجهول</span>
-          )}
-          {dateStr && (
-            <>
-              <span>·</span>
-              <span>{dateStr}</span>
-            </>
-          )}
+      <div className="flex items-center justify-between gap-3 mb-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-10 h-10 rounded-xl bg-[#0F2C2C] flex items-center justify-center flex-shrink-0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9B94A" strokeWidth="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+          </div>
+          <div className="min-w-0">
+            <div className="text-sm font-semibold text-[var(--color-text)]">ساكن مجهول</div>
+            <div className="text-xs text-[var(--color-text-muted)] truncate">
+              {[details.length > 0 ? details.join(' · ') : 'تقييم مجهول', dateStr].filter(Boolean).join(' · ')}
+            </div>
+          </div>
         </div>
         {hasAvg && (
-          <div className="flex items-center gap-1 bg-[var(--color-accent)]/15 px-2.5 py-1 rounded-lg">
+          <div className="flex items-center gap-1 bg-[var(--color-accent)]/15 px-2.5 py-1 rounded-lg flex-shrink-0">
             <span className="text-sm font-bold text-[var(--color-primary)]">{avg}</span>
             <span className="text-[var(--color-accent)] text-xs">★</span>
           </div>
@@ -57,7 +58,8 @@ export function ReviewCard({ review, buildingId, userVote = null, onVote, onRepo
       )}
 
       {buildingId && onVote && (
-        <div className="mt-3 flex items-center justify-end">
+        <div className="mt-4 flex items-center justify-between gap-3 pt-3 border-t border-[var(--color-border)]">
+          <span className="text-xs text-[var(--color-text-muted)]">هل كان مفيداً؟</span>
           <VoteButtons
             reviewId={review.id}
             upvotes={review.upvotes ?? 0}
@@ -78,6 +80,7 @@ export function ReviewCard({ review, buildingId, userVote = null, onVote, onRepo
             <span>🚩</span>
             إبلاغ
           </button>
+          {hasAvg && <span className="text-[10px] text-[var(--color-text-muted)]">{vals.length} معيار</span>}
         </div>
       )}
     </div>

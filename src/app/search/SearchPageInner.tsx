@@ -8,7 +8,6 @@ import { NumberGrid } from '@/components/ui/NumberGrid';
 import { useBuildings } from '@/hooks/useBuildings';
 import { useReviews } from '@/hooks/useReviews';
 import { useAuth } from '@/hooks/useAuth';
-import { useSavedBuildings } from '@/hooks/useSaves';
 import { RATING_LABELS } from '@/types';
 import { EGYPT_CITIES, findCityCenter } from '@/lib/egypt-cities';
 import { reverseGeocode } from '@/lib/geocode';
@@ -341,8 +340,6 @@ export default function SearchPageInner() {
   const q = searchParams.get('q') || '';
   const addMode = searchParams.get('add') === 'true';
   const { searchBuildings, searchBuildingsAdvanced, getAllDistricts, loading } = useBuildings();
-  const { user } = useAuth();
-  const { toggleSave, isSaved } = useSavedBuildings(user?.uid);
   const [query, setQuery] = useState(q);
   const [results, setResults] = useState<Building[]>([]);
   const [searched, setSearched] = useState(false);
@@ -606,8 +603,6 @@ export default function SearchPageInner() {
               building={building}
               ratingAvg={building.averageRatings?.overall}
               reviewCount={building.reviewCount}
-              isSaved={isSaved(building.id)}
-              onToggleSave={user ? () => void toggleSave(building) : undefined}
             />
           ))}
         </div>
