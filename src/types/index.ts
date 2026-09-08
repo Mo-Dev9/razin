@@ -4,6 +4,7 @@ export interface Building {
   city: string;
   area: string;
   district?: string;
+  governorate?: string;
   buildingNumber?: string;
   floor?: string;
   apartmentNumber?: string;

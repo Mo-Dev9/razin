@@ -236,7 +236,7 @@ export default function AdminDashboard() {
 
   const openEdit = (b: Building) => {
     setEditingId(b.id);
-    const gov = governorateOf(b.city || '');
+    const gov = governorateOf(b.governorate || b.city || '');
     setFormGovernorate(gov?.name ?? '');
     setForm({
       address: b.address || '',
@@ -275,6 +275,7 @@ export default function AdminDashboard() {
         city,
         area: form.area.trim(),
         district: form.district.trim(),
+        governorate: formGovernorate.trim(),
         buildingNumber: form.buildingNumber.trim(),
         floor: form.floor.trim(),
         apartmentNumber: form.apartmentNumber.trim(),

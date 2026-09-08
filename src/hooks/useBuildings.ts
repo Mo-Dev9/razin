@@ -52,7 +52,7 @@ export function useBuildings() {
     try {
       const buildings = await getAllBuildings();
       return buildings.filter((b) => {
-        if (filters.city && !matchesCityFilter(b.city, filters.city)) return false;
+        if (filters.city && !matchesCityFilter(b.city, filters.city, b.governorate)) return false;
         if (filters.district && b.district !== filters.district) return false;
         if (filters.hasReviews && b.reviewCount === 0) return false;
         return true;
@@ -93,6 +93,7 @@ export function useBuildings() {
     city: string;
     area: string;
     district?: string;
+    governorate?: string;
     location: { lat: number; lng: number };
   }): Promise<string> => {
     setLoading(true);

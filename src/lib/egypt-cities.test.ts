@@ -142,4 +142,20 @@ describe('matchesCityFilter', () => {
     expect(matchesCityFilter('القاهرة', 'الغربية')).toBe(false);
     expect(matchesCityFilter('طنطا', 'الإسكندرية')).toBe(false);
   });
+
+  it('disambiguates duplicate neighborhood names with the stored governorate', () => {
+    // «دار السلام» في القاهرة وفي سوهاج: بدون محافظة صريحة يُمرَّران معًا،
+    // وبمحافظة صريحة يُقيَّدان بمحافظة الفلتر فقط.
+    expect(matchesCityFilter('دار السلام', 'القاهرة')).toBe(true);
+    expect(matchesCityFilter('دار السلام', 'سوهاج')).toBe(true);
+    expect(matchesCityFilter('دار السلام', 'القاهرة', 'القاهرة')).toBe(true);
+    expect(matchesCityFilter('دار السلام', 'القاهرة', 'سوهاج')).toBe(false);
+    expect(matchesCityFilter('دار السلام', 'سوهاج', 'سوهاج')).toBe(true);
+    expect(matchesCityFilter('دار السلام', 'سوهاج', 'القاهرة')).toBe(false);
+  });
+
+  it('matches the stored governorate directly', () => {
+    expect(matchesCityFilter('أي شيء', 'القاهرة', 'القاهرة')).toBe(true);
+    expect(matchesCityFilter('أي شيء', 'القاهرة', 'الغربية')).toBe(false);
+  });
 });

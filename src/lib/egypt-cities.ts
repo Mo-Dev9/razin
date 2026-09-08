@@ -545,11 +545,19 @@ export function matchLocation(parts: string[]): LocationMatch {
 
 // هل قيمة المدينة المخزنة تتبع فلتر محافظة/مدينة/حي معيّن؟
 // يدعم البيانات القديمة المخزّنة باسم المحافظة نفسها.
-export function matchesCityFilter(buildingCity: string, filter: string): boolean {
+// filterGovernorate (اختياري) = المحافظة الصريحة المخزنة في المبنى،
+// تُستخدم لكسر التعارض بين أسماء الأحياء المكررة عبر المحافظات (مثل «دار السلام»).
+export function matchesCityFilter(
+  buildingCity: string,
+  filter: string,
+  filterGovernorate?: string
+): boolean {
   const bn = normalize(buildingCity);
   const fn = normalize(filter);
   if (!bn || !fn) return false;
-  if (bn === fn) return true;
+
+  // فلتر مسار مطابق للمحافظة الصريحة المخزنة → ممرر دائمًا.
+  if (filterGovernorate && normalize(filterGovernorate) === fn) return true;
 
   const filterGov =
     GOVERNORATES.find((g) => normalize(g.name) === fn) ??
@@ -557,5 +565,15 @@ export function matchesCityFilter(buildingCity: string, filter: string): boolean
   if (!filterGov) return false;
 
   if (bn === normalize(filterGov.name)) return true;
-  return filterGov.places.some((p) => normalize(p.name) === bn);
+
+  const inFilter = filterGov.places.some((p) => normalize(p.name) === bn);
+  // إذا كانت المدينة تتطابق مع اسم متكرر عبر محافظات، فلا نمررها إلا إذا
+  // كانت المحافظة الصريحة (إن وُجدت) هي نفس محافظة الفلتر.
+  if (inFilter) {
+    if (filterGovernorate) {
+      return normalize(filterGovernorate) === normalize(filterGov.name);
+    }
+    return true;
+  }
+  return false;
 }

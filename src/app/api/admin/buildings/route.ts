@@ -83,6 +83,7 @@ export async function POST(req: NextRequest) {
     city?: string;
     area?: string;
     district?: string;
+    governorate?: string;
     buildingNumber?: string;
     floor?: string;
     apartmentNumber?: string;
@@ -94,12 +95,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'طلب غير صالح' }, { status: 400 });
   }
 
-  const address = body.address?.trim();
-  const city = body.city?.trim();
-  const area = body.area?.trim();
+const address = body.address?.trim();
+const city = body.city?.trim();
+const area = body.area?.trim();
+const governorate = body.governorate?.trim();
 
   if (!address || !city || !area) {
     return NextResponse.json({ error: 'العنوان والمدينة والحي مطلوبين' }, { status: 400 });
+  }
+  if (address.length > 200 || city.length > 100 || area.length > 100 || (governorate && governorate.length > 100)) {
+    return NextResponse.json({ error: 'البيانات أطول من المسموح' }, { status: 400 });
   }
 
   let location: { lat: number; lng: number };
@@ -121,6 +126,7 @@ export async function POST(req: NextRequest) {
       city,
       area,
       district: body.district?.trim() || '',
+      governorate: governorate || '',
       buildingNumber: body.buildingNumber?.trim() || '',
       floor: body.floor?.trim() || '',
       apartmentNumber: body.apartmentNumber?.trim() || '',
@@ -162,6 +168,7 @@ export async function PATCH(req: NextRequest) {
     city?: string;
     area?: string;
     district?: string;
+    governorate?: string;
     buildingNumber?: string;
     floor?: string;
     apartmentNumber?: string;
@@ -192,6 +199,7 @@ export async function PATCH(req: NextRequest) {
     if (typeof body.city === 'string') patch.city = body.city.trim();
     if (typeof body.area === 'string') patch.area = body.area.trim();
     if (typeof body.district === 'string') patch.district = body.district.trim();
+    if (typeof body.governorate === 'string') patch.governorate = body.governorate.trim();
     if (typeof body.buildingNumber === 'string') patch.buildingNumber = body.buildingNumber.trim();
     if (typeof body.floor === 'string') patch.floor = body.floor.trim();
     if (typeof body.apartmentNumber === 'string') patch.apartmentNumber = body.apartmentNumber.trim();

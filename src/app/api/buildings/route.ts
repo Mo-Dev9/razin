@@ -25,16 +25,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
     }
 
-    let body: { address?: string; city?: string; area?: string; district?: string; location?: { lat?: number; lng?: number } };
+    let body: { address?: string; city?: string; area?: string; district?: string; governorate?: string; location?: { lat?: number; lng?: number } };
     try {
       body = await req.json();
     } catch {
       return NextResponse.json({ error: 'طلب غير صالح' }, { status: 400 });
     }
 
-    const address = body.address?.trim();
-    const city = body.city?.trim();
-    const area = body.area?.trim();
+const address = body.address?.trim();
+const city = body.city?.trim();
+const area = body.area?.trim();
+const governorate = body.governorate?.trim();
 
     if (!address || !city || !area) {
       return NextResponse.json({ error: 'العنوان والمدينة والحي مطلوبين' }, { status: 400 });
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'الموقع على الخريطة مطلوب لضمان الدقة في التقييم' }, { status: 400 });
     }
 
-    if (address.length > 200 || city.length > 100 || area.length > 100) {
+    if (address.length > 200 || city.length > 100 || area.length > 100 || (governorate && governorate.length > 100)) {
       return NextResponse.json({ error: 'البيانات أطول من المسموح' }, { status: 400 });
     }
 
@@ -77,6 +78,7 @@ export async function POST(req: NextRequest) {
       city,
       area,
       district: body.district?.trim() || '',
+      governorate: governorate || '',
       location: { lat, lng },
       geohash: encodeGeohash(lat, lng),
       averageRatings: {

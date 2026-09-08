@@ -80,6 +80,7 @@ function AddAndRateForm() {
         address: newAddress.trim(),
         city: newCity.trim(),
         area: newArea.trim(),
+        governorate: newGovernorate.trim(),
         location,
       });
 
