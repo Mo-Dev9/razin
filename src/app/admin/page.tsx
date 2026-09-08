@@ -37,6 +37,9 @@ interface AdminReport {
   reasonLabel: string;
   createdAt: number;
   reporterUid: string;
+  reporterName: string;
+  reporterEmail: string;
+  reportAnonymous: boolean;
   reviewComment: string;
   reviewOverall: number;
   buildingAddress: string;
@@ -566,7 +569,9 @@ export default function AdminDashboard() {
                         <p className="text-xs text-[var(--color-text-muted)] mb-1">(تقييم بدون تعليق)</p>
                       )}
                       <p className="text-[10px] text-[var(--color-text-muted)] mt-1">
-                        المُبلِّغ: {report.reporterUid.slice(0, 8)}... · التقييم: {report.reviewId.slice(0, 8)}...
+                        المُبلِّغ: {report.reporterName}
+                        {report.reporterEmail ? ` (${report.reporterEmail})` : ''}
+                        · التقييم: {report.reviewId.slice(0, 8)}...
                       </p>
                     </div>
                   </div>

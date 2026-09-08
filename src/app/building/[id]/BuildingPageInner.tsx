@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
@@ -11,6 +11,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { BuildingRatings } from '@/components/building/BuildingRatings';
 import { ReviewCard } from '@/components/review/ReviewCard';
 import { ReportModal } from '@/components/review/ReportModal';
+import { LoginPromptModal } from '@/components/auth/LoginPromptModal';
 import { useBuildings } from '@/hooks/useBuildings';
 import { useReviews } from '@/hooks/useReviews';
 import { useReports } from '@/hooks/useReports';
@@ -70,7 +71,35 @@ export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps
   const [reviews, setReviews] = useState<Review[]>([]);
   const [userVotes, setUserVotes] = useState<Record<string, VoteType>>({});
   const [reportFor, setReportFor] = useState<Review | null>(null);
+  const [showLogin, setShowLogin] = useState(false);
+  const [pendingVote, setPendingVote] = useState<{ reviewId: string; type: VoteType } | null>(null);
+  const [pendingReport, setPendingReport] = useState<Review | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const needsGoogle = () => !user || user.isAnonymous;
+
+  const performVote = useCallback(async (reviewId: string, type: VoteType) => {
+    if (!building || !user) return { ok: false, error: 'غير مصرح' };
+    const res = await voteReview(reviewId, building.id, type);
+    if (res.ok) {
+      const v = await getBuildingUserVotes(building.id, user.uid);
+      setUserVotes(v);
+    }
+    return res;
+  }, [building, user, voteReview, getBuildingUserVotes]);
+
+  const handleLoginDone = () => {
+    setShowLogin(false);
+    if (pendingVote) {
+      const vote = pendingVote;
+      setPendingVote(null);
+      void performVote(vote.reviewId, vote.type);
+    }
+    if (pendingReport) {
+      setPendingReport(null);
+      setReportFor(pendingReport);
+    }
+  };
 
   useEffect(() => {
     if (buildingId && user) {
@@ -220,15 +249,21 @@ export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps
                     buildingId={building.id}
                     userVote={userVotes[review.id] ?? null}
                     onVote={async (reviewId, type) => {
-                      if (!user) return { ok: false, error: 'غير مصرح' };
-                      const res = await voteReview(reviewId, building.id, type);
-                      if (res.ok) {
-                        const v = await getBuildingUserVotes(building.id, user.uid);
-                        setUserVotes(v);
+                      if (needsGoogle()) {
+                        setPendingVote({ reviewId, type });
+                        setShowLogin(true);
+                        return { ok: false };
                       }
-                      return res;
+                      return performVote(reviewId, type);
                     }}
-                    onReport={!isMine && !!user ? () => setReportFor(review) : undefined}
+                    onReport={() => {
+                      if (needsGoogle()) {
+                        setPendingReport(review);
+                        setShowLogin(true);
+                      } else {
+                        setReportFor(review);
+                      }
+                    }}
                   />
                   {isMine && (
                     <ReviewActions
@@ -252,6 +287,10 @@ export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps
         )}
       </main>
       <Footer />
+
+      {showLogin && (
+        <LoginPromptModal onDone={handleLoginDone} onClose={() => { setShowLogin(false); setPendingVote(null); setPendingReport(null); }} />
+      )}
 
       {reportFor && (
         <ReportModal

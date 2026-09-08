@@ -80,6 +80,7 @@ export function useAuth() {
         const updateData: Partial<UserProfile> = {
           isAnonymous: false,
           photoURL: firebaseUser.photoURL || undefined,
+          email: firebaseUser.email || undefined,
           linkedProvider: 'google.com',
           linkedAt: Date.now(),
         };

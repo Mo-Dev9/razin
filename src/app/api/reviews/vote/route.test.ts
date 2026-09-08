@@ -110,6 +110,17 @@ describe('POST /api/reviews/vote', () => {
     expect(res.status).toBe(401);
   });
 
+  it('returns 401 for an anonymous (not Google-linked) user', async () => {
+    mockGetAdminAuth.mockReturnValue({
+      verifyIdToken: () =>
+        Promise.resolve({ uid: 'user-1', firebase: { sign_in_provider: 'anonymous' } }),
+    });
+    const res = await POST(makeRequest({}));
+    expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body.error).toBe('سجّل بـ Google أولاً');
+  });
+
   it('returns 400 for malformed JSON body', async () => {
     const res = await POST(makeRequest({ rawBody: '{not-json' }));
     expect(res.status).toBe(400);

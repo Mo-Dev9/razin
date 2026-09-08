@@ -21,6 +21,9 @@ export async function POST(req: NextRequest) {
   let uid: string;
   try {
     const decoded = await getAdminAuth().verifyIdToken(authHeader.slice(7));
+    if (decoded.firebase?.sign_in_provider === 'anonymous') {
+      return NextResponse.json({ error: 'سجّل بـ Google أولاً' }, { status: 401 });
+    }
     uid = decoded.uid;
   } catch {
     return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });

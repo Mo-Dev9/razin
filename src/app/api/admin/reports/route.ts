@@ -31,9 +31,11 @@ export async function GET() {
 
     const reviewIds = [...new Set(rawReports.map((r) => r.reviewId))];
     const buildingIds = [...new Set(rawReports.map((r) => r.buildingId))];
+    const reporterIds = [...new Set(rawReports.map((r) => r.reporterUid))];
 
     const reviewMap: Record<string, Record<string, unknown>> = {};
     const buildingMap: Record<string, Record<string, unknown>> = {};
+    const reporterMap: Record<string, Record<string, unknown>> = {};
 
     await Promise.all([
       ...reviewIds.map(async (id) => {
@@ -46,6 +48,11 @@ export async function GET() {
         const data = d.data();
         if (d.exists && data) buildingMap[id] = data;
       }),
+      ...reporterIds.map(async (id) => {
+        const d = await db.collection('users').doc(id).get();
+        const data = d.data();
+        if (d.exists && data) reporterMap[id] = data;
+      }),
     ]);
 
     const reports = rawReports.map((r) => ({
@@ -56,6 +63,9 @@ export async function GET() {
       reasonLabel: REPORT_REASONS.find((x) => x.id === r.reason)?.ar || r.reason,
       createdAt: r.createdAt,
       reporterUid: r.reporterUid,
+      reporterName: (reporterMap[r.reporterUid]?.displayName as string) || '—',
+      reporterEmail: (reporterMap[r.reporterUid]?.email as string) || '',
+      reportAnonymous: reporterMap[r.reporterUid]?.isAnonymous !== false,
       reviewComment: (reviewMap[r.reviewId]?.comment as string) || '',
       reviewOverall: (reviewMap[r.reviewId]?.overall as number) ?? 0,
       buildingAddress: (buildingMap[r.buildingId]?.address as string) || r.buildingId,

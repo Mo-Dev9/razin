@@ -87,6 +87,16 @@ describe('POST /api/reports', () => {
     expect(res.status).toBe(401);
   });
 
+  it('returns 401 for an anonymous (not Google-linked) user', async () => {
+    mockGetAdminAuth.mockReturnValue({
+      verifyIdToken: () => Promise.resolve({ uid: 'u1', firebase: { sign_in_provider: 'anonymous' } }),
+    });
+    const res = await POST(makeRequest(JSON.stringify({ reviewId: 'r1', buildingId: 'b1', reason: 'offensive' })));
+    expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body.error).toBe('سجّل بـ Google أولاً');
+  });
+
   it('returns 400 for an invalid reason', async () => {
     const res = await POST(makeRequest(JSON.stringify({ reviewId: 'r1', buildingId: 'b1', reason: 'spam' })));
     expect(res.status).toBe(400);
