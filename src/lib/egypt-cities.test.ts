@@ -130,9 +130,12 @@ describe('matchesCityFilter', () => {
     expect(matchesCityFilter('مدينة نصر', 'القاهرة')).toBe(true);
   });
 
-  it('matches legacy stored governorate names under their governorate', () => {
+  it('keeps legacy governorate-stored names matching their governorate filter only', () => {
     expect(matchesCityFilter('الغربية', 'الغربية')).toBe(true);
-    expect(matchesCityFilter('القاهرة', 'مدينة نصر')).toBe(true);
+    expect(matchesCityFilter('القاهرة', 'القاهرة')).toBe(true);
+    // لكن لا تظهر تحت فلتر مدينة/حي محدد (بلا governorate مخزن)
+    expect(matchesCityFilter('القاهرة', 'مدينة نصر')).toBe(false);
+    expect(matchesCityFilter('الجيزة', '6 أكتوبر')).toBe(false);
   });
 
   it('matches an exact city filter', () => {
@@ -165,8 +168,10 @@ describe('matchesCityFilter', () => {
     expect(matchesCityFilter('6 أكتوبر', '6 أكتوبر', 'الجيزة')).toBe(true);
     expect(matchesCityFilter('فيصل', '6 أكتوبر', 'الجيزة')).toBe(false);
     expect(matchesCityFilter('الهرم', '6 أكتوبر', 'الجيزة')).toBe(false);
-    // بيانات قديمة مخزنة باسم المحافظة تبقى مقبولة كتنازل رجعي
-    expect(matchesCityFilter('الجيزة', '6 أكتوبر')).toBe(true);
+    // حتى مبنى قديم مخزّن باسم المحافظة لا يظهر تحت فلتر مدينة محدد
+    expect(matchesCityFilter('الجيزة', '6 أكتوبر')).toBe(false);
+    // والمباني بلا محافظة مخزنة تطابق مدينتها الحرفية فقط
+    expect(matchesCityFilter('فيصل', 'فيصل')).toBe(true);
   });
 });
 
