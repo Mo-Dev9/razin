@@ -46,6 +46,19 @@ function normalize(name: string): string {
     .trim();
 }
 
+// تطبيع بحث أخف من normalize: يوحّد الهمزات/التاء المربوطة/الألف المقصورة
+// ويحذف التشكيل فقط، مع إبقاء الأرقام والكلمات (مثل "6 أكتوبر").
+export function normalizeSearchText(text: string): string {
+  return text
+    .replace(/[\u064B-\u0652\u0640]/g, '')
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
 const CITY_BY_NAME = new Map<string, EgyptCity>();
 for (const city of CITIES) {
   CITY_BY_NAME.set(normalize(city.name), city);
@@ -556,24 +569,23 @@ export function matchesCityFilter(
   const fn = normalize(filter);
   if (!bn || !fn) return false;
 
-  // فلتر مسار مطابق للمحافظة الصريحة المخزنة → ممرر دائمًا.
-  if (filterGovernorate && normalize(filterGovernorate) === fn) return true;
-
   const filterGov =
     GOVERNORATES.find((g) => normalize(g.name) === fn) ??
     GOVERNORATES.find((g) => g.places.some((p) => normalize(p.name) === fn));
-  if (!filterGov) return false;
 
-  if (bn === normalize(filterGov.name)) return true;
+  if (!filterGov) return bn === fn;
 
-  const inFilter = filterGov.places.some((p) => normalize(p.name) === bn);
-  // إذا كانت المدينة تتطابق مع اسم متكرر عبر محافظات، فلا نمررها إلا إذا
-  // كانت المحافظة الصريحة (إن وُجدت) هي نفس محافظة الفلتر.
-  if (inFilter) {
-    if (filterGovernorate) {
-      return normalize(filterGovernorate) === normalize(filterGov.name);
-    }
-    return true;
+  // فلتر يمثل اسم محافظة → كل مبنى يتبع تلك المحافظة.
+  if (normalize(filterGov.name) === fn) {
+    if (filterGovernorate) return normalize(filterGovernorate) === fn;
+    if (bn === fn) return true;
+    return filterGov.places.some((p) => normalize(p.name) === bn);
   }
+
+  // فلتر يمثل مدينة/حي داخل المحافظة → المطابقة على المبنى نفسه حصرًا.
+  // لا تُمرَّر مبانٍ من مناطق أخرى داخل نفس المحافظة؛
+  // مع قبول البيانات القديمة المخزّنة باسم المحافظة (بلا حقل governorate).
+  if (bn === fn) return true;
+  if (bn === normalize(filterGov.name) && !filterGovernorate) return true;
   return false;
 }

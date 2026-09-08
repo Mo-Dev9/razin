@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { getDb, getFirebaseAuth } from '@/lib/firebase';
-import { matchesCityFilter } from '@/lib/egypt-cities';
+import { matchesCityFilter, normalizeSearchText } from '@/lib/egypt-cities';
 import type { Building } from '@/types';
 
 let allBuildingsCache: Building[] | null = null;
@@ -18,6 +18,8 @@ async function getAllBuildings(): Promise<Building[]> {
 }
 
 function matchesSearch(building: Building, q: string): boolean {
+  const nq = normalizeSearchText(q);
+  if (!nq) return false;
   const fields = [
     building.area,
     building.city,
@@ -26,8 +28,8 @@ function matchesSearch(building: Building, q: string): boolean {
     building.buildingNumber,
     building.floor,
     building.apartmentNumber,
-  ].filter(Boolean).map((f) => f!.toLowerCase());
-  return fields.some((f) => f.includes(q));
+  ].filter(Boolean).map((f) => normalizeSearchText(f!));
+  return fields.some((f) => f.includes(nq));
 }
 
 export function useBuildings() {

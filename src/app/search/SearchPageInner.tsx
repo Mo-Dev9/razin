@@ -419,7 +419,7 @@ export default function SearchPageInner() {
       filtered = await searchBuildingsAdvanced({ city: c || undefined, district: d || undefined });
     }
 
-    if (c) filtered = filtered.filter((b) => matchesCityFilter(b.city, c));
+    if (c) filtered = filtered.filter((b) => matchesCityFilter(b.city, c, b.governorate));
     if (d) filtered = filtered.filter((b) => b.district === d);
     if (ch === 'withReviews') filtered = filtered.filter((b) => b.reviewCount > 0);
     if (ch === 'topRated') filtered = filtered.filter((b) => b.averageRatings.overall >= 4.0);

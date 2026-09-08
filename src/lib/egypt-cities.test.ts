@@ -9,6 +9,7 @@ import {
   isPlaceIn,
   matchLocation,
   matchesCityFilter,
+  normalizeSearchText,
 } from './egypt-cities';
 
 describe('EGYPT_CITIES', () => {
@@ -157,5 +158,27 @@ describe('matchesCityFilter', () => {
   it('matches the stored governorate directly', () => {
     expect(matchesCityFilter('أي شيء', 'القاهرة', 'القاهرة')).toBe(true);
     expect(matchesCityFilter('أي شيء', 'القاهرة', 'الغربية')).toBe(false);
+  });
+
+  it('scopes a district filter to that district only — not every building in the governorate', () => {
+    // مبانٍ في الجيزة بمدن مختلفة: فلتر «6 أكتوبر» يمرر 6 أكتوبر فقط
+    expect(matchesCityFilter('6 أكتوبر', '6 أكتوبر', 'الجيزة')).toBe(true);
+    expect(matchesCityFilter('فيصل', '6 أكتوبر', 'الجيزة')).toBe(false);
+    expect(matchesCityFilter('الهرم', '6 أكتوبر', 'الجيزة')).toBe(false);
+    // بيانات قديمة مخزنة باسم المحافظة تبقى مقبولة كتنازل رجعي
+    expect(matchesCityFilter('الجيزة', '6 أكتوبر')).toBe(true);
+  });
+});
+
+describe('normalizeSearchText', () => {
+  it('unifies hamza, taa marbuta and alef maqsura for matching', () => {
+    expect(normalizeSearchText('اكتوبر')).toBe(normalizeSearchText('أكتوبر'));
+    expect(normalizeSearchText('مدينة')).toBe(normalizeSearchText('مدينه'));
+    expect(normalizeSearchText('مدى')).toBe('مدي');
+  });
+
+  it('keeps digits and words (6 أكتوبر) intact', () => {
+    expect(normalizeSearchText('6 أكتوبر')).toBe('6 اكتوبر');
+    expect(normalizeSearchText('شارع مصطفى النحاس')).toContain('مصطفي');
   });
 });
