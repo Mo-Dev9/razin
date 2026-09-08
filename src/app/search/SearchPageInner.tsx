@@ -33,7 +33,6 @@ function AddAndRateForm() {
   const [newAddress, setNewAddress] = useState('');
   const [newGovernorate, setNewGovernorate] = useState('');
   const [newCity, setNewCity] = useState('');
-  const [newArea, setNewArea] = useState('');
   const [buildingNumber, setBuildingNumber] = useState('');
   const [floor, setFloor] = useState('');
   const [apartmentNumber, setApartmentNumber] = useState('');
@@ -65,7 +64,7 @@ function AddAndRateForm() {
   const governoratePlaces = placesOf(newGovernorate);
 
   const handleSubmit = async () => {
-    if (!newAddress.trim() || !newGovernorate.trim() || !newCity.trim() || !newArea.trim()) return;
+    if (!newAddress.trim() || !newGovernorate.trim() || !newCity.trim()) return;
     if (!location) {
       setError('حدد الموقع على الخريطة أولاً لضمان الدقة في التقييم');
       return;
@@ -79,7 +78,7 @@ function AddAndRateForm() {
       const buildingId = await addBuilding({
         address: newAddress.trim(),
         city: newCity.trim(),
-        area: newArea.trim(),
+        area: newCity.trim(),
         governorate: newGovernorate.trim(),
         location,
       });
@@ -140,7 +139,6 @@ function AddAndRateForm() {
               setNewAddress('');
               setNewGovernorate('');
               setNewCity('');
-              setNewArea('');
               setBuildingNumber('');
               setFloor('');
               setApartmentNumber('');
@@ -178,14 +176,6 @@ function AddAndRateForm() {
       <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-5 mb-5">
         <label className="text-sm font-semibold text-[var(--color-text)] block mb-3">بيانات المبنى</label>
         <div className="space-y-3">
-          <input
-            type="text"
-            value={newAddress}
-            onChange={(e) => setNewAddress(e.target.value)}
-            placeholder="عنوان المبنى (مثال: شارع مصطفى النحاس، مدينة نصر)"
-            required
-            className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
-          />
           <div className="grid grid-cols-2 gap-3">
             <select
               value={newGovernorate}
@@ -242,9 +232,9 @@ function AddAndRateForm() {
           )}
           <input
             type="text"
-            value={newArea}
-            onChange={(e) => setNewArea(e.target.value)}
-            placeholder="الحي (مثال: مدينة نصر)"
+            value={newAddress}
+            onChange={(e) => setNewAddress(e.target.value)}
+            placeholder="عنوان المبنى مثل اسم الشارع/ الحي"
             required
             className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
           />
@@ -294,7 +284,6 @@ function AddAndRateForm() {
                       setNewCity((cur) => placesOf(gov).some((p) => p.name === cur) ? cur : '');
                     }
                   }
-                  if (result.area) setNewArea(result.area);
                 });
               }}
             />
@@ -359,7 +348,7 @@ function AddAndRateForm() {
 
         <button
           onClick={handleSubmit}
-          disabled={loading || !newAddress.trim() || !newCity.trim() || !newArea.trim()}
+          disabled={loading || !newAddress.trim() || !newCity.trim()}
           className="w-full bg-[var(--color-primary)] text-white py-[16px] rounded-full text-sm font-bold hover:bg-[var(--color-primary-dark)] hover:shadow-[0_10px_25px_-5px_rgb(15_44_44/0.3)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
         >
           {loading ? (
