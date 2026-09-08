@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { AnalyticsPanel } from '@/components/admin/AnalyticsPanel';
 import { LogoutButton } from '@/components/admin/LogoutButton';
 import { ReviewDetails } from '@/components/admin/ReviewDetails';
-import { EGYPT_CITIES, findCityCenter } from '@/lib/egypt-cities';
+import { EGYPT_GOVERNORATES, placesOf, governorateOf, isPlaceIn } from '@/lib/egypt-cities';
 import { reverseGeocode } from '@/lib/geocode';
 import type { Building, Review } from '@/types';
 
@@ -58,10 +58,11 @@ export default function AdminDashboard() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [mapTarget, setMapTarget] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapTarget, setMapTarget] = useState<{ lat: number; lng: number; zoom?: number } | null>(null);
   const [mapNonce, setMapNonce] = useState(0);
   const [savingForm, setSavingForm] = useState(false);
   const geoSeq = useRef(0);
+  const [formGovernorate, setFormGovernorate] = useState('');
   const [form, setForm] = useState({
     address: '',
     city: '',
@@ -228,15 +229,18 @@ export default function AdminDashboard() {
 
   const openAdd = () => {
     setEditingId(null);
+    setFormGovernorate('');
     setForm({ address: '', city: '', area: '', district: '', buildingNumber: '', floor: '', apartmentNumber: '', location: null });
     setShowForm(true);
   };
 
   const openEdit = (b: Building) => {
     setEditingId(b.id);
+    const gov = governorateOf(b.city || '');
+    setFormGovernorate(gov?.name ?? '');
     setForm({
       address: b.address || '',
-      city: b.city || '',
+      city: gov && isPlaceIn(b.city || '', gov.name) ? b.city : '',
       area: b.area || '',
       district: b.district || '',
       buildingNumber: b.buildingNumber || '',
@@ -254,8 +258,9 @@ export default function AdminDashboard() {
   };
 
   const saveBuilding = async () => {
-    if (!form.address.trim() || !form.city.trim() || !form.area.trim()) {
-      setMessage({ type: 'error', text: 'العنوان والمدينة والحي مطلوبين' });
+    const city = form.city.trim() || formGovernorate.trim();
+    if (!form.address.trim() || !city || !form.area.trim()) {
+      setMessage({ type: 'error', text: 'العنوان والمحافظة والمدينة والحي مطلوبين' });
       return;
     }
     if (!form.location) {
@@ -267,7 +272,7 @@ export default function AdminDashboard() {
     try {
       const payload = {
         address: form.address.trim(),
-        city: form.city.trim(),
+        city,
         area: form.area.trim(),
         district: form.district.trim(),
         buildingNumber: form.buildingNumber.trim(),
@@ -627,25 +632,57 @@ export default function AdminDashboard() {
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <select
-                    value={form.city}
+                    value={formGovernorate}
                     onChange={(e) => {
                       const value = e.target.value;
-                      setForm({ ...form, city: value });
-                      const center = findCityCenter(value);
-                      if (center) {
-                        setMapTarget(center);
+                      setFormGovernorate(value);
+                      if (value && !placesOf(value).some((p) => p.name === form.city)) {
+                        setForm({ ...form, city: '' });
+                      }
+                      const gov = EGYPT_GOVERNORATES.find((g) => g.name === value);
+                      if (gov) {
+                        setMapTarget({ ...gov.center, zoom: 10 });
                         setMapNonce((n) => n + 1);
                       }
                     }}
                     className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] cursor-pointer"
                   >
-                    <option value="">اختر المدينة</option>
-                    {EGYPT_CITIES.map((city) => (
-                      <option key={city.name} value={city.name}>
-                        {city.name}
+                    <option value="">اختر المحافظة</option>
+                    {EGYPT_GOVERNORATES.map((gov) => (
+                      <option key={gov.name} value={gov.name}>
+                        {gov.name}
                       </option>
                     ))}
                   </select>
+                  <select
+                    value={form.city}
+                    onChange={(e) => {
+                      const place = placesOf(formGovernorate).find((p) => p.name === e.target.value);
+                      setForm({ ...form, city: e.target.value });
+                      if (place) {
+                        setMapTarget({ lat: place.lat, lng: place.lng, zoom: 13 });
+                        setMapNonce((n) => n + 1);
+                      }
+                    }}
+                    disabled={!formGovernorate}
+                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <option value="">
+                      {formGovernorate ? 'اختر المدينة / الحي' : 'اختر المحافظة أولاً'}
+                    </option>
+                    {placesOf(formGovernorate).map((place) => (
+                      <option key={place.name} value={place.name}>
+                        {place.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {!formGovernorate && (
+                  <p className="text-[11px] text-[var(--color-accent-dark)] flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]"></span>
+                    اختر المحافظة أولاً لتظهر قائمة المدن والأحياء
+                  </p>
+                )}
                   <input
                     type="text"
                     value={form.area}
@@ -653,7 +690,6 @@ export default function AdminDashboard() {
                     placeholder="الحي"
                     className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
                   />
-                </div>
                 <input
                   type="text"
                   value={form.district}
@@ -697,12 +733,18 @@ export default function AdminDashboard() {
                     void reverseGeocode(loc.lat, loc.lng).then((result) => {
                       // Ignore stale responses from an older pin drop.
                       if (seq !== geoSeq.current) return;
-                      if (result.city || result.area) {
-                        setForm((f) => ({
-                          ...f,
-                          city: result.city && result.city !== f.city ? result.city : f.city,
-                          area: result.area ? result.area : f.area,
-                        }));
+                      if (result.governorate || result.city || result.area) {
+                        setFormGovernorate((gov) => result.governorate ?? gov);
+                        setForm((f) => {
+                          const next = { ...f };
+                          if (result.city) {
+                            next.city = result.city;
+                          } else if (result.governorate && !placesOf(result.governorate).some((p) => p.name === next.city)) {
+                            next.city = '';
+                          }
+                          if (result.area) next.area = result.area;
+                          return next;
+                        });
                       }
                     });
                   }}

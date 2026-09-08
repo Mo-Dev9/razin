@@ -15,10 +15,16 @@ const markerIcon = L.icon({
   shadowSize: [41, 41],
 });
 
+interface MapTarget {
+  lat: number;
+  lng: number;
+  zoom?: number;
+}
+
 interface MapPickerProps {
   value?: { lat: number; lng: number };
   onChange: (loc: { lat: number; lng: number }) => void;
-  target?: { lat: number; lng: number } | null;
+  target?: MapTarget | null;
   targetNonce?: number;
 }
 
@@ -31,11 +37,11 @@ function ClickHandler({ value, onChange }: { value?: { lat: number; lng: number 
   return value ? <Marker position={[value.lat, value.lng]} icon={markerIcon} /> : null;
 }
 
-function MapController({ target, targetNonce }: { target?: { lat: number; lng: number } | null; targetNonce?: number }) {
+function MapController({ target, targetNonce }: { target?: MapTarget | null; targetNonce?: number }) {
   const map = useMap();
   useEffect(() => {
     if (target && typeof targetNonce === 'number') {
-      map.flyTo([target.lat, target.lng], 13, { duration: 0.8 });
+      map.flyTo([target.lat, target.lng], target.zoom ?? 13, { duration: 0.8 });
     }
   }, [target, targetNonce, map]);
   return null;

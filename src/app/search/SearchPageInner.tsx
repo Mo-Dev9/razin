@@ -9,7 +9,7 @@ import { useBuildings } from '@/hooks/useBuildings';
 import { useReviews } from '@/hooks/useReviews';
 import { useAuth } from '@/hooks/useAuth';
 import { RATING_LABELS } from '@/types';
-import { EGYPT_CITIES, findCityCenter } from '@/lib/egypt-cities';
+import { EGYPT_GOVERNORATES, placesOf, matchesCityFilter } from '@/lib/egypt-cities';
 import { reverseGeocode } from '@/lib/geocode';
 import type { Building, ReviewRatings } from '@/types';
 
@@ -31,6 +31,7 @@ function AddAndRateForm() {
   const { user, loading: authLoading } = useAuth();
 
   const [newAddress, setNewAddress] = useState('');
+  const [newGovernorate, setNewGovernorate] = useState('');
   const [newCity, setNewCity] = useState('');
   const [newArea, setNewArea] = useState('');
   const [buildingNumber, setBuildingNumber] = useState('');
@@ -55,15 +56,16 @@ function AddAndRateForm() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [mapTarget, setMapTarget] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapTarget, setMapTarget] = useState<{ lat: number; lng: number; zoom?: number } | null>(null);
   const [mapNonce, setMapNonce] = useState(0);
   const geoSeq = useRef(0);
 
   const overall = Object.values(ratings).reduce((a, b) => a + b, 0) / Object.keys(ratings).length;
   const keys = Object.keys(RATING_LABELS) as (keyof ReviewRatings)[];
+  const governoratePlaces = placesOf(newGovernorate);
 
   const handleSubmit = async () => {
-    if (!newAddress.trim() || !newCity.trim() || !newArea.trim()) return;
+    if (!newAddress.trim() || !newGovernorate.trim() || !newCity.trim() || !newArea.trim()) return;
     if (!location) {
       setError('حدد الموقع على الخريطة أولاً لضمان الدقة في التقييم');
       return;
@@ -135,6 +137,7 @@ function AddAndRateForm() {
           <button
             onClick={() => {
               setNewAddress('');
+              setNewGovernorate('');
               setNewCity('');
               setNewArea('');
               setBuildingNumber('');
@@ -184,35 +187,66 @@ function AddAndRateForm() {
           />
           <div className="grid grid-cols-2 gap-3">
             <select
-              value={newCity}
+              value={newGovernorate}
               onChange={(e) => {
                 const value = e.target.value;
-                setNewCity(value);
-                const center = findCityCenter(value);
-                if (center) {
-                  setMapTarget(center);
+                setNewGovernorate(value);
+                if (value && !placesOf(value).some((p) => p.name === newCity)) setNewCity('');
+                const gov = EGYPT_GOVERNORATES.find((g) => g.name === value);
+                if (gov) {
+                  setMapTarget({ ...gov.center, zoom: 10 });
                   setMapNonce((n) => n + 1);
                 }
               }}
               required
               className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] cursor-pointer"
             >
-              <option value="">اختر المدينة</option>
-              {EGYPT_CITIES.map((city) => (
-                <option key={city.name} value={city.name}>
-                  {city.name}
+              <option value="">اختر المحافظة</option>
+              {EGYPT_GOVERNORATES.map((gov) => (
+                <option key={gov.name} value={gov.name}>
+                  {gov.name}
                 </option>
               ))}
             </select>
-            <input
-              type="text"
-              value={newArea}
-              onChange={(e) => setNewArea(e.target.value)}
-              placeholder="الحي (مثال: مدينة نصر)"
+            <select
+              value={newCity}
+              onChange={(e) => {
+                const value = e.target.value;
+                setNewCity(value);
+                const place = governoratePlaces.find((p) => p.name === value);
+                if (place) {
+                  setMapTarget({ lat: place.lat, lng: place.lng, zoom: 13 });
+                  setMapNonce((n) => n + 1);
+                }
+              }}
+              disabled={!newGovernorate}
               required
-              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
-            />
+              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <option value="">
+                {newGovernorate ? 'اختر المدينة / الحي' : 'اختر المحافظة أولاً'}
+              </option>
+              {governoratePlaces.map((place) => (
+                <option key={place.name} value={place.name}>
+                  {place.name}
+                </option>
+              ))}
+            </select>
           </div>
+          {!newGovernorate && (
+            <p className="text-[11px] text-[var(--color-accent-dark)] flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]"></span>
+              اختر المحافظة أولاً لتظهر قائمة المدن والأحياء
+            </p>
+          )}
+          <input
+            type="text"
+            value={newArea}
+            onChange={(e) => setNewArea(e.target.value)}
+            placeholder="الحي (مثال: مدينة نصر)"
+            required
+            className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+          />
           <div className="grid grid-cols-3 gap-2">
             <input
               type="text"
@@ -250,7 +284,15 @@ function AddAndRateForm() {
                 const seq = ++geoSeq.current;
                 void reverseGeocode(loc.lat, loc.lng).then((result) => {
                   if (seq !== geoSeq.current) return;
-                  if (result.city) setNewCity(result.city);
+                  const gov = result.governorate;
+                  if (gov) {
+                    setNewGovernorate(gov);
+                    if (result.city) {
+                      setNewCity(result.city);
+                    } else {
+                      setNewCity((cur) => placesOf(gov).some((p) => p.name === cur) ? cur : '');
+                    }
+                  }
                   if (result.area) setNewArea(result.area);
                 });
               }}
@@ -344,22 +386,19 @@ export default function SearchPageInner() {
   const [results, setResults] = useState<Building[]>([]);
   const [searched, setSearched] = useState(false);
   const [districts, setDistricts] = useState<string[]>([]);
+  const [selectedGovernorate, setSelectedGovernorate] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [activeChip, setActiveChip] = useState<ActiveChip>('all');
   const [showAddForm, setShowAddForm] = useState(false);
 
   useEffect(() => {
-    getAllDistricts().then(setDistricts);
-  }, [getAllDistricts]);
-
-  useEffect(() => {
-    if (selectedCity) {
-      getAllDistricts(selectedCity).then(setDistricts);
+    if (selectedGovernorate || selectedCity) {
+      getAllDistricts(selectedGovernorate || selectedCity).then(setDistricts);
     } else {
       getAllDistricts().then(setDistricts);
     }
-  }, [selectedCity, getAllDistricts]);
+  }, [selectedGovernorate, selectedCity, getAllDistricts]);
 
   useEffect(() => {
     if (q) {
@@ -390,7 +429,7 @@ export default function SearchPageInner() {
       filtered = await searchBuildingsAdvanced({ city: c || undefined, district: d || undefined });
     }
 
-    if (c) filtered = filtered.filter((b) => b.city === c);
+    if (c) filtered = filtered.filter((b) => matchesCityFilter(b.city, c));
     if (d) filtered = filtered.filter((b) => b.district === d);
     if (ch === 'withReviews') filtered = filtered.filter((b) => b.reviewCount > 0);
     if (ch === 'topRated') filtered = filtered.filter((b) => b.averageRatings.overall >= 4.0);
@@ -404,10 +443,17 @@ export default function SearchPageInner() {
     applyFilters();
   };
 
+  const handleGovernorateChange = (governorate: string) => {
+    setSelectedGovernorate(governorate);
+    setSelectedCity('');
+    setSelectedDistrict('');
+    applyFilters(undefined, governorate ? governorate : '', '');
+  };
+
   const handleCityChange = (city: string) => {
     setSelectedCity(city);
     setSelectedDistrict('');
-    applyFilters(undefined, city, '');
+    applyFilters(undefined, city ? city : undefined, '');
   };
 
   const handleDistrictChange = (district: string) => {
@@ -478,35 +524,19 @@ export default function SearchPageInner() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 mt-3">
-          <select value={selectedCity} onChange={(e) => handleCityChange(e.target.value)} className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-3 py-2.5 text-sm text-[var(--color-text)] cursor-pointer">
-            <option value="">كل المدن</option>
-            <option value="القاهرة">القاهرة</option>
-            <option value="الجيزة">الجيزة</option>
-            <option value="الإسكندرية">الإسكندرية</option>
-            <option value="الدقهلية">الدقهلية</option>
-            <option value="البحيرة">البحيرة</option>
-            <option value="الشرقية">الشرقية</option>
-            <option value="كفر الشيخ">كفر الشيخ</option>
-            <option value="الغربية">الغربية</option>
-            <option value="المنوفية">المنوفية</option>
-            <option value="القليوبية">القليوبية</option>
-            <option value="بني سويف">بني سويف</option>
-            <option value="الفيوم">الفيوم</option>
-            <option value="المنيا">المنيا</option>
-            <option value="أسيوط">أسيوط</option>
-            <option value="سوهاج">سوهاج</option>
-            <option value="قنا">قنا</option>
-            <option value="الأقصر">الأقصر</option>
-            <option value="أسوان">أسوان</option>
-            <option value="البحر الأحمر">البحر الأحمر</option>
-            <option value="الوادي الجديد">الوادي الجديد</option>
-            <option value="مطروح">مطروح</option>
-            <option value="شمال سيناء">شمال سيناء</option>
-            <option value="جنوب سيناء">جنوب سيناء</option>
-            <option value="بورسعيد">بورسعيد</option>
-            <option value="الإسماعيلية">الإسماعيلية</option>
-            <option value="السويس">السويس</option>
-            <option value="دمياط">دمياط</option>
+          <select value={selectedGovernorate} onChange={(e) => handleGovernorateChange(e.target.value)} className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-3 py-2.5 text-sm text-[var(--color-text)] cursor-pointer">
+            <option value="">كل المحافظات</option>
+            {EGYPT_GOVERNORATES.map((gov) => (
+              <option key={gov.name} value={gov.name}>{gov.name}</option>
+            ))}
+          </select>
+          <select value={selectedCity} onChange={(e) => handleCityChange(e.target.value)} disabled={!selectedGovernorate} className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-3 py-2.5 text-sm text-[var(--color-text)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+            <option value="">
+              {selectedGovernorate ? 'كل المدن والأحياء' : 'اختر المحافظة أولاً'}
+            </option>
+            {placesOf(selectedGovernorate).map((place) => (
+              <option key={place.name} value={place.name}>{place.name}</option>
+            ))}
           </select>
           <select value={selectedDistrict} onChange={(e) => handleDistrictChange(e.target.value)} className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-3 py-2.5 text-sm text-[var(--color-text)] cursor-pointer">
             <option value="">كل الأحياء</option>
@@ -574,7 +604,7 @@ export default function SearchPageInner() {
               + أضف المبنى وقيّمه
             </button>
             <button
-              onClick={() => { setQuery(''); setResults([]); setSearched(false); setSelectedCity(''); setSelectedDistrict(''); setActiveChip('all'); }}
+              onClick={() => { setQuery(''); setResults([]); setSearched(false); setSelectedGovernorate(''); setSelectedCity(''); setSelectedDistrict(''); setActiveChip('all'); }}
               className="text-[var(--color-text-secondary)] text-sm hover:text-[var(--color-primary)] transition-colors"
             >
               حاول مجدداً

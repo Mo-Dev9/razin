@@ -8,7 +8,7 @@ vi.mock('@/lib/rate-limit', () => ({
 }));
 
 vi.mock('@/lib/egypt-cities', () => ({
-  matchCityName: () => 'الجيزة',
+  matchLocation: () => ({ governorate: 'الجيزة', city: 'الجيزة' }),
 }));
 
 function makeRequest(search: string): Request {
@@ -65,6 +65,7 @@ describe('GET /api/geocode', () => {
     const res = await GET(makeRequest('?lat=29.98&lng=31.2'));
     expect(res.status).toBe(200);
     const body = await res.json();
+    expect(body.governorate).toBe('الجيزة');
     expect(body.city).toBe('الجيزة');
     expect(body.area).toBe('الشيخ زايد');
 

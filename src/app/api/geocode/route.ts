@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
-import { matchCityName } from '@/lib/egypt-cities';
+import { matchLocation } from '@/lib/egypt-cities';
 
 export const dynamic = 'force-dynamic';
 
 interface GeoResult {
+  governorate: string | null;
   city: string | null;
   area: string | null;
 }
@@ -59,7 +60,7 @@ export async function GET(req: Request) {
     const data = (await res.json()) as { address?: Record<string, string> };
     const address = data.address ?? {};
 
-    const city = matchCityName([
+    const located = matchLocation([
       address.state,
       address.county,
       address.city,
@@ -77,9 +78,14 @@ export async function GET(req: Request) {
       address.city ||
       '';
 
-    if (city && area === city) area = '';
+    if (located.city && area === located.city) area = '';
+    if (located.governorate && !located.city && area === located.governorate) area = '';
 
-    const result: GeoResult = { city, area: area || null };
+    const result: GeoResult = {
+      governorate: located.governorate,
+      city: located.city,
+      area: area || null,
+    };
 
     cache.set(cacheKey, result);
     if (cache.size > 200) {
