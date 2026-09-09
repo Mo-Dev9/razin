@@ -6,6 +6,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { SearchBar } from '@/components/layout/SearchBar';
 import { useBuildings } from '@/hooks/useBuildings';
+import { buildingLocationLabel } from '@/lib/building-location';
 import type { Building } from '@/types';
 
 export default function HomePageInner() {
@@ -231,7 +232,7 @@ export default function HomePageInner() {
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <p className="text-sm font-semibold text-[var(--color-text)]">{b.address}</p>
-                      <p className="text-xs text-[var(--color-text-muted)]">{b.city} · {b.area}</p>
+                      <p className="text-xs text-[var(--color-text-muted)]">{buildingLocationLabel(b)}</p>
                     </div>
                     <span className="inline-flex items-center gap-1 bg-[var(--color-accent)]/15 px-2.5 py-1 rounded-lg text-sm font-bold text-[var(--color-primary)]">
                       {b.averageRatings.overall.toFixed(1)} <span className="text-[var(--color-accent)]">★</span>

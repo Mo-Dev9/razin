@@ -78,6 +78,7 @@ export async function GET() {
         address: data.address,
         area: data.area,
         city: data.city,
+        governorate: data.governorate || '',
         reviewCount: data.reviewCount,
         overall: data.averageRatings?.overall || 0,
       };

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { buildingLocationLabel } from '@/lib/building-location';
 
 interface Analytics {
   totalUsers: number;
@@ -20,6 +21,7 @@ interface Analytics {
     address: string;
     area: string;
     city: string;
+    governorate?: string;
     reviewCount: number;
     overall: number;
   }[];
@@ -171,7 +173,7 @@ export function AnalyticsPanel() {
                 <span className="text-xs font-bold text-[var(--color-accent)] w-5 text-center">#{i + 1}</span>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium truncate">{b.address}</div>
-                  <div className="text-[10px] text-[var(--color-text-muted)]">{b.area}، {b.city}</div>
+                  <div className="text-[10px] text-[var(--color-text-muted)]">{buildingLocationLabel(b)}</div>
                 </div>
                 <div className="text-left">
                   <div className="text-sm font-bold text-[var(--color-primary)]">⭐ {b.overall.toFixed(1)}</div>

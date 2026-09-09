@@ -12,6 +12,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useReviews } from '@/hooks/useReviews';
 import { useBuildings } from '@/hooks/useBuildings';
 import { useSavedBuildings } from '@/hooks/useSaves';
+import { buildingLocationLabel } from '@/lib/building-location';
 import type { Review, Building } from '@/types';
 
 export default function ProfilePageInner() {
@@ -267,7 +268,7 @@ export default function ProfilePageInner() {
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-[var(--color-text-muted)] truncate">
-                              {building ? [building.area, building.city].filter(Boolean).join('، ') : ''}
+                              {building ? buildingLocationLabel(building) : ''}
                             </span>
                             <span className="text-[10px] text-[var(--color-text-muted)] shrink-0">
                               {new Date(review.createdAt).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -351,7 +352,7 @@ export default function ProfilePageInner() {
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-[var(--color-text-muted)] truncate">
-                            {[s.area, s.city].filter(Boolean).join('، ')}
+                            {buildingLocationLabel(s)}
                           </span>
                           <span className="text-[10px] text-[var(--color-text-muted)] shrink-0">
                             {s.reviewCount > 0 ? `${s.reviewCount} تقييم` : 'لا تقييمات'}

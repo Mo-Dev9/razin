@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Building } from '@/types';
 import { ratingSummaryText, ratingScaleText } from '@/lib/rating-text';
+import { buildingLocationLabel } from '@/lib/building-location';
 
 interface BuildingCardProps {
   building: Building;
@@ -21,7 +22,7 @@ export function BuildingCard({ building, ratingAvg = 0, reviewCount = 0 }: Build
               {building.address || 'بلا عنوان'}
             </h3>
             <p className="text-xs text-[var(--color-text-secondary)] mt-1">
-              {building.city} {building.district ? `· ${building.district}` : ''}
+              {buildingLocationLabel(building)} {building.district ? `· ${building.district}` : ''}
             </p>
           </div>
           {ratingAvg > 0 && (

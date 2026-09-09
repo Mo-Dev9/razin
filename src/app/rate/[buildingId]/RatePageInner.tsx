@@ -9,6 +9,7 @@ import { NumberGrid } from '@/components/ui/NumberGrid';
 import { useAuth } from '@/hooks/useAuth';
 import { useBuildings } from '@/hooks/useBuildings';
 import { useReviews } from '@/hooks/useReviews';
+import { buildingLocationLabel } from '@/lib/building-location';
 import { RATING_LABELS } from '@/types';
 import type { Building, ReviewRatings } from '@/types';
 
@@ -297,7 +298,7 @@ export default function RatePageInner({ buildingId, isEditing = false }: RatePag
                     <polyline points="6 9 12 15 18 9" />
                   </svg>
                 </div>
-                <p className="text-xs text-[var(--color-text-muted)] mt-1">{building.area}، {building.city}</p>
+                <p className="text-xs text-[var(--color-text-muted)] mt-1">{buildingLocationLabel(building)}</p>
               </div>
             )}
 

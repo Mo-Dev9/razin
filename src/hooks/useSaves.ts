@@ -8,6 +8,7 @@ export interface SavedBuilding {
   address: string;
   city: string;
   area: string;
+  governorate?: string;
   overall: number;
   reviewCount: number;
   savedAt: number;
@@ -69,6 +70,7 @@ export function useSavedBuildings(uid?: string) {
           address: building.address || 'بلا عنوان',
           city: building.city || '',
           area: building.area || '',
+          governorate: building.governorate || '',
           overall: building.averageRatings?.overall ?? 0,
           reviewCount: building.reviewCount ?? 0,
           savedAt: Date.now(),

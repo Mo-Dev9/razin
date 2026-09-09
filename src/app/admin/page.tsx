@@ -11,6 +11,7 @@ import { LogoutButton } from '@/components/admin/LogoutButton';
 import { ReviewDetails } from '@/components/admin/ReviewDetails';
 import { EGYPT_GOVERNORATES, placesOf, governorateOf, isPlaceIn } from '@/lib/egypt-cities';
 import { reverseGeocode } from '@/lib/geocode';
+import { buildingLocationLabel } from '@/lib/building-location';
 import type { Building, Review } from '@/types';
 
 const MapPicker = dynamic(() => import('@/components/map/MapPicker').then((m) => m.MapPicker), {
@@ -427,7 +428,7 @@ export default function AdminDashboard() {
                           <div className="flex-1 min-w-0">
                             <div className="font-medium text-sm truncate">{b.address}</div>
                             <div className="text-xs text-[var(--color-text-secondary)]">
-                              {b.area}، {b.city} · ⭐ {b.averageRatings?.overall?.toFixed(1) ?? '—'} · {b.reviewCount} تقييم
+                              {buildingLocationLabel(b)} · ⭐ {b.averageRatings?.overall?.toFixed(1) ?? '—'} · {b.reviewCount} تقييم
                             </div>
                           </div>
                           <div className="flex items-center gap-2 flex-shrink-0">

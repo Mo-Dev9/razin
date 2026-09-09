@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import BuildingPageInner from './BuildingPageInner';
 import { getAdminDb } from '@/lib/firebase-admin';
+import { buildingLocationLabel } from '@/lib/building-location';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -24,9 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (data) {
     const address = data.address || 'مبنى';
-    const area = data.area || '';
-    const city = data.city || '';
-    const location = [area, city].filter(Boolean).join('، ');
+    const location = buildingLocationLabel(data);
 
     return {
       title: `${address} — تقييمات السكان | RentRate`,
@@ -61,8 +60,8 @@ export default async function BuildingPage({ params }: Props) {
   let jsonLd: Record<string, unknown> | null = null;
   if (data) {
     const address = data.address || 'مبنى';
-    const area = data.area || '';
     const city = data.city || '';
+    const governorate = data.governorate || data.area || '';
     const reviewCount = data.reviewCount || 0;
     const avgOverall = data.averageRatings?.overall || 0;
 
@@ -73,7 +72,7 @@ export default async function BuildingPage({ params }: Props) {
       address: {
         '@type': 'PostalAddress',
         addressLocality: city,
-        addressRegion: area,
+        addressRegion: governorate,
         addressCountry: 'EG',
       },
       url: `${BASE_URL}/building/${id}`,
