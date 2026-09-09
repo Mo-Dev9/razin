@@ -66,7 +66,6 @@ export default function AdminDashboard() {
   const [form, setForm] = useState({
     address: '',
     city: '',
-    area: '',
     district: '',
     location: null as { lat: number; lng: number } | null,
   });
@@ -227,7 +226,7 @@ export default function AdminDashboard() {
   const openAdd = () => {
     setEditingId(null);
     setFormGovernorate('');
-    setForm({ address: '', city: '', area: '', district: '', location: null });
+    setForm({ address: '', city: '', district: '', location: null });
     setShowForm(true);
   };
 
@@ -238,7 +237,6 @@ export default function AdminDashboard() {
     setForm({
       address: b.address || '',
       city: gov && isPlaceIn(b.city || '', gov.name) ? b.city : '',
-      area: b.area || '',
       district: b.district || '',
       location: b.location ?? null,
     });
@@ -253,8 +251,8 @@ export default function AdminDashboard() {
 
   const saveBuilding = async () => {
     const city = form.city.trim() || formGovernorate.trim();
-    if (!form.address.trim() || !city || !form.area.trim()) {
-      setMessage({ type: 'error', text: 'العنوان والمحافظة والمدينة والحي مطلوبين' });
+    if (!form.address.trim() || !city) {
+      setMessage({ type: 'error', text: 'العنوان والمحافظة والمدينة مطلوبين' });
       return;
     }
     if (!form.location) {
@@ -267,7 +265,7 @@ export default function AdminDashboard() {
       const payload = {
         address: form.address.trim(),
         city,
-        area: form.area.trim(),
+        area: city,
         district: form.district.trim(),
         governorate: formGovernorate.trim(),
         location: form.location,
@@ -615,13 +613,6 @@ export default function AdminDashboard() {
               </div>
 
               <div className="space-y-3">
-                <input
-                  type="text"
-                  value={form.address}
-                  onChange={(e) => setForm({ ...form, address: e.target.value })}
-                  placeholder="عنوان المبنى"
-                  className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
-                />
                 <div className="grid grid-cols-2 gap-3">
                   <select
                     value={formGovernorate}
@@ -676,12 +667,12 @@ export default function AdminDashboard() {
                   </p>
                 )}
                   <input
-                    type="text"
-                    value={form.area}
-                    onChange={(e) => setForm({ ...form, area: e.target.value })}
-                    placeholder="الحي"
-                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
-                  />
+                  type="text"
+                  value={form.address}
+                  onChange={(e) => setForm({ ...form, address: e.target.value })}
+                  placeholder="عنوان المبنى مثل اسم الشارع والحي"
+                  className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+                />
                 <input
                   type="text"
                   value={form.district}
@@ -710,7 +701,6 @@ export default function AdminDashboard() {
                           } else if (result.governorate && !placesOf(result.governorate).some((p) => p.name === next.city)) {
                             next.city = '';
                           }
-                          if (result.area) next.area = result.area;
                           return next;
                         });
                       }
