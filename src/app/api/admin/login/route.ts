@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHash, timingSafeEqual } from 'crypto';
 import { checkRateLimit, resetRateLimit } from '@/lib/rate-limit';
+import { adminSessionValue } from '@/lib/admin';
 
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_MS = 30 * 60 * 1000;
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
   resetRateLimit(rateKey);
 
   const res = NextResponse.json({ ok: true });
-  res.cookies.set('admin_session', 'authenticated', {
+  res.cookies.set('admin_session', adminSessionValue(), {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',

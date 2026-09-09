@@ -68,9 +68,6 @@ export default function AdminDashboard() {
     city: '',
     area: '',
     district: '',
-    buildingNumber: '',
-    floor: '',
-    apartmentNumber: '',
     location: null as { lat: number; lng: number } | null,
   });
   const [buildingSearch, setBuildingSearch] = useState('');
@@ -230,7 +227,7 @@ export default function AdminDashboard() {
   const openAdd = () => {
     setEditingId(null);
     setFormGovernorate('');
-    setForm({ address: '', city: '', area: '', district: '', buildingNumber: '', floor: '', apartmentNumber: '', location: null });
+    setForm({ address: '', city: '', area: '', district: '', location: null });
     setShowForm(true);
   };
 
@@ -243,9 +240,6 @@ export default function AdminDashboard() {
       city: gov && isPlaceIn(b.city || '', gov.name) ? b.city : '',
       area: b.area || '',
       district: b.district || '',
-      buildingNumber: b.buildingNumber || '',
-      floor: b.floor || '',
-      apartmentNumber: b.apartmentNumber || '',
       location: b.location ?? null,
     });
     setShowForm(true);
@@ -276,9 +270,6 @@ export default function AdminDashboard() {
         area: form.area.trim(),
         district: form.district.trim(),
         governorate: formGovernorate.trim(),
-        buildingNumber: form.buildingNumber.trim(),
-        floor: form.floor.trim(),
-        apartmentNumber: form.apartmentNumber.trim(),
         location: form.location,
         ...(editingId ? { buildingId: editingId } : {}),
       };
@@ -698,30 +689,6 @@ export default function AdminDashboard() {
                   placeholder="المنطقة (اختياري)"
                   className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
                 />
-                <div className="grid grid-cols-3 gap-2">
-                  <input
-                    type="text"
-                    value={form.buildingNumber}
-                    onChange={(e) => setForm({ ...form, buildingNumber: e.target.value })}
-                    placeholder="عمارة"
-                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-2 sm:px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
-                  />
-                  <input
-                    type="text"
-                    value={form.floor}
-                    onChange={(e) => setForm({ ...form, floor: e.target.value })}
-                    placeholder="الدور"
-                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-2 sm:px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
-                  />
-                  <input
-                    type="text"
-                    value={form.apartmentNumber}
-                    onChange={(e) => setForm({ ...form, apartmentNumber: e.target.value })}
-                    placeholder="شقة"
-                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-2 sm:px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
-                  />
-                </div>
-
                 <div className="pt-1">
                   <label className="text-sm font-semibold text-[var(--color-text)] block mb-2">حدد موقع المبنى على الخريطة</label>
                   <MapPicker

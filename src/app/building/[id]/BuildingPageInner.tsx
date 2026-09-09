@@ -186,11 +186,6 @@ export default function BuildingPageInner({ buildingId }: BuildingPageInnerProps
             <p className="text-sm text-[var(--color-text-secondary)] mb-5">
               تجارب سكان حقيقية تساعدك تشوف الحياة اليومية في المكان.
             </p>
-            {(building.buildingNumber || building.floor || building.apartmentNumber) && (
-              <p className="text-xs text-[var(--color-primary)] mb-5 font-medium">
-                {[building.buildingNumber && `عمارة ${building.buildingNumber}`, building.floor && `دور ${building.floor}`, building.apartmentNumber && `شقة ${building.apartmentNumber}`].filter(Boolean).join(' · ')}
-              </p>
-            )}
 
             <div className="flex flex-wrap items-center gap-3">
               <button
