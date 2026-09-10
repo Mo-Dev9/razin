@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/'],
       },
     ],
-    sitemap: 'https://rentrate-zeta.vercel.app/sitemap.xml',
+    sitemap: 'https://www.razinrayees.com/sitemap.xml',
   };
 }

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const BASE_URL = 'https://rentrate-zeta.vercel.app';
+const BASE_URL = 'https://www.razinrayees.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
