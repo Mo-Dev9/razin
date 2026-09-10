@@ -55,11 +55,6 @@ export default function ComingSoonPage() {
           style={{ background: 'linear-gradient(90deg, transparent, var(--color-accent), transparent)' }}
         />
 
-        <p className="mx-auto mt-8 max-w-xl text-base leading-relaxed text-[var(--color-background)]/80 sm:text-lg">
-          قبل ما تتعاقد على إيجارك، رزين هيكشف لك قيمة السوق الحقيقية لكل حي في مصر —
-          ومجتمع من الجيران يجيب على أسئلتك. نستعد للإطلاق الآن.
-        </p>
-
         <p className="mt-12 text-xs tracking-wide text-[var(--color-background)]/40" dir="rtl">
           © 2026 رزين — تابعونا قريبًا
         </p>
