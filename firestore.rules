@@ -2,13 +2,13 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Buildings — public read, no client writes
+    // Buildings — silent legacy collection; public read, no client writes
     match /buildings/{buildingId} {
       allow read: if true;
       allow write: if false;
     }
 
-    // Reviews — read any, no client writes (all writes via server API + Admin SDK)
+    // Reviews — silent legacy collection; same treatment
     match /reviews/{reviewId} {
       allow read: if true;
       allow write: if false;
@@ -20,8 +20,26 @@ service cloud.firestore {
       allow write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Votes — read any, no client writes (all writes via server API + Admin SDK)
-    match /votes/{voteId} {
+    // Listings (price ads) — public read; all writes via server API + Admin SDK
+    match /listings/{listingId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Questions — read any; writes land via server API (participant policy lands Week 3)
+    match /questions/{questionId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Question replies — same policy
+    match /questions/{questionId}/replies/{replyId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Manual-collection queue (protected pages recorded by the crawler) — read any, no client writes
+    match /collectionQueue/{queueId} {
       allow read: if true;
       allow write: if false;
     }
@@ -35,17 +53,6 @@ service cloud.firestore {
     match /visitPages/{page} {
       allow read: if true;
       allow write: if false;
-    }
-
-    // Reports — read any, no client writes (all writes via server API + Admin SDK)
-    match /reports/{reportId} {
-      allow read: if true;
-      allow write: if false;
-    }
-
-    // Saved buildings — each user manages their own bookmarks
-    match /users/{userId}/savedBuildings/{buildingId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }

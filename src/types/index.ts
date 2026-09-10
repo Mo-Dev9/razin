@@ -1,93 +1,3 @@
-export interface Building {
-  id: string;
-  address: string;
-  city: string;
-  area: string;
-  district?: string;
-  governorate?: string;
-  buildingNumber?: string;
-  floor?: string;
-  apartmentNumber?: string;
-  geohash?: string;
-  location?: { lat: number; lng: number };
-  averageRatings: RatingAverages;
-  reviewCount: number;
-  lastReviewAt?: number;
-  createdAt: number;
-  source?: string;
-}
-
-export interface RatingAverages {
-  zahma: number;
-  humidity: number;
-  landlord: number;
-  neighbors: number;
-  cleanliness: number;
-  safety: number;
-  services: number;
-  annoyance: number;
-  elevator: number;
-  maintenance: number;
-  ac: number;
-  condition: number;
-  overall: number;
-}
-
-export interface Review {
-  id: string;
-  buildingId: string;
-  userId: string;
-  ratings: ReviewRatings;
-  overall: number;
-  comment?: string;
-  createdAt: number;
-  buildingNumber?: string;
-  floor?: string;
-  apartmentNumber?: string;
-  upvotes?: number;
-  downvotes?: number;
-}
-
-export type VoteType = 'up' | 'down';
-
-export const REPORT_REASONS = [
-  { id: 'offensive', ar: 'محتوى مسيء' },
-  { id: 'false_info', ar: 'معلومات غير حقيقية' },
-  { id: 'promotion', ar: 'إعلان أو ترويج' },
-  { id: 'personal_data', ar: 'بيانات شخصية' },
-] as const;
-
-export type ReportReason = (typeof REPORT_REASONS)[number]['id'];
-
-export interface ReportItem {
-  id: string;
-  reviewId: string;
-  buildingId: string;
-  reporterUid: string;
-  reason: ReportReason;
-  status: 'pending';
-  createdAt: number;
-}
-
-export function isReportReason(value: unknown): value is ReportReason {
-  return REPORT_REASONS.some((r) => r.id === value);
-}
-
-export interface ReviewRatings {
-  zahma: number;
-  humidity: number;
-  landlord: number;
-  neighbors: number;
-  cleanliness: number;
-  safety: number;
-  services: number;
-  annoyance: number;
-  elevator: number;
-  maintenance: number;
-  ac: number;
-  condition: number;
-}
-
 export interface UserProfile {
   uid: string;
   isAnonymous: boolean;
@@ -100,17 +10,108 @@ export interface UserProfile {
   createdAt: number;
 }
 
-export const RATING_LABELS: Record<keyof ReviewRatings, { ar: string; icon: string }> = {
-  zahma: { ar: 'الزحمة', icon: '🚗' },
-  humidity: { ar: 'الرطوبة', icon: '💧' },
-  landlord: { ar: 'تعاون المالك', icon: '🤝' },
-  neighbors: { ar: 'الجيران', icon: '👥' },
-  cleanliness: { ar: 'النظافة', icon: '🧹' },
-  safety: { ar: 'الأمان', icon: '🛡️' },
-  services: { ar: 'الخدمات', icon: '🏪' },
-  annoyance: { ar: 'الإزعاج', icon: '🔊' },
-  elevator: { ar: 'المصعد', icon: '🛗' },
-  maintenance: { ar: 'الصيانة', icon: '🔧' },
-  ac: { ar: 'التكيف', icon: '❄️' },
-  condition: { ar: 'حالة الشقة', icon: '🏠' },
-};
+export type PropertyType =
+  | 'apartment'
+  | 'studio'
+  | 'penthouse'
+  | 'duplex'
+  | 'roof'
+  | 'villa'
+  | 'townhouse'
+  | 'chalet'
+  | 'shop'
+  | 'office';
+
+export const PROPERTY_TYPES: ReadonlyArray<{ id: PropertyType; ar: string }> = [
+  { id: 'apartment', ar: 'شقة' },
+  { id: 'studio', ar: 'استوديو' },
+  { id: 'penthouse', ar: 'بنتهاوس' },
+  { id: 'duplex', ar: 'دوبلكس' },
+  { id: 'roof', ar: 'روف' },
+  { id: 'villa', ar: 'فيلا' },
+  { id: 'townhouse', ar: 'تاون هاوس' },
+  { id: 'chalet', ar: 'شاليه' },
+  { id: 'shop', ar: 'محل' },
+  { id: 'office', ar: 'مكتب' },
+];
+
+export type FinishingLevel = 'basic' | 'average' | 'lux' | 'super-lux';
+
+export const FINISHING_LEVELS: ReadonlyArray<{ id: FinishingLevel; ar: string }> = [
+  { id: 'basic', ar: 'ساده' },
+  { id: 'average', ar: 'متوسط' },
+  { id: 'lux', ar: 'لوكس' },
+  { id: 'super-lux', ar: 'سوبر لوكس' },
+];
+
+export type ListingSourceType = 'manual' | 'crawled';
+
+export type VerificationStatus = 'verified' | 'unverified';
+
+export type ListingStatus = 'active' | 'removed';
+
+/**
+ * سجل سعر واحد = إعلان واحد من السوق. كل حقل يطابق نموذج §5.2 في STUDY.md.
+ * neighborhoodId هو مفتاح الحي المطبيع (انظر src/lib/listing-utils.ts).
+ */
+export interface Listing {
+  id: string;
+  governorate: string;
+  city: string;
+  neighborhoodId: string;
+  propertyType: PropertyType;
+  rooms: number;
+  bathrooms: number;
+  finishing: FinishingLevel;
+  price: number;
+  sourceName: string;
+  sourceType: ListingSourceType;
+  sourceUrl?: string;
+  verif: VerificationStatus;
+  listedAt?: number;
+  recordedAt: number;
+  status: ListingStatus;
+  note?: string;
+}
+
+export type QuestionStatus = 'open' | 'resolved';
+
+export interface QuestionReply {
+  id: string;
+  userId: string;
+  displayName: string;
+  text: string;
+  createdAt: number;
+}
+
+export interface Question {
+  id: string;
+  governorate: string;
+  city: string;
+  neighborhoodId: string;
+  userId: string;
+  displayName: string;
+  text: string;
+  createdAt: number;
+  numReplies: number;
+  status: QuestionStatus;
+}
+
+export type CollectionQueueReason = 'login' | 'captcha' | 'protected' | 'robots-disallow';
+
+export type CollectionQueueStatus = 'pending' | 'collected' | 'skipped';
+
+/**
+ * الصفحة المحمية التي سجّلها الكراولر، بانتظار جمعها يدويًا (تسجيل دخول طبيعي +
+ * إدخال يدوي). قرار §5.4: لا تجاوز حماية تقنية إطلاقًا.
+ */
+export interface CollectionQueueItem {
+  id: string;
+  url: string;
+  sourceName: string;
+  reason: CollectionQueueReason;
+  status: CollectionQueueStatus;
+  addedAt: number;
+  collectedAt?: number;
+  note?: string;
+}

@@ -10,11 +10,3 @@ export function formatDate(timestamp: number): string {
     day: 'numeric',
   });
 }
-
-export function ratingToLabel(rating: number): string {
-  if (rating >= 4.5) return 'ممتاز';
-  if (rating >= 3.5) return 'جيد جداً';
-  if (rating >= 2.5) return 'جيد';
-  if (rating >= 1.5) return 'مقبول';
-  return 'ضعيف';
-}

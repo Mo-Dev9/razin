@@ -11,7 +11,7 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch('/api/admin/buildings').then((res) => {
+    fetch('/api/admin/session').then((res) => {
       if (res.ok) router.push('/admin');
     }).catch(() => {});
   }, [router]);
@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-[var(--color-background)] px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-[var(--color-primary)] tracking-tight">RentRate</h1>
+          <h1 className="text-2xl font-bold text-[var(--color-primary)] tracking-tight">رزين</h1>
           <p className="text-sm text-[var(--color-text-secondary)] mt-2">لوحة التحكم</p>
         </div>
 
