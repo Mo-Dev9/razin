@@ -6,12 +6,9 @@ interface LogoProps {
 }
 
 export function Logo({ size = 48 }: LogoProps) {
-  // `variant` يبقى في الواجهة للتوافق مع الاستخدامات الحالية،
-  // لكن المارك الجديد (logo-razin.svg) مبني بألوان الهوية الثابتة
-  // ويعمل بخلفيات فاتحة وداكنة دون الحاجة لتغيير المصدر.
   return (
     <Image
-      src="/logo-razin.svg"
+      src="/logo-128.png"
       alt="رزين"
       width={size}
       height={size}

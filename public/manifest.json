@@ -1,7 +1,7 @@
 {
-  "name": "RentRate — اعرف الحقيقة قبل ما تتعاقد",
-  "short_name": "RentRate",
-  "description": "تقييمات شقق ومباني سكنية من مستأجرين حقيقيين في مصر",
+  "name": "رزين — قبل الإيداع، خذ رأي الحي",
+  "short_name": "رزين",
+  "description": "دليل أسعار الإيجار الحقيقية لكل حي في مصر + مجتمع صوت الحارة",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F8F5F0",
@@ -14,13 +14,13 @@
       "src": "/logo-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/logo-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

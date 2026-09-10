@@ -1,14 +1,5 @@
-const CACHE_NAME = 'rentrate-v1';
-const STATIC_ASSETS = [
-  '/',
-  '/search',
-  '/about',
-  '/contact',
-  '/privacy',
-  '/terms',
-  '/logo-192.png',
-  '/logo-512.png',
-];
+const CACHE_NAME = 'razin-v1';
+const STATIC_ASSETS = ['/'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -36,13 +27,15 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     caches.match(request).then((cached) => {
-      const networkFetch = fetch(request).then((response) => {
-        if (response.ok) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-        }
-        return response;
-      }).catch(() => cached);
+      const networkFetch = fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          }
+          return response;
+        })
+        .catch(() => cached);
 
       return cached || networkFetch;
     })
