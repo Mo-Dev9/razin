@@ -11,22 +11,22 @@ const BASE_URL = 'https://rentrate-zeta.vercel.app';
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'RentRate — اعرف الحقيقة قبل ما تتعاقد',
-    template: '%s | RentRate',
+    default: 'رزين — قريباً',
+    template: '%s | رزين',
   },
-  description: 'تقييمات شقق ومباني سكنية من مستأجرين حقيقيين. اعرف تفاصيل الحياة في المبنى قبل ما توقّع.',
+  description: 'دليل أسعار الإيجار الحقيقية ومجتمع الأحياء في مصر. رزين قريباً.',
   openGraph: {
     type: 'website',
     locale: 'ar_EG',
     url: BASE_URL,
-    siteName: 'RentRate',
-    title: 'RentRate — اعرف الحقيقة قبل ما تتعاقد',
-    description: 'تقييمات شقق ومباني سكنية من مستأجرين حقيقيين. اعرف تفاصيل الحياة في المبنى قبل ما توقّع.',
+    siteName: 'رزين',
+    title: 'رزين — قريباً',
+    description: 'دليل أسعار الإيجار الحقيقية ومجتمع الأحياء في مصر. رزين قريباً.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RentRate — اعرف الحقيقة قبل ما تتعاقد',
-    description: 'تقييمات شقق ومباني سكنية من مستأجرين حقيقيين. اعرف تفاصيل الحياة في المبنى قبل ما توقّع.',
+    title: 'رزين — قريباً',
+    description: 'دليل أسعار الإيجار الحقيقية ومجتمع الأحياء في مصر. رزين قريباً.',
   },
   robots: {
     index: true,
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'RentRate',
+    title: 'رزين',
   },
 };
 
