@@ -6,7 +6,7 @@ import { VisitTracker } from '@/components/layout/VisitTracker';
 import 'leaflet/dist/leaflet.css';
 import './globals.css';
 
-const BASE_URL = 'https://www.razinrayees.com';
+const BASE_URL = 'https://razin-eg.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

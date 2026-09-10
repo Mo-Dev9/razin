@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'رزين — قريباً',
     description: 'دليل أسعار الإيجار الحقيقية ومجتمع الأحياء في مصر. قريباً.',
-    url: 'https://www.razinrayees.com',
+    url: 'https://razin-eg.vercel.app',
     siteName: 'رزين',
     locale: 'ar_EG',
     type: 'website',

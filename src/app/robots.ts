@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/'],
       },
     ],
-    sitemap: 'https://www.razinrayees.com/sitemap.xml',
+    sitemap: 'https://razin-eg.vercel.app/sitemap.xml',
   };
 }
