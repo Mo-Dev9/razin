@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# رزين (Razin)
 
-## Getting Started
+دليل أسعار الإيجار الحقيقية لكل حي في مصر، من **إعلانات السوق العامة فقط** (لا تقارير من الجيران) — مع مجتمع «صوت الحارة» لأسئلة الأحياء.
 
-First, run the development server:
+> قبل الإيداع، خذ رأي الحي، خذ رأي رزين.
+
+## المرحلة الحالية
+
+- صفحة «قريباً» على `/` مع توجيه كل المسارات القديمة إليها عبر `src/proxy.ts`.
+- لوحة الأدمن (`/admin`): إدخال إعلانات يدويًا + قائمة «جمع يدوي منتظر» للصفحات المحمية.
+- كراولر أدبي لمصدر OLX مصر (دبلجيز): `src/lib/crawler/` — يحترم `robots.txt`، لا يجتاز أي حماية، ويحفظ الصفحة المحمية في `collectionQueue` للجمع اليدوي (قرار §5.4 في STUDY.md).
+- إحصاءات الأسعار حسب §5.3 (وسيط + نطاق 25%–75% + «بيانات محدودة» دون 10 إعلانات): `src/lib/price-stats.ts`.
+
+## الأساسات
+
+- Next.js 16.3.1 (Turbopack) + React 19 + TypeScript + Tailwind v4 + pnpm 11.
+- Firebase (Firestore + Admin SDK) — القواعد تُنشر بـ `firebase deploy --only firestore:rules`.
+- Sentry مفعّل؛ اختبارات Vitest (`pnpm test`).
+
+## الأوامر
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm dev       # التطوير على :3000
+pnpm test      # اختبارات Vitest
+pnpm lint      # ESLint
+pnpm build     # إنتاج + فحص الأنواع
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## تنظيم المسارات المهمة
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `src/app/` — الصفحات (`/`, الأدمن) وواجهات API (`/api/admin/*`, `/api/visit`).
+- `src/lib/` — منطق الأعمال الخالص: الأسعار، كراولر، الجدول الجغرافي، الجلسات، معدّلات الحدود.
+- `src/types/index.ts` — نماذج البيانات (Listing / Question / CollectionQueue).
+- `firestore.rules` — قواعد الأقسام: قراءة عامة، كتابة عبر الخادم فقط.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+التخطيط التفصيلي محفوظ محليًا في `STUDY.md` (خارج الريبو العام).
