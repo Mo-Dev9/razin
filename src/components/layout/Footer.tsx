@@ -42,7 +42,7 @@ export function Footer() {
 
         <div className="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4 text-xs text-white/40">
-            <span>© {new Date().getFullYear()} RentRate</span>
+            <span>© {new Date().getFullYear()} رزين</span>
             <span className="hidden sm:inline">·</span>
             <Link href="/privacy" className="hover:text-white/70 transition-colors">سياسة الخصوصية</Link>
             <Link href="/terms" className="hover:text-white/70 transition-colors">شروط الاستخدام</Link>

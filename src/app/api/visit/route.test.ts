@@ -37,7 +37,7 @@ function makeDb(): FakeDb {
 }
 
 function makeRequest(rawBody: string): NextRequest {
-  return new NextRequest('https://rentrate.test/api/visit', {
+  return new NextRequest('https://razin.test/api/visit', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: rawBody,

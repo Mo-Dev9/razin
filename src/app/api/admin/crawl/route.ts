@@ -49,7 +49,7 @@ export async function POST(req: Request): Promise<NextResponse> {
 
   const settings = {
     userAgent:
-      'RazinBot/1.0 (دليل أسعار إيجار مصري، بحث علمي عن إعلانات عامة؛ تواصل: https://rentrate.vercel.app)',
+      'RazinBot/1.0 (دليل أسعار إيجار مصري، بحث علمي عن إعلانات عامة؛ تواصل: https://razin.vercel.app)',
     timeoutMs: 15000,
     minDelayMs: 600,
   };

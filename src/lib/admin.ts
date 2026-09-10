@@ -5,7 +5,7 @@ import { createHash, timingSafeEqual } from 'crypto';
 // على عكس القيمة الثابتة السابقة («authenticated») التي كان أي عميل يمكنه انتحالها.
 export function adminSessionValue(): string {
   const password = process.env.ADMIN_PASSWORD || '';
-  return createHash('sha256').update(`rentrate-admin-session:${password}`).digest('hex');
+  return createHash('sha256').update(`razin-admin-session:${password}`).digest('hex');
 }
 
 export async function isAdmin(): Promise<boolean> {
