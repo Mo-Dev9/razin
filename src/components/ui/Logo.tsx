@@ -5,13 +5,14 @@ interface LogoProps {
   variant?: 'light' | 'dark';
 }
 
-export function Logo({ size = 48, variant = 'light' }: LogoProps) {
-  const src = variant === 'dark' ? '/logo-128.png' : '/logo-128.png';
-
+export function Logo({ size = 48 }: LogoProps) {
+  // `variant` يبقى في الواجهة للتوافق مع الاستخدامات الحالية،
+  // لكن المارك الجديد (logo-razin.svg) مبني بألوان الهوية الثابتة
+  // ويعمل بخلفيات فاتحة وداكنة دون الحاجة لتغيير المصدر.
   return (
     <Image
-      src={src}
-      alt="RentRate Logo"
+      src="/logo-razin.svg"
+      alt="رزين"
       width={size}
       height={size}
       className="object-contain"

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+    <linearGradient id="razin-gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F4C94A"/>
+      <stop offset="1" stop-color="#C89B2E"/>
+    </linearGradient>
+  </defs>
+  <!-- الدرع: ختم الثقة والحماية -->
+  <path d="M12,56 Q100,4 188,56 L188,126 Q188,196 103.5,188 Q12,196 12,126 Z" fill="url(#razin-gold)"/>
+  <!-- واجهة المبنى: سقف مائل ناعم (أقرب للبناء المصري المستوي) + جسم -->
+  <path d="M62,94 L100,58 L138,94 Z" fill="#0F2C2C"/>
+  <rect x="70" y="94" width="60" height="64" fill="#0F2C2C"/>
+  <!-- نوافذ 2×2 -->
+  <g fill="#E9B94A">
+    <rect x="86.5" y="104" width="9" height="11" rx="1"/>
+    <rect x="104.5" y="104" width="9" height="11" rx="1"/>
+    <rect x="86.5" y="123" width="9" height="11" rx="1"/>
+    <rect x="104.5" y="123" width="9" height="11" rx="1"/>
+  </g>
+  <!-- مدخل معقود -->
+  <path d="M90,158 L90,148 Q100,138 110,148 L110,158 Z" fill="#E9B94A"/>
+  <!-- نجمة التقييم داخل حافة الدرع بمسافات مريحة عن السقف -->
+  <path d="M100,37.07 L101.72,42.36 L107.28,42.36 L102.78,45.62 L104.5,50.91 L100,47.65 L95.5,50.91 L97.22,45.62 L92.72,42.36 L98.28,42.36 Z" fill="#0F2C2C"/>
+</svg>
