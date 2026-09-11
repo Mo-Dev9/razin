@@ -1,13 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdmin } from '@/lib/admin';
 import { getAdminDb } from '@/lib/firebase-admin';
+import { checkRateLimit, getRequestIp } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+async function enforceRateLimit(req: NextRequest): Promise<NextResponse | null> {
+  const { allowed, retryAfterMs } = checkRateLimit(
+    `admin-queue:${getRequestIp(req.headers)}`,
+    60,
+    60_000
+  );
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'طلبات كثيرة، حاول لاحقًا' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(retryAfterMs / 1000)) } }
+    );
+  }
+  return null;
+}
+
+export async function GET(req: NextRequest) {
   if (!(await isAdmin())) {
     return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
   }
+  const limited = await enforceRateLimit(req);
+  if (limited) return limited;
 
   try {
     const db = getAdminDb();
@@ -24,6 +42,8 @@ export async function PATCH(req: NextRequest) {
   if (!(await isAdmin())) {
     return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
   }
+  const limited = await enforceRateLimit(req);
+  if (limited) return limited;
 
   let body: { id?: unknown; status?: unknown };
   try {

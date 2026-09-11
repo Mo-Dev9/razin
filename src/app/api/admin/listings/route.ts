@@ -1,11 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdmin } from '@/lib/admin';
 import { getAdminDb } from '@/lib/firebase-admin';
+import { checkRateLimit, getRequestIp } from '@/lib/rate-limit';
 import { neighborhoodKey } from '@/lib/listing-utils';
+import { EGYPT_GOVERNORATES, isPlaceIn } from '@/lib/egypt-cities';
 import { PROPERTY_TYPES, FINISHING_LEVELS } from '@/types';
 import type { Listing, PropertyType, FinishingLevel, VerificationStatus } from '@/types';
 
 export const dynamic = 'force-dynamic';
+
+const RATE_LIMIT = { max: 60, windowMs: 60_000 };
+
+async function enforceRateLimit(req: NextRequest): Promise<NextResponse | null> {
+  const { allowed, retryAfterMs } = checkRateLimit(
+    `admin-listings:${getRequestIp(req.headers)}`,
+    RATE_LIMIT.max,
+    RATE_LIMIT.windowMs
+  );
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'طلبات كثيرة، حاول لاحقًا' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(retryAfterMs / 1000)) } }
+    );
+  }
+  return null;
+}
 
 function isPropertyType(value: unknown): value is PropertyType {
   return typeof value === 'string' && PROPERTY_TYPES.some((p) => p.id === value);
@@ -23,6 +42,8 @@ export async function POST(req: NextRequest) {
   if (!(await isAdmin())) {
     return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
   }
+  const limited = await enforceRateLimit(req);
+  if (limited) return limited;
 
   let body: Record<string, unknown>;
   try {
@@ -35,10 +56,16 @@ export async function POST(req: NextRequest) {
   if (!governorate || governorate.length > 100) {
     return NextResponse.json({ error: 'المحافظة مطلوبة وبحد أقصى 100 حرف' }, { status: 400 });
   }
+  if (!EGYPT_GOVERNORATES.some((g) => g.name === governorate)) {
+    return NextResponse.json({ error: 'المحافظة غير معروفة' }, { status: 400 });
+  }
 
   const city = typeof body.city === 'string' ? body.city.trim() : '';
   if (!city || city.length > 100) {
     return NextResponse.json({ error: 'الحي/المدينة مطلوب وبحد أقصى 100 حرف' }, { status: 400 });
+  }
+  if (!isPlaceIn(city, governorate)) {
+    return NextResponse.json({ error: 'الحي/المدينة لا ينتمي إلى المحافظة المختارة' }, { status: 400 });
   }
 
   const propertyType = body.propertyType;
@@ -153,10 +180,12 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   if (!(await isAdmin())) {
     return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
   }
+  const limited = await enforceRateLimit(req);
+  if (limited) return limited;
 
   try {
     const db = getAdminDb();
@@ -173,6 +202,8 @@ export async function DELETE(req: NextRequest) {
   if (!(await isAdmin())) {
     return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
   }
+  const limited = await enforceRateLimit(req);
+  if (limited) return limited;
 
   let body: { listingId?: unknown };
   try {

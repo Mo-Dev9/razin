@@ -76,7 +76,7 @@ export default function AdminLoginPage() {
         </div>
 
         <p className="text-center text-xs text-[var(--color-text-secondary)] mt-4">
-          محاولتان فقط كل 30 دقيقة
+          5 محاولات فقط كل 30 دقيقة
         </p>
       </div>
     </div>

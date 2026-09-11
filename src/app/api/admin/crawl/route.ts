@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { isAdmin } from '@/lib/admin';
 import { getAdminDb } from '@/lib/firebase-admin';
+import { checkRateLimit, getRequestIp } from '@/lib/rate-limit';
 import { crawlSource, toStoredListing, blockedToQueueItem } from '@/lib/crawler/runner';
 import type { CrawlResult } from '@/lib/crawler/types';
 
@@ -35,6 +36,18 @@ function hasher(str: string, len = 8): string {
 export async function POST(req: Request): Promise<NextResponse> {
   if (!(await isAdmin())) {
     return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
+  }
+
+  const { allowed, retryAfterMs } = checkRateLimit(
+    `admin-crawl:${getRequestIp(req.headers)}`,
+    6,
+    60_000
+  );
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'طلبات زحف كثيرة، حاول لاحقًا' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(retryAfterMs / 1000)) } }
+    );
   }
 
   let body: CrawlControllerRequest = {};

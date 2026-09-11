@@ -1,3 +1,11 @@
+export function getRequestIp(headers: Pick<Headers, 'get'>): string {
+  return (
+    headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    headers.get('x-real-ip') ||
+    'unknown'
+  );
+}
+
 const RATE_LIMIT_STORE = new Map<string, { count: number; resetAt: number }>();
 const MAX_ENTRIES = 5000;
 
