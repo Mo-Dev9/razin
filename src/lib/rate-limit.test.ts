@@ -1,5 +1,22 @@
 import { describe, it, expect } from 'vitest';
-import { checkRateLimit, resetRateLimit } from '@/lib/rate-limit';
+import { checkRateLimit, checkRateLimitShared, resetRateLimit, getRequestIp } from '@/lib/rate-limit';
+
+describe('getRequestIp — آخر قيمة موثوقة من XFF', () => {
+  it('يأخذ آخر قيمة في السلسلة (الذي يُلحقه الوكيل الموثوق) لا أولها', () => {
+    const head = new Headers({ 'x-forwarded-for': '10.0.0.1, 1.2.3.4' });
+    expect(getRequestIp(head)).toBe('1.2.3.4');
+  });
+
+  it('يتجاهل القيم الفارغة والمسافات وينجح بترويسة واحدة', () => {
+    expect(getRequestIp(new Headers({ 'x-forwarded-for': ' 8.8.8.8 ' }))).toBe('8.8.8.8');
+    expect(getRequestIp(new Headers({ 'x-forwarded-for': ',,' }))).toBe('unknown');
+  });
+
+  it('يستعمل x-real-ip عند غياب x-forwarded-for', () => {
+    expect(getRequestIp(new Headers({ 'x-real-ip': '9.9.9.9' }))).toBe('9.9.9.9');
+    expect(getRequestIp(new Headers({}))).toBe('unknown');
+  });
+});
 
 describe('checkRateLimit (in-memory sliding-fixed window)', () => {
   it('allows requests within the limit then blocks', () => {
@@ -32,5 +49,18 @@ describe('checkRateLimit (in-memory sliding-fixed window)', () => {
     expect(checkRateLimit(key, 1, 60_000).allowed).toBe(false);
     resetRateLimit(key);
     expect(checkRateLimit(key, 1, 60_000).allowed).toBe(true);
+  });
+});
+
+// checkRateLimitShared: خارج VERCEL (= محلي/اختبارات) يسلك سلوك الذاكرة نفسه —
+// هذه التحويلات تؤكّد أن واجهة المسارات الحساسة (async) لا تكسر النمط الحالي.
+describe('checkRateLimitShared (fallback محلي = نفس حد الذاكرة)', () => {
+  it('يحسب على نفس مفتاح الذاكرة حتى عبر المسارات الحساسة', async () => {
+    const key = `shared-local-${Date.now()}`;
+    expect((await checkRateLimitShared(key, 2, 60_000)).allowed).toBe(true);
+    expect((await checkRateLimitShared(key, 2, 60_000)).allowed).toBe(true);
+    const blocked = await checkRateLimitShared(key, 2, 60_000);
+    expect(blocked.allowed).toBe(false);
+    expect(blocked.retryAfterMs).toBeGreaterThan(0);
   });
 });

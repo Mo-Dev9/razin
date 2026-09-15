@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     "scripts/**",
+    // أدوات التشغيل منفردة (cjs) خارج باندل Next — لا تمر عبر flat config
+    "tools/**/*.cjs",
   ]),
 ]);
 

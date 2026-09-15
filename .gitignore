@@ -51,5 +51,14 @@ scripts/service-account.json
 AGENTS.md
 CLAUDE.md
 
+# runtime + accidental redirect artifacts
+.next-start*.log
+-w
+
+# local reference docs (review files, study) — stay local-only
+STUDY.md
+*.xlsx
+*.xls
+
 .vercel
 .env*

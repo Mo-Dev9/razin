@@ -17,6 +17,15 @@ export interface CrawlSource {
   allowedPathPrefixes: string[];
 }
 
+/**
+ * مشكّل صفحة بحث لمصدر معيّن — يعزل طريقة استخراج كل مصدر حتى يضاف مصدر
+ * جديد بإدخال (مصدر، مشكّل) واحد فقط دون المساس بمنطق الرحلة/الروبات/التخزين.
+ */
+export interface SourceParser {
+  /** حلّل HTML صفحة بحث المصدر إلى إعلانات مطبّعة + عدد متاح (إن وُجد). */
+  parseSearchHtml(html: string): { items: ParsedListing[]; totalAvailable: number | null };
+}
+
 export interface CrawlSettings {
   /** تعرّف وكيل صريح وغير مضلل (اسم المنتج + رقم الإصدار + غرض). */
   userAgent: string;

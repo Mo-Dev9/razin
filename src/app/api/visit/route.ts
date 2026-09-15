@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { FieldValue } from 'firebase-admin/firestore';
 import { getAdminDb } from '@/lib/firebase-admin';
-import { checkRateLimit } from '@/lib/rate-limit';
+import { checkRateLimit, getRequestIp } from '@/lib/rate-limit';
 import { cairoDateString } from '@/lib/date';
 
 export const dynamic = 'force-dynamic';
-
-function getRequestIp(req: NextRequest): string {
-  return req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
-}
 
 function getValidPath(raw: unknown): string | null {
   if (typeof raw !== 'string') return null;
@@ -23,7 +19,7 @@ function getValidPath(raw: unknown): string | null {
 
 export async function POST(req: NextRequest) {
   try {
-    const ip = getRequestIp(req);
+    const ip = getRequestIp(req.headers);
     const { allowed, retryAfterMs } = checkRateLimit(`visit:${ip}`, 300, 60_000);
     if (!allowed) {
       return NextResponse.json(
@@ -52,8 +48,11 @@ export async function POST(req: NextRequest) {
       { merge: true }
     );
 
-    const pageKey = encodeURIComponent(path);
-    await db.collection('visitPages').doc(pageKey).set(
+    // مفتاح وثيقة مشتّت (sha256) بدل encodeURIComponent للمسار — مسارات عربية
+    // طويلة كانت ستنتفخ كمعرّفات وثائق (L6)؛ المسار يُخزَّن كحقل قابل للعرض.
+    const { createHash } = await import('crypto');
+    const pageId = createHash('sha256').update(path).digest('hex');
+    await db.collection('visitPages').doc(pageId).set(
       { count: FieldValue.increment(1), path, lastVisitAt: Date.now() },
       { merge: true }
     );

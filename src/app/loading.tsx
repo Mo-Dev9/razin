@@ -1,12 +1,12 @@
 'use client';
 
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
+import { SiteHeader } from '@/components/layout/SiteHeader';
+import { SiteFooter as Footer } from '@/components/layout/SiteFooter';
 
 export default function Loading() {
   return (
     <>
-      <Header />
+      <SiteHeader />
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full mx-auto mb-4" />

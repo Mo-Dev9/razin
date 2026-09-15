@@ -4,9 +4,10 @@ import {
   signInAnonymously,
   GoogleAuthProvider,
   signInWithPopup,
-  linkWithCredential,
+  linkWithPopup,
   signOut as firebaseSignOut,
   type User,
+  type UserCredential,
   type AuthError,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
@@ -43,12 +44,26 @@ export function useAuth() {
           console.warn('Failed to load/create user profile:', err);
         }
       } else {
-        try {
-          const cred = await signInAnonymously(getFirebaseAuth());
-          setUser(cred.user);
-        } catch (err) {
-          console.error('Anonymous auth failed:', err);
-        }
+        // لقطة مؤقتة قد يبثّها Firebase أثناء دوران الجلسة (لا مستخدم فعلًا):
+        // نحاول إنشاء المجهول، ومع فشلٍ عابر (انقطاع Firebase/شبكة) نحاول
+        // مرتين بالأثر (L3) — والخروج النهائي بلا user يبقى حيًّا لواجهة
+        // القراءة ولا يعلّق الخلاصة إلى الأبد.
+        let attempts = 0;
+        const tryAnon = async (): Promise<void> => {
+          try {
+            const cred = await signInAnonymously(getFirebaseAuth());
+            setUser(cred.user);
+          } catch (err) {
+            attempts += 1;
+            if (attempts < 3) {
+              // backoff تصاعدي (600ms، 1200ms، ثم استسلام)
+              setTimeout(() => void tryAnon(), 600 * attempts);
+            } else {
+              console.error('Anonymous auth failed after retries:', err);
+            }
+          }
+        };
+        await tryAnon();
       }
       setLoading(false);
     });
@@ -58,57 +73,61 @@ export function useAuth() {
 
   const isLinkedWithGoogle = user?.providerData.some((p) => p.providerId === 'google.com') ?? false;
 
-  const signInWithGoogle = useCallback(async (): Promise<{ success: boolean; error?: string }> => {
+  const signInWithGoogle = useCallback(async (): Promise<{ success: boolean; user?: User; error?: string }> => {
     try {
       const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(getFirebaseAuth(), provider);
+      const auth = getFirebaseAuth();
+      const current = auth.currentUser;
 
-      if (user && user.isAnonymous) {
-        try {
-          const credential = GoogleAuthProvider.credentialFromResult(result);
-          if (credential) {
-            await linkWithCredential(user, credential);
-          }
-        } catch {
-          // Already linked or different account — proceed with Google account
-        }
+      // إذا كان هناك مستخدم مجهول قائم: نربط جوجل به عبر linkWithPopup
+      // (يرفع الحساب المجهول لنفس uid) — لا نستبدل الهوية أبدًا. بدون مستخدم
+      // مجهول حي: تسجيل دخول بوب-أب عادي.
+      let result: UserCredential;
+      if (current?.isAnonymous) {
+        result = await linkWithPopup(current, provider);
+      } else {
+        result = await signInWithPopup(auth, provider);
       }
 
-      const firebaseUser = getFirebaseAuth().currentUser;
+      const firebaseUser = result.user;
       if (firebaseUser) {
         const userDoc = await getDoc(doc(getDb(), 'users', firebaseUser.uid));
+        // الهوية تبقى «مجهولة» في العرض: الاسم المستعار ثابت من uid، ولا نخزّن
+        // الاسم الحقيقي/البريد/الصورة أبدًا (قرار ٥ — «بلا اسمك الحقيقي»).
         const updateData: Partial<UserProfile> = {
           isAnonymous: false,
-          photoURL: firebaseUser.photoURL || undefined,
-          email: firebaseUser.email || undefined,
+          displayName: generateAnonymousName(firebaseUser.uid),
           linkedProvider: 'google.com',
           linkedAt: Date.now(),
         };
-
-        if (firebaseUser.displayName) {
-          updateData.displayName = firebaseUser.displayName;
-        }
 
         if (userDoc.exists()) {
           await updateDoc(doc(getDb(), 'users', firebaseUser.uid), updateData);
         } else {
           await setDoc(doc(getDb(), 'users', firebaseUser.uid), {
             uid: firebaseUser.uid,
-            displayName: firebaseUser.displayName || generateAnonymousName(firebaseUser.uid),
+            displayName: generateAnonymousName(firebaseUser.uid),
             reviewCount: 0,
             createdAt: Date.now(),
             ...updateData,
           });
         }
 
-        setProfile((prev) => prev ? { ...prev, ...updateData } : null);
+        setProfile((prev) =>
+          prev
+            ? { ...prev, isAnonymous: false, displayName: generateAnonymousName(firebaseUser.uid), linkedProvider: 'google.com', linkedAt: updateData.linkedAt }
+            : null
+        );
       }
 
-      return { success: true };
+      return { success: true, user: firebaseUser ?? undefined };
     } catch (err) {
       const authError = err as AuthError;
       if (authError.code === 'auth/popup-closed-by-user') {
         return { success: false, error: 'تم إلغاء التسجيل' };
+      }
+      if (authError.code === 'auth/credential-already-in-use') {
+        return { success: false, error: 'حساب جوجل هذا مربوط بهوية أخرى — استخدم حسابًا مختلفًا' };
       }
       if (authError.code === 'auth/account-exists-with-different-credential') {
         return { success: false, error: 'الحساب موجود ببيانات دخول مختلفة' };
@@ -116,7 +135,7 @@ export function useAuth() {
       console.error('Google sign-in failed:', err);
       return { success: false, error: 'حدث خطأ أثناء تسجيل الدخول' };
     }
-  }, [user]);
+  }, []);
 
   const signOut = useCallback(async (): Promise<void> => {
     try {

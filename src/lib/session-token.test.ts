@@ -34,4 +34,12 @@ describe('admin session token', () => {
     vi.stubEnv('ADMIN_PASSWORD', 'secret-2');
     expect(isAdminSession(other)).toBe(false);
   });
+
+  it('never issues or accepts a session when ADMIN_PASSWORD is unset', () => {
+    vi.stubEnv('ADMIN_PASSWORD', '');
+    expect(adminSessionValue()).toBe('');
+    expect(isAdminSession(adminSessionValue())).toBe(false);
+    // قيمة ثابتة كانت ستُقبل سابقًا مع باسورد فارغ — تُرفض الآن.
+    expect(isAdminSession('95a5f824')).toBe(false);
+  });
 });

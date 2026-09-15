@@ -1,27 +1,26 @@
-'use client';
-
 import Link from 'next/link';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
-import { Button } from '@/components/ui/Button';
+import { SiteHeader } from '@/components/layout/SiteHeader';
+import { SiteFooter } from '@/components/layout/SiteFooter';
 
 export default function NotFound() {
   return (
     <>
-      <Header />
-      <main className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4">🔍</div>
-          <h1 className="text-2xl font-bold mb-2">الصفحة غير موجودة</h1>
-          <p className="text-sm text-[var(--color-text-secondary)] mb-6">
-            يبدو أن الرابط الذي أدخلته غير صحيح أو الصفحة قد تمت إزالته
-          </p>
-          <Link href="/">
-            <Button>الرجوع للرئيسية</Button>
-          </Link>
-        </div>
+      <SiteHeader />
+      <main className="mx-auto flex min-h-[60vh] max-w-5xl flex-col items-center justify-center px-4 py-20 text-center">
+        <p className="text-7xl font-extrabold text-[var(--color-accent)]">404</p>
+        <h1 className="mt-4 text-2xl font-extrabold text-[var(--color-primary)]">هذه الصفحة غير موجودة</h1>
+        <p className="mt-3 max-w-md text-sm leading-relaxed text-[var(--color-text-secondary)]">
+          ربما حذف الرابط أو أن الحي غير مسجل في دليلنا بعد. عد إلى الرئيسية وابحث عن
+          حيّك من جديد.
+        </p>
+        <Link
+          href="/"
+          className="mt-8 rounded-full bg-[var(--color-primary)] px-7 py-3 text-sm font-bold text-[var(--color-accent)] transition-all hover:scale-[1.03] hover:shadow-lg"
+        >
+          العودة للرئيسية
+        </Link>
       </main>
-      <Footer />
+      <SiteFooter />
     </>
   );
 }

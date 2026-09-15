@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
+import { SiteHeader } from '@/components/layout/SiteHeader';
+import { SiteFooter as Footer } from '@/components/layout/SiteFooter';
 import { Button } from '@/components/ui/Button';
 import { LogoutButton } from '@/components/admin/LogoutButton';
 import { EGYPT_GOVERNORATES, placesOf } from '@/lib/egypt-cities';
@@ -12,6 +12,7 @@ import type { PropertyType, FinishingLevel, VerificationStatus } from '@/types';
 
 interface ListingRow {
   id: string;
+  neighborhoodId: string;
   governorate: string;
   city: string;
   propertyType: string;
@@ -237,14 +238,14 @@ export default function AdminListingsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, neighborhoodId: string) => {
     if (!window.confirm('حذف هذا الإعلان نهائيًا؟')) return;
     setDeletingId(id);
     try {
       const res = await fetch('/api/admin/listings', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ listingId: id }),
+        body: JSON.stringify({ listingId: id, neighborhoodId }),
       });
       if (res.status === 401) {
         router.push('/admin/login');
@@ -288,7 +289,7 @@ export default function AdminListingsPage() {
 
   return (
     <>
-      <Header />
+      <SiteHeader />
       <main className="flex-1 mx-auto max-w-5xl px-4 py-6 w-full">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -647,7 +648,7 @@ export default function AdminListingsPage() {
                       variant="danger"
                       size="sm"
                       loading={deletingId === row.id}
-                      onClick={() => void handleDelete(row.id)}
+                      onClick={() => void handleDelete(row.id, row.neighborhoodId)}
                     >
                       حذف
                     </Button>

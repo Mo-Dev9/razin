@@ -14,28 +14,51 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Users — read any, write own only
+    // Users — own-read/own-write only (لا قراءة عامة لبيانات المستخدمين)
     match /users/{userId} {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Listings (price ads) — public read; all writes via server API + Admin SDK
-    match /listings/{listingId} {
+    // Neighborhoods — meta doc + subcollections.
+    // Listings (price ads) + questions («صوت الحارة»): public read; all writes via server API + Admin SDK
+    match /neighborhoods/{neighborhoodId} {
       allow read: if true;
       allow write: if false;
+
+      match /listings/{listingId} {
+        allow read: if true;
+        allow write: if false;
+      }
+
+      match /questions/{questionId} {
+        allow read: if true;
+        allow write: if false;
+
+        match /replies/{replyId} {
+          allow read: if true;
+          allow write: if false;
+        }
+      }
     }
 
-    // Questions — read any; writes land via server API (participant policy lands Week 3)
-    match /questions/{questionId} {
-      allow read: if true;
+    // Posts («حارة») — مجتمع الحي: تقدَّم كاملة عبر API بخادم إشراف (Admin SDK).
+    // read: false للعملاء حتى لا يتسرب موقع مُرسل أو هنوية بعد الآن (قرار ٦).
+    match /posts/{postId} {
+      allow read: if false;
       allow write: if false;
-    }
 
-    // Question replies — same policy
-    match /questions/{questionId}/replies/{replyId} {
-      allow read: if true;
-      allow write: if false;
+      match /comments/{commentId} {
+        allow read: if false;
+        allow write: if false;
+      }
+      match /votes/{voteId} {
+        allow read: if false;
+        allow write: if false;
+      }
+      match /reports/{reportId} {
+        allow read: if false;
+        allow write: if false;
+      }
     }
 
     // Manual-collection queue (protected pages recorded by the crawler) — read any, no client writes

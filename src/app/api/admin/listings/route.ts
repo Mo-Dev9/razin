@@ -3,6 +3,7 @@ import { isAdmin } from '@/lib/admin';
 import { getAdminDb } from '@/lib/firebase-admin';
 import { checkRateLimit, getRequestIp } from '@/lib/rate-limit';
 import { neighborhoodKey } from '@/lib/listing-utils';
+import { neighborhoodListingsRef, recomputeNeighborhoodMeta } from '@/lib/neighborhood-writer';
 import { EGYPT_GOVERNORATES, isPlaceIn } from '@/lib/egypt-cities';
 import { PROPERTY_TYPES, FINISHING_LEVELS } from '@/types';
 import type { Listing, PropertyType, FinishingLevel, VerificationStatus } from '@/types';
@@ -154,10 +155,11 @@ export async function POST(req: NextRequest) {
 
   try {
     const db = getAdminDb();
+    const neighborhoodId = neighborhoodKey(city, governorate);
     const record: Omit<Listing, 'id'> = {
       governorate,
       city,
-      neighborhoodId: neighborhoodKey(city),
+      neighborhoodId,
       propertyType,
       rooms,
       bathrooms,
@@ -172,8 +174,9 @@ export async function POST(req: NextRequest) {
       ...(listedAt !== undefined ? { listedAt } : {}),
       ...(note !== undefined ? { note } : {}),
     };
-    const ref = await db.collection('listings').add(record);
-    return NextResponse.json({ listingId: ref.id });
+    const ref = await neighborhoodListingsRef(db, neighborhoodId).add(record);
+    await recomputeNeighborhoodMeta(db, neighborhoodId, { city, governorate });
+    return NextResponse.json({ listingId: ref.id, neighborhoodId });
   } catch (err) {
     console.error('Create listing failed:', err);
     return NextResponse.json({ error: 'تعذر حفظ الإعلان' }, { status: 500 });
@@ -189,8 +192,20 @@ export async function GET(req: NextRequest) {
 
   try {
     const db = getAdminDb();
-    const snap = await db.collection('listings').orderBy('recordedAt', 'desc').limit(100).get();
-    const listings = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    // مجموعة الأحياء صغيرة — نمسح meta ثم نقرأ أحدث إعلانات كل حي وندمجها.
+    // (الاستعلام عبر collectionGroup كان يتطلب فهرسًا لا ينشئه CLI — قررنا تخطيه.)
+    const nSnap = await db.collection('neighborhoods').get();
+    const pages = await Promise.all(
+      nSnap.docs.map((nd) =>
+        nd.ref.collection('listings').orderBy('recordedAt', 'desc').limit(20).get()
+      )
+    );
+    const rows: Array<Record<string, unknown> & { id: string; recordedAt?: number }> = [];
+    for (const page of pages) {
+      for (const d of page.docs) rows.push({ id: d.id, ...d.data() });
+    }
+    rows.sort((a, b) => (Number(b.recordedAt) || 0) - (Number(a.recordedAt) || 0));
+    const listings = rows.slice(0, 100);
     return NextResponse.json({ listings });
   } catch (err) {
     console.error('List listings failed:', err);
@@ -205,26 +220,34 @@ export async function DELETE(req: NextRequest) {
   const limited = await enforceRateLimit(req);
   if (limited) return limited;
 
-  let body: { listingId?: unknown };
+  let body: { listingId?: unknown; neighborhoodId?: unknown };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: 'طلب غير صالح' }, { status: 400 });
   }
 
-  const { listingId } = body;
+  const { listingId, neighborhoodId } = body;
   if (typeof listingId !== 'string' || !listingId) {
     return NextResponse.json({ error: 'معرّف الإعلان مطلوب' }, { status: 400 });
+  }
+  if (typeof neighborhoodId !== 'string' || !neighborhoodId) {
+    return NextResponse.json({ error: 'معرّف الحي مطلوب' }, { status: 400 });
   }
 
   try {
     const db = getAdminDb();
-    const ref = db.collection('listings').doc(listingId);
+    const ref = neighborhoodListingsRef(db, neighborhoodId).doc(listingId);
     const snap = await ref.get();
     if (!snap.exists) {
       return NextResponse.json({ error: 'الإعلان غير موجود' }, { status: 404 });
     }
+    const data = snap.data();
     await ref.delete();
+    await recomputeNeighborhoodMeta(db, neighborhoodId, {
+      city: typeof data?.city === 'string' ? data.city : undefined,
+      governorate: typeof data?.governorate === 'string' ? data.governorate : undefined,
+    });
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error('Delete listing failed:', err);

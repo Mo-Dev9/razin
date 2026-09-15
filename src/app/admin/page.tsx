@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
+import { SiteHeader } from '@/components/layout/SiteHeader';
+import { SiteFooter as Footer } from '@/components/layout/SiteFooter';
 import { LogoutButton } from '@/components/admin/LogoutButton';
 
 export default function AdminDashboard() {
@@ -29,7 +29,7 @@ export default function AdminDashboard() {
 
   return (
     <>
-      <Header />
+      <SiteHeader />
       <main className="flex-1 mx-auto max-w-3xl px-4 py-8 w-full">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -50,6 +50,17 @@ export default function AdminDashboard() {
             <h2 className="font-semibold">الإعلانات</h2>
             <p className="text-xs text-[var(--color-text-secondary)] mt-1">
               إدخال إعلانات الأسعار يدويًا + استعراضها + قائمة «جمع يدوي منتظر».
+            </p>
+          </a>
+
+          <a
+            href="/admin/posts"
+            className="block rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-6 hover:border-[var(--color-primary)] transition-colors"
+          >
+            <div className="text-3xl mb-3">🗣️</div>
+            <h2 className="font-semibold">إشراف الحارة</h2>
+            <p className="text-xs text-[var(--color-text-secondary)] mt-1">
+              المراجعة الإدارية لمنشورات المجتمع المبلَّغ عنها: استعادة أو حذف.
             </p>
           </a>
         </div>

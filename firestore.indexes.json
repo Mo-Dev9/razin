@@ -1,6 +1,14 @@
 {
   "indexes": [
     {
+      "collectionGroup": "neighborhoods",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "ready", "order": "ASCENDING" },
+        { "fieldPath": "lastUpdated", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "reviews",
       "queryScope": "COLLECTION",
       "fields": [
@@ -25,12 +33,44 @@
       ]
     },
     {
+      "collectionGroup": "listings",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "recordedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "buildings",
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "address", "order": "ASCENDING" },
         { "fieldPath": "city", "order": "ASCENDING" },
         { "fieldPath": "area", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "cell", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "neighborhoodId", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
         { "fieldPath": "createdAt", "order": "DESCENDING" }
       ]
     }

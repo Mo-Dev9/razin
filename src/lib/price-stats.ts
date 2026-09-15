@@ -20,6 +20,13 @@ export interface PriceStats {
 /** أقل عدد إعلانات لعرض أرقام ملفتة (وسيط/أعلى/أقل) — أقل من ذلك «بيانات محدودة». */
 export const MIN_DISPLAY_SOURCES = 10;
 
+/**
+ * حارس الكفاية للفلتر: أقل عدد إعلانات في فئة مفلترة (نوع/تأثيث) لنعرض
+ * لها رقمًا. القيم في القاعدة الحالية 1–3 لكل حي، والفلترة تقصها أكثر —
+ * فلا نعرض وسيطًا وهميًا من 2–3 إعلانات (قرار «الصحة فوق السرعة»).
+ */
+export const MIN_FILTER_SOURCES = 5;
+
 function percentile(sorted: number[], q: number): number {
   const pos = (sorted.length - 1) * q;
   const base = Math.floor(pos);

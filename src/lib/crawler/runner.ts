@@ -4,8 +4,8 @@
  * ولا محاولة تجاوز أي حماية (تسجيل دخول/كابتشا/حظر) — تُحفظ الصفحة للجمع اليدوي.
  */
 
-import type { BlockReason, CrawlResult, CrawlSettings, CrawlSource, ParsedListing } from '@/lib/crawler/types';
-import { parseOlxSearchHtml, reasonForStatus } from '@/lib/crawler/olx-eg';
+import type { BlockReason, CrawlResult, CrawlSettings, CrawlSource, ParsedListing, SourceParser } from '@/lib/crawler/types';
+import { reasonForStatus } from '@/lib/crawler/olx-eg';
 import { parseRobotsTxt, robotsAllows } from '@/lib/crawler/robots';
 
 export interface FetchTextResult {
@@ -41,6 +41,8 @@ function sleep(ms: number): Promise<void> {
 export interface RunSourceOptions {
   /** عناوين الصفحات لجلبها بهذا الترتيب (افتراضيًا صفحة البحث القياسية الواردة في المصدر). */
   searchUrls: string[];
+  /** مشكّل صفحة البحث الخاص بهذا المصدر — يُحدَّد عند إضافة مصدر جديد. */
+  parser: SourceParser;
 }
 
 /**
@@ -106,7 +108,7 @@ export async function crawlSource(
         continue;
       }
 
-      const parsed = parseOlxSearchHtml(fetchRes.body);
+      const parsed = options.parser.parseSearchHtml(fetchRes.body);
       result.totalAvailable = parsed.totalAvailable ?? result.totalAvailable;
       result.parsed.push(...parsed.items);
     } catch (err) {

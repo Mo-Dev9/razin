@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHash, timingSafeEqual } from 'crypto';
-import { checkRateLimit, resetRateLimit } from '@/lib/rate-limit';
+import { checkRateLimitShared, resetRateLimitShared, getRequestIp } from '@/lib/rate-limit';
 import { adminSessionValue } from '@/lib/admin';
 
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_MS = 30 * 60 * 1000;
 
+// تأخذ آخر قيمة موثوقة من XFF (يُلحقها Vercel) — لا الأولى القابلة للتزوير
 function getRateKey(req: NextRequest): string {
-  const forwarded = req.headers.get('x-forwarded-for');
-  const ip = forwarded?.split(',')[0]?.trim() || 'unknown';
-  return `admin_login:${ip}`;
+  return `admin_login:${getRequestIp(req.headers)}`;
 }
 
 function passwordMatches(input: string, expected: string): boolean {
@@ -20,7 +19,7 @@ function passwordMatches(input: string, expected: string): boolean {
 
 export async function POST(req: NextRequest) {
   const rateKey = getRateKey(req);
-  const { allowed, retryAfterMs } = checkRateLimit(rateKey, MAX_ATTEMPTS, LOCKOUT_MS);
+  const { allowed, retryAfterMs } = await checkRateLimitShared(rateKey, MAX_ATTEMPTS, LOCKOUT_MS);
 
   if (!allowed) {
     const minutes = Math.max(1, Math.ceil(retryAfterMs / 60000));
@@ -38,7 +37,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { password } = body;
-  if (!password) {
+  if (typeof password !== 'string' || !password.trim()) {
     return NextResponse.json({ error: 'كلمة المرور مطلوبة' }, { status: 400 });
   }
 
@@ -52,12 +51,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'كلمة المرور غير صحيحة' }, { status: 401 });
   }
 
-  resetRateLimit(rateKey);
+  await resetRateLimitShared(rateKey);
 
   const res = NextResponse.json({ ok: true });
   res.cookies.set('admin_session', adminSessionValue(), {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.VERCEL === '1',
     sameSite: 'strict',
     maxAge: 24 * 60 * 60,
     path: '/',

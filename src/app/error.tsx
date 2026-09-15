@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
+import { SiteHeader } from '@/components/layout/SiteHeader';
+import { SiteFooter as Footer } from '@/components/layout/SiteFooter';
 import { Button } from '@/components/ui/Button';
 
 export default function Error({
@@ -21,7 +21,7 @@ export default function Error({
 
   return (
     <>
-      <Header />
+      <SiteHeader />
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">⚠️</div>

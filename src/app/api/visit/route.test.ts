@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { createHash } from 'crypto';
 import { NextRequest } from 'next/server';
 import { POST } from './route';
 
@@ -11,6 +12,7 @@ vi.mock('@/lib/firebase-admin', () => ({
 
 vi.mock('@/lib/rate-limit', () => ({
   checkRateLimit: (...args: unknown[]) => mockCheckRateLimit(...args),
+  getRequestIp: () => 'test-ip',
 }));
 
 interface FakeDb {
@@ -82,6 +84,7 @@ describe('POST /api/visit', () => {
     const body = await res.json();
     expect(body.ok).toBe(true);
     expect(db.ops.some((op) => op.startsWith('set:visitDays/'))).toBe(true);
-    expect(db.ops.some((op) => op.startsWith('set:visitPages/%2Fsearch'))).toBe(true);
+    const pageId = createHash('sha256').update('/search').digest('hex');
+    expect(db.ops.some((op) => op === `set:visitPages/${pageId}`)).toBe(true);
   });
 });

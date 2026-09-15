@@ -4,6 +4,7 @@ const SESSION_SALT = 'razin-admin-session:';
 
 export function adminSessionValue(): string {
   const password = process.env.ADMIN_PASSWORD || '';
+  if (!password) return '';
   return createHash('sha256').update(`${SESSION_SALT}${password}`).digest('hex');
 }
 
