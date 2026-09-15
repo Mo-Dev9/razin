@@ -29,7 +29,6 @@ interface CalculatorProps {
 
 const ROOMS_OPTIONS = [
   { value: '', label: 'أي عدد غرف' },
-  { value: '0', label: 'استوديو' },
   { value: '1', label: 'غرفة واحدة' },
   { value: '2', label: 'غرفتان' },
   { value: '3', label: '3 غرف' },

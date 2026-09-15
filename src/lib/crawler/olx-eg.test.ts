@@ -218,7 +218,12 @@ describe('helpers', () => {
     expect(detectPropertyType('Villa for sale', 'Villa')).toBe('villa');
     expect(detectPropertyType('Duplex', 'Duplex')).toBe('duplex');
     expect(detectPropertyType('Flat for rent in Maadi', 'Apartment')).toBe('apartment');
-    expect(detectPropertyType('Office space', 'Office')).toBe('office');
+    expect(detectPropertyType('Studio for rent', 'Apartment')).toBe('studio');
+    // الأنواع الخمسة فقط: روف وتاون هاوس وشاليه ومحل ومكتب خارجة ولا تُصنَّف.
+    // بلا entityType سكني لا يُلتقط شيء؛ ومع «Apartment» تتسرب لفئة الشقق العامة (fallback).
+    expect(detectPropertyType('Roof', 'Roof')).toBeNull();
+    expect(detectPropertyType('Townhouse', 'Townhouse')).toBeNull();
+    expect(detectPropertyType('Office space', 'Office')).toBeNull();
     expect(detectPropertyType('q1', 'Warehouse')).toBeNull();
   });
 

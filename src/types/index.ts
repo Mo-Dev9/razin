@@ -10,29 +10,14 @@ export interface UserProfile {
   createdAt: number;
 }
 
-export type PropertyType =
-  | 'apartment'
-  | 'studio'
-  | 'penthouse'
-  | 'duplex'
-  | 'roof'
-  | 'villa'
-  | 'townhouse'
-  | 'chalet'
-  | 'shop'
-  | 'office';
+export type PropertyType = 'apartment' | 'studio' | 'penthouse' | 'duplex' | 'villa';
 
 export const PROPERTY_TYPES: ReadonlyArray<{ id: PropertyType; ar: string }> = [
   { id: 'apartment', ar: 'شقة' },
   { id: 'studio', ar: 'استوديو' },
   { id: 'penthouse', ar: 'بنتهاوس' },
   { id: 'duplex', ar: 'دوبلكس' },
-  { id: 'roof', ar: 'روف' },
   { id: 'villa', ar: 'فيلا' },
-  { id: 'townhouse', ar: 'تاون هاوس' },
-  { id: 'chalet', ar: 'شاليه' },
-  { id: 'shop', ar: 'محل' },
-  { id: 'office', ar: 'مكتب' },
 ];
 
 export type FinishingLevel = 'basic' | 'average' | 'lux' | 'super-lux';

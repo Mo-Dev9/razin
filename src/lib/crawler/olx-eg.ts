@@ -155,12 +155,7 @@ const PROPERTY_TYPE_PATTERNS: Array<[RegExp, string]> = [
   [/^studio\b|\bstudio\b|\bاستوديو\b|\bستوديو\b/i, 'studio'],
   [/^penthouse\b|penthouse|بنتهاوس/i, 'penthouse'],
   [/^duplex\b|\bduplex\b|\bدوبلكس\b/i, 'duplex'],
-  [/^roof\b|\broof\b|\bروف\b/i, 'roof'],
   [/^villa\b|\bvilla\b|\bفيلا\b/i, 'villa'],
-  [/^townhouse\b|townhouse|تاون\s*هاوس/i, 'townhouse'],
-  [/^chalet\b|\bchalet\b|\bشاليه\b|\bشالي\b/i, 'chalet'],
-  [/^shop\b|\bshop\b|\bمحل\b/i, 'shop'],
-  [/office|مكتب|مكتبي|اداري|إداري/i, 'office'],
   [/apartment|شقة|شقه|سكن/i, 'apartment'],
 ];
 
