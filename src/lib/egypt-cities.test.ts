@@ -182,8 +182,10 @@ describe('normalizeSearchText', () => {
     expect(normalizeSearchText('مدى')).toBe('مدي');
   });
 
-  it('keeps digits and words (6 أكتوبر) intact', () => {
+  it('keeps digits and words (6 أكتوبر) intact and unifies Arabic-Indic digits', () => {
     expect(normalizeSearchText('6 أكتوبر')).toBe('6 اكتوبر');
+    expect(normalizeSearchText('٦ أكتوبر')).toBe('6 اكتوبر');
+    expect(normalizeSearchText('مدينة ٦ أكتوبر')).toBe('مدينه 6 اكتوبر');
     expect(normalizeSearchText('شارع مصطفى النحاس')).toContain('مصطفي');
   });
 

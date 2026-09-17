@@ -22,13 +22,16 @@ vi.mock('@/lib/rate-limit', () => ({
 
 vi.mock('@/lib/crawler/runner', () => ({
   crawlSource: (...args: unknown[]) => mockCrawlSource(...args),
-  toStoredListing: (source: { id: string }, l: { externalId: string; title: string; price: number }) => ({
+  toStoredListing: (
+    source: { id: string },
+    l: { externalId: string; title: string; price: number; city?: string | null; governorate?: string | null }
+  ) => ({
     externalId: l.externalId,
     title: l.title,
     price: l.price,
     sourceUrl: 'https://example.test/x',
-    city: 'مدينة نصر',
-    governorate: 'القاهرة',
+    city: l.city ?? null,
+    governorate: l.governorate ?? null,
     status: 'active',
   }),
   blockedToQueueItem: (source: unknown, url: string, reason: string) => ({ url, reason }),
@@ -42,10 +45,14 @@ vi.mock('@/lib/neighborhood-writer', () => ({
   recomputeNeighborhoodMeta: vi.fn(async () => undefined),
 }));
 
+const mockResolvePlaceFromSearchUrl = vi.fn();
+const mockResolveListingLocation = vi.fn();
+
 vi.mock('@/lib/listing-utils', () => ({
-  resolveListingLocation: () => ({ neighborhoodId: 'n1', city: 'مدينة نصر', governorate: 'القاهرة' }),
+  resolveListingLocation: (city: string | null, governorate: string | null) =>
+    mockResolveListingLocation(city, governorate),
   listingDedupKey: () => null,
-  resolvePlaceFromSearchUrl: () => null,
+  resolvePlaceFromSearchUrl: (u: unknown) => mockResolvePlaceFromSearchUrl(u),
 }));
 
 type FakeListingDoc = { path: string; id: string; set: (d: unknown) => Promise<void> };
@@ -106,13 +113,19 @@ function makeRequest(body: string): NextRequest {
   });
 }
 
-function parsedListing(externalId: string, price: number) {
+function parsedListing(
+  externalId: string,
+  price: number,
+  city: string | null = 'مدينة نصر',
+  sourcePageUrl: string | null = null
+) {
   return {
     externalId,
     title: `Twig ${externalId}`,
     price,
     sourceUrl: `https://example.test/${externalId}`,
-    city: 'مدينة نصر' as string | null,
+    sourcePageUrl,
+    city,
     governorate: 'القاهرة' as string | null,
     propertyType: null,
     finishing: null,
@@ -128,6 +141,13 @@ function parsedListing(externalId: string, price: number) {
 beforeEach(() => {
   mockIsAdmin.mockReturnValue(true);
   mockCheckRateLimit.mockReturnValue({ allowed: true, retryAfterMs: 0 });
+  mockResolvePlaceFromSearchUrl.mockReturnValue(null);
+  mockResolveListingLocation.mockReturnValue({
+    neighborhoodId: 'n1',
+    city: 'مدينة نصر',
+    governorate: 'القاهرة',
+    matched: true,
+  });
 });
 
 function storedData(db: FakeDb, suffix: string): Record<string, unknown> | undefined {
@@ -473,5 +493,132 @@ expect(storedData(db, 'olx-eg_t1')?.propertyType).toBe('studio');
     const body = await res.json();
     expect(body.previewItems).toHaveLength(3);
     expect(body.previewItems[body.previewItems.length - 1]).toMatchObject({ index: 3 });
+  });
+
+  it('skips items whose own locality is another KNOWN neighborhood than the slug page (mixed slug page)', async () => {
+    // صفحة slug غير صالحة (مثل sayeda-zeinab) ترجّع خليطًا (فيصل/المقطم) —
+    // الحارس يحتفظ بالمطابق للحس الأخير فقط ويُهمل المختلف دون رفض الرحلة.
+    const url = 'https://www.olx.com.eg/en/properties/apartments-duplex-for-rent/sayeda-zeinab';
+    mockResolvePlaceFromSearchUrl.mockReturnValue({ city: 'السيدة زينب', governorate: 'القاهرة' });
+    mockResolveListingLocation.mockImplementation((city) => {
+      if (city === 'السيدة زينب') {
+        return { neighborhoodId: 'السيدهزينب', city: 'السيدة زينب', governorate: 'القاهرة', matched: true };
+      }
+      if (city === 'Faisal') {
+        return { neighborhoodId: 'فيصل', city: 'فيصل', governorate: 'الجيزة', matched: true };
+      }
+      return { neighborhoodId: 'n1', city: 'مدينة نصر', governorate: 'القاهرة', matched: true };
+    });
+    mockCrawlSource.mockResolvedValue({
+      sourceId: 'olx-eg',
+      fetchedPages: 1,
+      totalAvailable: 2,
+      parsed: [
+        parsedListing('keep1', 6000, 'السيدة زينب', url),
+        parsedListing('drop1', 4000, 'Faisal', url),
+      ],
+      blocked: [],
+      error: null,
+    });
+    const db = makeDb([]);
+    mockGetAdminDb.mockReturnValue(db);
+
+    const res = await POST(makeRequest(JSON.stringify({ source: 'olx-eg', urls: [url] })));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.saved).toBe(1);
+    expect(body.skippedNeighborhoodMismatch).toBe(1);
+    expect(db.written.find((w) => w.path.endsWith('olx-eg_keep1'))).toBeTruthy();
+    expect(db.written.find((w) => w.path.endsWith('olx-eg_drop1'))).toBeFalsy();
+  });
+
+  it('keeps items whose locality is UNKNOWN (best-effort under slug authority)', async () => {
+    // محليات غير معروفة للكتالوج تبقى بصلاحية slug (أفضل جهد كسلوك اليوم) —
+    // لا تُعاقب ولا تُنسب لحي آخر.
+    const url = 'https://www.olx.com.eg/en/properties/apartments-duplex-for-rent/heliopolis';
+    mockResolvePlaceFromSearchUrl.mockReturnValue({ city: 'مصر الجديدة', governorate: 'القاهرة' });
+    mockResolveListingLocation.mockImplementation((city) => {
+      if (city === 'Heliopolis') {
+        return { neighborhoodId: 'مصرالجديده', city: 'مصر الجديدة', governorate: 'القاهرة', matched: true };
+      }
+      return { neighborhoodId: 'مصرالجديده', city: 'Some Unknown', governorate: 'القاهرة', matched: false };
+    });
+    mockCrawlSource.mockResolvedValue({
+      sourceId: 'olx-eg',
+      fetchedPages: 1,
+      totalAvailable: 2,
+      parsed: [
+        parsedListing('keep1', 6000, 'Heliopolis', url),
+        parsedListing('keep2', 7000, 'Some Unknown', url),
+      ],
+      blocked: [],
+      error: null,
+    });
+    const db = makeDb([]);
+    mockGetAdminDb.mockReturnValue(db);
+
+    const res = await POST(makeRequest(JSON.stringify({ source: 'olx-eg', urls: [url] })));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.saved).toBe(2);
+    expect(body.skippedNeighborhoodMismatch).toBe(0);
+    expect(db.written.find((w) => w.path.endsWith('olx-eg_keep1'))).toBeTruthy();
+    expect(db.written.find((w) => w.path.endsWith('olx-eg_keep2'))).toBeTruthy();
+  });
+
+  it('does not guard pages without a resolvable slug (general pages keep today behaviour)', async () => {
+    mockResolvePlaceFromSearchUrl.mockReturnValue(null);
+    mockCrawlSource.mockResolvedValue({
+      sourceId: 'olx-eg',
+      fetchedPages: 1,
+      totalAvailable: 2,
+      parsed: [parsedListing('a1', 6000, 'مدينة نصر'), parsedListing('b2', 7000, 'المعادي')],
+      blocked: [],
+      error: null,
+    });
+    const db = makeDb([]);
+    mockGetAdminDb.mockReturnValue(db);
+
+    const res = await POST(makeRequest(JSON.stringify({ source: 'olx-eg' })));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.saved).toBe(2);
+    expect(body.skippedNeighborhoodMismatch).toBe(0);
+  });
+
+  it('preview flags items outside the slug neighborhood and reports the counter without writing', async () => {
+    const url = 'https://www.olx.com.eg/en/properties/apartments-duplex-for-rent/sayeda-zeinab';
+    mockResolvePlaceFromSearchUrl.mockReturnValue({ city: 'السيدة زينب', governorate: 'القاهرة' });
+    mockResolveListingLocation.mockImplementation((city) => {
+      if (city === 'السيدة زينب') {
+        return { neighborhoodId: 'السيدهزينب', city: 'السيدة زينب', governorate: 'القاهرة', matched: true };
+      }
+      if (city === 'Faisal') {
+        return { neighborhoodId: 'فيصل', city: 'فيصل', governorate: 'الجيزة', matched: true };
+      }
+      return { neighborhoodId: 'n1', city: 'مدينة نصر', governorate: 'القاهرة', matched: true };
+    });
+    mockCrawlSource.mockResolvedValue({
+      sourceId: 'olx-eg',
+      fetchedPages: 1,
+      totalAvailable: 2,
+      parsed: [
+        parsedListing('keep1', 6000, 'السيدة زينب', url),
+        parsedListing('drop1', 4000, 'Faisal', url),
+      ],
+      blocked: [],
+      error: null,
+    });
+    const db = makeDb([]);
+    mockGetAdminDb.mockReturnValue(db);
+
+    const res = await POST(makeRequest(JSON.stringify({ source: 'olx-eg', urls: [url], preview: true })));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.previewItems).toHaveLength(2);
+    expect(body.previewItems[0].neighborhoodMismatch).toBe(false);
+    expect(body.previewItems[1].neighborhoodMismatch).toBe(true);
+    expect(body.skippedNeighborhoodMismatch).toBe(1);
+    expect(db.written).toHaveLength(0);
   });
 });

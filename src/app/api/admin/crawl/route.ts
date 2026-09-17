@@ -176,8 +176,10 @@ export async function POST(req: Request): Promise<NextResponse> {
     saved: number;
     queued: number;
     touchedNeighborhoods: number;
+    /** عدد إعلانات أُهملت لأن محلّها المعلَن حيٌّ آخر معروف غير حي slug الصفحة. */
+    skippedNeighborhoodMismatch: number;
     previewItems?: Array<Record<string, unknown>>;
-  } = { sourceResults: [], saved: 0, queued: 0, touchedNeighborhoods: 0 };
+  } = { sourceResults: [], saved: 0, queued: 0, touchedNeighborhoods: 0, skippedNeighborhoodMismatch: 0 };
 
   const db = getAdminDb();
   const touched = new Set<string>();
@@ -203,22 +205,39 @@ export async function POST(req: Request): Promise<NextResponse> {
       outcome.previewItems = [
         ...(outcome.previewItems ?? []),
         ...result.parsed
-          .map((l, i) => ({
-            index: i + 1,
-            externalId: l.externalId,
-            title: l.title ?? '',
-            url: l.sourceUrl ?? l.sourcePageUrl ?? searchUrls[0],
-            price: l.price ?? null,
-            propertyType: l.propertyType ?? null,
-            rentalFrequency: l.rentalFrequency ?? null,
-            city: l.city ?? null,
-            governorate: l.governorate ?? null,
-            bedrooms: l.rooms ?? null,
-            bathrooms: l.bathrooms ?? null,
-            areaM2: l.areaM2 ?? null,
-            monthly: l.rentalFrequency === null || l.rentalFrequency === 'monthly',
-          }))
-          .filter((p) => (stopAt === null ? true : p.index <= stopAt)),
+          .map((l, i) => {
+            const item: Record<string, unknown> = {
+              index: i + 1,
+              externalId: l.externalId,
+              title: l.title ?? '',
+              url: l.sourceUrl ?? l.sourcePageUrl ?? searchUrls[0],
+              price: l.price ?? null,
+              propertyType: l.propertyType ?? null,
+              rentalFrequency: l.rentalFrequency ?? null,
+              city: l.city ?? null,
+              governorate: l.governorate ?? null,
+              bedrooms: l.rooms ?? null,
+              bathrooms: l.bathrooms ?? null,
+              areaM2: l.areaM2 ?? null,
+              monthly: l.rentalFrequency === null || l.rentalFrequency === 'monthly',
+              neighborhoodMismatch: false,
+            };
+            // حارس انتماء الحي في المعاينة: يسبغ إشارة على كل إعلان محلّه المعلَن
+            // حيٌّ آخر معروف غير حي slug — صفحة slug غير صالحة ترجّع خليط أحياء
+            // (مثل فيصل/المقطم ضمن «السيدة زينب») تُشير إليه المعاينة قبل التطبيق.
+            const pagePlace =
+              typeof l.sourcePageUrl === 'string' ? resolvePlaceFromSearchUrl(l.sourcePageUrl) : null;
+            if (pagePlace) {
+              const own = resolveListingLocation(l.city ?? null, l.governorate ?? null);
+              const pageNid = resolveListingLocation(pagePlace.city, pagePlace.governorate).neighborhoodId;
+              if (own.matched && own.neighborhoodId !== pageNid) {
+                item.neighborhoodMismatch = true;
+                outcome.skippedNeighborhoodMismatch += 1;
+              }
+            }
+            return item;
+          })
+          .filter((p) => (stopAt === null ? true : (p.index as number) <= stopAt)),
       ];
       continue;
     }
@@ -254,12 +273,25 @@ export async function POST(req: Request): Promise<NextResponse> {
       // مصدر الحقيقة للحي: slug صفحة البحث أولًا (المستخدم يزحف صفحة حي بعينه)،
       // ثم locality المحفوظ في json-ld إن لم يكشف slug عن مكان معروف.
       const pagePlace = typeof l.sourcePageUrl === 'string' ? resolvePlaceFromSearchUrl(l.sourcePageUrl) : null;
+      const own = resolveListingLocation(
+        typeof base.city === 'string' ? base.city : null,
+        typeof base.governorate === 'string' ? base.governorate : null
+      );
       const resolved = pagePlace
         ? resolveListingLocation(pagePlace.city, pagePlace.governorate)
-        : resolveListingLocation(
-            typeof base.city === 'string' ? base.city : null,
-            typeof base.governorate === 'string' ? base.governorate : null
-          );
+        : own;
+      // حارس انتماء الحي على مستوى الإعلان: صفحة بslug حي معروف لا تخزّن إعلانًا
+      // محلّه المعلَن حيٌّ آخر معروف (slug غير صالح يعيد خليطًا في فيصل/المقطم
+      // داخل «السيدة زينب»). نحتفظ بالمطابق ونهمل المختلف مع عدّاد شفاف — بلا رفض
+      // رحلة كاملة ولا فقدان إعلانات صحيحة. المحليات غير المعروفة تبقى بصلاحية slug
+      // (أفضل جهد — كسلوك اليوم).
+      if (pagePlace) {
+        const pageNid = resolveListingLocation(pagePlace.city, pagePlace.governorate).neighborhoodId;
+        if (own.matched && own.neighborhoodId !== pageNid) {
+          outcome.skippedNeighborhoodMismatch += 1;
+          continue;
+        }
+      }
 // إزالة تكرار إعلانات الوسيط المُعاد نشرها (نفس الشقة برقم ID جديد).
       const dedup = listingDedupKey({
         neighborhoodId:

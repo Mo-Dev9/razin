@@ -54,6 +54,8 @@ export function normalizeSearchText(text: string): string {
     .replace(/[أإآ]/g, 'ا')
     .replace(/ة/g, 'ه')
     .replace(/ى/g, 'ي')
+    // الأرقام الهندية العربية (٠-٩) → لاتينية (0-9) — «٦ أكتوبر» تطابق «6 أكتوبر».
+    .replace(/[٠-٩]/g, (ch) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(ch)))
     .replace(/\s+/g, ' ')
     .trim()
     .toLowerCase();
