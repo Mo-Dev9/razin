@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { neighborhoodKey, placeNameIsAmbiguous, resolveListingLocation, resolveEnPlace, listingDedupKey } from '@/lib/listing-utils';
+import { neighborhoodKey, placeNameIsAmbiguous, resolveListingLocation, resolveEnPlace, listingDedupKey, resolvePlaceFromSearchUrl } from '@/lib/listing-utils';
 
 describe('neighborhoodKey', () => {
   it('removes spaces and normalizes hamza/ta marbuta', () => {
@@ -98,6 +98,28 @@ describe('resolveListingLocation — أسماء المصدر الإنجليزي�
 describe('resolveEnPlace', () => {
   it('يعيد null عند غياب المطابقة', () => {
     expect(resolveEnPlace('Anything Else')).toBeNull();
+  });
+});
+
+describe('resolvePlaceFromSearchUrl', () => {
+  const base = '/en/properties/apartments-duplex-for-rent/';
+  it('يستخرج حيًّا من slug صفحة بحروف صغيرة', () => {
+    expect(resolvePlaceFromSearchUrl(`https://www.dubizzle.com.eg${base}5th-settlement/?sorting=asc-price`)).toEqual({
+      city: 'التجمع الخامس',
+      governorate: 'القاهرة',
+    });
+  });
+  it('يطابق slug بشرطات مع alias بمسافات (hadayek october)', () => {
+    expect(resolvePlaceFromSearchUrl(`https://www.dubizzle.com.eg${base}hadayek-october/q-x/?sorting=x`)).toEqual({
+      city: 'حدائق أكتوبر',
+      governorate: 'الجيزة',
+    });
+  });
+  it('يعيد null لصفحة حي غير معروف', () => {
+    expect(resolvePlaceFromSearchUrl(`https://www.dubizzle.com.eg${base}zzz-unknown/q-x/`)).toBeNull();
+  });
+  it('يعيد null لعنوان مالstatic لمسار غير مطابق', () => {
+    expect(resolvePlaceFromSearchUrl('https://www.dubizzle.com.eg/en/properties/zoo')).toBeNull();
   });
 });
 

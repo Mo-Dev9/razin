@@ -19,8 +19,12 @@ export const SOURCE_EN_ALIASES: Readonly<Record<string, { city: string; governor
   'new cairo': { city: 'القاهرة الجديدة', governorate: 'القاهرة' },
   'new cairo city': { city: 'القاهرة الجديدة', governorate: 'القاهرة' },
   'fifth settlement': { city: 'التجمع الخامس', governorate: 'القاهرة' },
+  '5th settlement': { city: 'التجمع الخامس', governorate: 'القاهرة' },
+  '5th-settlement': { city: 'التجمع الخامس', governorate: 'القاهرة' },
   'fifth settlement new cairo': { city: 'التجمع الخامس', governorate: 'القاهرة' },
   'first settlement': { city: 'التجمع الأول', governorate: 'القاهرة' },
+  '1st settlement': { city: 'التجمع الأول', governorate: 'القاهرة' },
+  '1st-settlement': { city: 'التجمع الأول', governorate: 'القاهرة' },
   'madinaty': { city: 'مدينتي', governorate: 'القاهرة' },
   'madinaty city': { city: 'مدينتي', governorate: 'القاهرة' },
   'heliopolis': { city: 'مصر الجديدة', governorate: 'القاهرة' },
@@ -72,6 +76,7 @@ export const SOURCE_EN_ALIASES: Readonly<Record<string, { city: string; governor
   'imhaba': { city: 'إمبابة', governorate: 'الجيزة' },
   'embaba': { city: 'إمبابة', governorate: 'الجيزة' },
   'faisal giza': { city: 'فيصل', governorate: 'الجيزة' },
+  'faisal': { city: 'فيصل', governorate: 'الجيزة' },
   'giza city': { city: 'الجيزة', governorate: 'الجيزة' },
   'talbia': { city: 'الطالبية', governorate: 'الجيزة' },
   // الإسكندرية
@@ -137,6 +142,29 @@ function enAliasKey(text: string): string {
 export function resolveEnPlace(city: string): { city: string; governorate: string } | null {
   const hit = SOURCE_EN_ALIASES[enAliasKey(city)];
   return hit ? { ...hit } : null;
+}
+
+/**
+ * يستخرج slug حي الصفحة من رابط صفحة بحث OLX/dubizzle ويرجعه مكانًا عربيًا.
+ * مثال: /en/properties/apartments-duplex-for-rent/5th-settlement/ → التجمع الخامس.
+ * يُستخدم حين يكون locality المحفوظ في json-ld عامًا (مثل «New Cairo») بينما
+ * المستخدم يزحف صفحة حي بعينه — فslug الصفحة هو مصدر الحقيقة للحي.
+ */
+export function resolvePlaceFromSearchUrl(url: string): { city: string; governorate: string } | null {
+  try {
+    const path = new URL(url).pathname;
+    // /en/properties/apartments-duplex-for-rent/<slug>/[fa…] — slug هو المقطع الثالث.
+    const seg = path.replace(/\/+$/, '').split('/');
+    if (seg.length < 5 || seg[1] !== 'en' || seg[2] !== 'properties') return null;
+    const slug = decodeURIComponent(seg[4]);
+    // slugs تستخدم شرطات بينما الـ aliases بمسافات (hadayek-october ↔ hadayek october).
+    const fromSlug =
+      SOURCE_EN_ALIASES[enAliasKey(slug)] ?? SOURCE_EN_ALIASES[enAliasKey(slug.replace(/-/g, ' '))];
+    if (fromSlug) return { ...fromSlug };
+    return resolveEnPlace(slug) ?? null;
+  } catch {
+    return null;
+  }
 }
 
 function resolveEnGovernorate(governorate: string): string | null {

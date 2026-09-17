@@ -156,4 +156,24 @@ describe('opensooqParser', () => {
     expect(result.items.every((l) => l.title !== 'مطلوب شقة')).toBe(true);
     expect(result.items).toHaveLength(1); // كلها نفس المعرف 1234567
   });
+
+  it('يحلل صفحة إعلان مفردة (رابط /ar/search/<id>): كتلة Apartment مباشرة بلا ItemList', () => {
+    const singleAd = {
+      '@context': 'https://schema.org',
+      '@type': 'Apartment',
+      name: 'استوديو مفروش بالزمالك موقع مميز',
+      url: 'http://eg.opensooq.com/ar/search/287042268',
+      address: { '@type': 'PostalAddress', addressCountry: 'مصر', addressRegion: 'Cairo', addressLocality: 'الزمالك' },
+      numberOfRooms: 'Studio',
+      offers: { '@type': 'Offer', availability: 'https://schema.org/InStock', price: '25000', priceCurrency: 'EGP' },
+    };
+    const html = `<html><script type="application/ld+json">${JSON.stringify(singleAd)}</script></html>`;
+    const result = opensooqParser.parseSearchHtml(html);
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].price).toBe(25000);
+    expect(result.items[0].externalId).toBe('287042268');
+    expect(result.items[0].city).toBe('الزمالك');
+    expect(result.items[0].governorate).toBe('Cairo');
+    expect(result.totalAvailable).toBe(1);
+  });
 });

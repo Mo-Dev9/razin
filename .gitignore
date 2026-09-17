@@ -53,6 +53,7 @@ CLAUDE.md
 
 # runtime + accidental redirect artifacts
 .next-start*.log
+server.log
 -w
 
 # local reference docs (review files, study) — stay local-only

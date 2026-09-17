@@ -219,6 +219,11 @@ describe('helpers', () => {
     expect(detectPropertyType('Duplex', 'Duplex')).toBe('duplex');
     expect(detectPropertyType('Flat for rent in Maadi', 'Apartment')).toBe('apartment');
     expect(detectPropertyType('Studio for rent', 'Apartment')).toBe('studio');
+    // العنوان يقدَّم على entityType العام عند تعارض — حتى بالكتابة العربية
+    // («ستوديو/ستديو» بلا واو) التي كانت تسقط للشقة بسبب \b العربي المعطوب.
+    expect(detectPropertyType('ستوديو للأيجار', 'Apartment')).toBe('studio');
+    expect(detectPropertyType('استوديو مفروش مكيف ومجدد', 'Apartment')).toBe('studio');
+    expect(detectPropertyType('ستديو مفروش بالدقي', 'Apartment')).toBe('studio');
     // الأنواع الخمسة فقط: روف وتاون هاوس وشاليه ومحل ومكتب خارجة ولا تُصنَّف.
     // بلا entityType سكني لا يُلتقط شيء؛ ومع «Apartment» تتسرب لفئة الشقق العامة (fallback).
     expect(detectPropertyType('Roof', 'Roof')).toBeNull();

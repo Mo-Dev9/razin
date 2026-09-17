@@ -57,6 +57,8 @@ export interface ParsedListing {
   /** زمن نشر الإعلان إن وجده المصدر (epoch ms)، وإلا null. */
   listedAt: number | null;
   sourceUrl: string;
+  /** رابط صفحة البحث التي نتج عنها هذا الإعلان (لتوجيه الحي من slug الصفحة). */
+  sourcePageUrl?: string;
 }
 
 export type BlockReason = 'login' | 'captcha' | 'protected' | 'robots-disallow' | 'blocked'; 

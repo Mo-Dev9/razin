@@ -110,7 +110,7 @@ export async function crawlSource(
 
       const parsed = options.parser.parseSearchHtml(fetchRes.body);
       result.totalAvailable = parsed.totalAvailable ?? result.totalAvailable;
-      result.parsed.push(...parsed.items);
+      result.parsed.push(...parsed.items.map((l) => ({ ...l, sourcePageUrl: url })));
     } catch (err) {
       result.blocked.push({
         url,

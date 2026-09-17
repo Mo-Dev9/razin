@@ -158,7 +158,18 @@ export const opensooqParser: SourceParser = {
       const found = findOpenSooqItemList(graph as unknown[]);
       if (found) { itemList = found; break; }
     }
-    if (!itemList) return { items: [], totalAvailable: null };
+    if (!itemList) {
+      // صفحة إعلان مفردة (رابط /ar/search/<id> مباشر): كتلة ld+json من نوع
+      // Apartment بكامل التفاصيل (name/url/address/offers.price).
+      const ad = findOpenSooqSingleAd(blocks);
+      if (!ad) return { items: [], totalAvailable: null };
+      const offer = isRecord(ad.offers) ? (ad.offers as Record<string, unknown>) : null;
+      const normalized = normalizeOpenSooqListing({
+        itemOffered: ad,
+        priceSpecification: offer,
+      });
+      return normalized ? { items: [normalized], totalAvailable: 1 } : { items: [], totalAvailable: null };
+    }
 
     const items: ParsedListing[] = [];
     for (const el of itemList) {
@@ -192,6 +203,24 @@ export const opensooqParser: SourceParser = {
     return { items: unique, totalAvailable: null };
   },
 };
+
+/**
+ * صفحة إعلان مفردة: كتلة ld+json من نوع Apartment مباشرة (بلا ItemList)
+ * تحمل name/url/address/offers.price — صالحة للتحويل كنظير بند Offer.
+ */
+function findOpenSooqSingleAd(blocks: unknown[]): Record<string, unknown> | null {
+  for (const block of blocks) {
+    if (!isRecord(block)) continue;
+    if (String(block['@type'] ?? '') !== 'Apartment') continue;
+    const offers = isRecord(block.offers) ? (block.offers as Record<string, unknown>) : null;
+    const price = offers ? firstNumber(offers.price) : null;
+    const name = firstText(block.name);
+    const url = firstText(block.url);
+    if (price === null || !name || !url) continue;
+    return block;
+  }
+  return null;
+}
 
 /** أرقام عربية مشرقية (٠-٩) → لاتينية. */
 function toLatinDigits(s: string): string {

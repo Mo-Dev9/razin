@@ -151,16 +151,21 @@ function firstNumber(...candidates: unknown[]): number | null {
   return null;
 }
 
+// ملاحظة حاسمة: `\b` لا يعمل مع الحروف العربية في JS (ليست word chars بلا /u)،
+// فكان «\bاستوديو\b» لا يطابق شيئًا أبدًا ويسقط إعلانات الاستوديو للشقة العامة.
+// لذلك الحدود تُترك للأسكي فقط، والعربية تُطابق كنص حر (لا التباس: حروفها متصلة).
+// وترتيب الأنماط = أولوية النوع: المحدد (استوديو/بنتهاوس/دوبلكس/فيلا) قبل الشقة
+// العامة — فيُقدَّم العنوان («استوديو»...) على entityType العام («Apartment»).
 const PROPERTY_TYPE_PATTERNS: Array<[RegExp, string]> = [
-  [/^studio\b|\bstudio\b|\bاستوديو\b|\bستوديو\b/i, 'studio'],
-  [/^penthouse\b|penthouse|بنتهاوس/i, 'penthouse'],
-  [/^duplex\b|\bduplex\b|\bدوبلكس\b/i, 'duplex'],
-  [/^villa\b|\bvilla\b|\bفيلا\b/i, 'villa'],
+  [/^studio\b|\bstudio\b|استوديو|ستوديو|ستديو/i, 'studio'],
+  [/^penthouse\b|\bpenthouse\b|بنتهاوس/i, 'penthouse'],
+  [/^duplex\b|\bduplex\b|دوبلكس/i, 'duplex'],
+  [/^villa\b|\bvilla\b|فيلا/i, 'villa'],
   [/apartment|شقة|شقه|سكن/i, 'apartment'],
 ];
 
 export function detectPropertyType(name: string, entityType: string): string | null {
-  const hay = `${entityType} ${name}`.toLowerCase();
+  const hay = `${name} ${entityType}`.toLowerCase();
   for (const [re, id] of PROPERTY_TYPE_PATTERNS) {
     if (re.test(hay)) return id;
   }
