@@ -19,6 +19,9 @@ export function SiteFooter() {
             <Link href="/" className="text-sm text-white/70 transition-colors hover:text-[var(--color-accent)]">
               الرئيسية
             </Link>
+            <Link href="/hara" className="text-sm text-white/70 transition-colors hover:text-[var(--color-accent)]">
+              حارة
+            </Link>
             <Link href="/privacy" className="text-sm text-white/70 transition-colors hover:text-[var(--color-accent)]">
               سياسة الخصوصية
             </Link>

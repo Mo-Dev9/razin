@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { NeighborhoodSearch } from '@/components/home/NeighborhoodSearch';
-import { CommunityFeed } from '@/components/community/CommunityFeed';
 import { getReadyNeighborhoods } from '@/lib/neighborhood-data';
 import { placeByNeighborhoodId } from '@/lib/neighborhood-search';
 import { formatEGP } from '@/lib/format';
@@ -110,7 +109,7 @@ export default async function HomePage() {
                   <a
                     key={m.neighborhoodId}
                     href={`/neighborhood/${encodeURIComponent(m.neighborhoodId)}`}
-                    className="group rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lg"
+                    className="group rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-soft transition-all hover:-translate-y-1 hover:shadow-lg"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <h3 className="text-lg font-bold text-[var(--color-text)] group-hover:text-[var(--color-primary)]">
@@ -138,7 +137,7 @@ export default async function HomePage() {
         </section>
 
         {/* كيف تستخدم رزين؟ */}
-        <section className="bg-[var(--color-surface-warm)] px-4 py-14">
+        <section className="border-t border-[var(--color-border)] bg-[var(--color-success-light)] px-4 py-14">
           <div className="mx-auto max-w-5xl">
             <h2 className="text-center text-2xl font-extrabold text-[var(--color-primary)] md:text-3xl">
               كيف تستخدم رزين؟
@@ -146,50 +145,61 @@ export default async function HomePage() {
             <p className="mx-auto mt-2 max-w-md text-center text-sm text-[var(--color-text-secondary)]">
               ثلاث خطوات تفصلك عن قرار سعر مدروس
             </p>
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
-              <div className="group relative overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-[#3A7D72]/50 hover:shadow-xl">
-                <div aria-hidden className="absolute inset-x-0 top-0 h-1" style={{ background: 'linear-gradient(90deg, transparent, #3A7D72, transparent)' }} />
-                <div aria-hidden className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full opacity-10 blur-2xl" style={{ background: '#3A7D72' }} />
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl text-lg font-extrabold" style={{ color: '#1E4C48', background: 'linear-gradient(135deg, rgba(58,125,114,0.25), rgba(58,125,114,0.05))' }}>١</span>
-                <h3 className="mt-5 text-base font-bold text-[var(--color-text)] transition-colors group-hover:text-[#2C6B62]">ابحث عن حيّك أو احسب سعر شقتك</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
-                  اكتب اسم حيّك في خانة البحث بالأعلى وادخل صفحته، أو استخدم حاسبة
-                  الأسعار إن كنت تعرف مواصفات شقتك (غرف/حمامات).
-                </p>
-              </div>
-              <div className="group relative overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-[#E9B94A]/60 hover:shadow-xl">
-                <div aria-hidden className="absolute inset-x-0 top-0 h-1" style={{ background: 'linear-gradient(90deg, transparent, #E9B94A, transparent)' }} />
-                <div aria-hidden className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full opacity-10 blur-2xl" style={{ background: '#E9B94A' }} />
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl text-lg font-extrabold" style={{ color: '#8A6A1A', background: 'linear-gradient(135deg, rgba(233,185,74,0.30), rgba(233,185,74,0.06))' }}>٢</span>
-                <h3 className="mt-5 text-base font-bold text-[var(--color-text)] transition-colors group-hover:text-[#A67F1F]">اعرف كم يدفع الناس في الحيّ</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
-                  الرقم الوسطي = ما يدفعه معظم المستأجرين هنا، والنطاق يمنحك
-                  حدود التفاوض.
-                </p>
-              </div>
-              <div className="group relative overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-[#E2725B]/60 hover:shadow-xl">
-                <div aria-hidden className="absolute inset-x-0 top-0 h-1" style={{ background: 'linear-gradient(90deg, transparent, #E2725B, transparent)' }} />
-                <div aria-hidden className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full opacity-10 blur-2xl" style={{ background: '#E2725B' }} />
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl text-lg font-extrabold" style={{ color: '#B24E3A', background: 'linear-gradient(135deg, rgba(226,114,91,0.25), rgba(226,114,91,0.05))' }}>٣</span>
-                <h3 className="mt-5 text-base font-bold text-[var(--color-text)] transition-colors group-hover:text-[#C85A45]">اسأل أهل الحيّ قبل الإيداع</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
-                  ادخل «حارة» وارجع سؤالًا أو جرّب تجربة الجيران حول السعر والحياة
-                  في الحي — أقرب مصدر لحقيقة الشارع.
-                </p>
-                <a href="#hara" className="mt-3 inline-block text-xs font-medium text-[#C85A45] underline-offset-4 hover:underline">
-                  انتقل لقسم «حارة» ↓
-                </a>
-              </div>
+            <div className="relative mt-12">
+              {/* الخط الواصل الأفقي — أجهزة كبيرة */}
+              <div aria-hidden className="absolute inset-x-2 top-5 hidden h-px border-t-2 border-dashed border-[var(--color-primary)]/25 md:block" />
+              {/* الخط الواصل الرأسي — موبايل */}
+              <div aria-hidden className="absolute bottom-2 right-5 top-1 w-px border-r-2 border-dashed border-[var(--color-primary)]/25 md:hidden" />
+
+              <ol className="relative grid gap-8 md:grid-cols-3 md:gap-6">
+                <li className="group relative flex items-start gap-4 md:flex-col md:items-center md:gap-0 md:text-center">
+                  <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-base font-extrabold text-[var(--color-primary)] shadow-[0_0_16px_rgba(233,185,74,0.5)] ring-[6px] ring-[var(--color-success-light)] transition-transform duration-300 group-hover:scale-110">١</span>
+                  <div className="relative flex-1 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-accent)]/60 hover:shadow-lg md:mt-5 md:w-full">
+                    <span aria-hidden className="pointer-events-none absolute -left-1 -top-3 select-none text-6xl font-extrabold leading-none text-[var(--color-primary)]/[0.07]">١</span>
+                    <h3 className="relative text-base font-bold text-[var(--color-text)] transition-colors group-hover:text-[var(--color-primary)]">
+                      ابحث عن حيّك أو احسب سعر شقتك
+                    </h3>
+                    <p className="relative mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+                      اكتب اسم حيّك في خانة البحث بالأعلى وادخل صفحته، أو استخدم حاسبة
+                      الأسعار إن كنت تعرف مواصفات شقتك (غرف/حمامات).
+                    </p>
+                  </div>
+                </li>
+                <li className="group relative flex items-start gap-4 md:flex-col md:items-center md:gap-0 md:text-center">
+                  <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-base font-extrabold text-[var(--color-primary)] shadow-[0_0_16px_rgba(233,185,74,0.5)] ring-[6px] ring-[var(--color-success-light)] transition-transform duration-300 group-hover:scale-110">٢</span>
+                  <div className="relative flex-1 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-accent)]/60 hover:shadow-lg md:mt-5 md:w-full">
+                    <span aria-hidden className="pointer-events-none absolute -left-1 -top-3 select-none text-6xl font-extrabold leading-none text-[var(--color-primary)]/[0.07]">٢</span>
+                    <h3 className="relative text-base font-bold text-[var(--color-text)] transition-colors group-hover:text-[var(--color-primary)]">
+                      اعرف كم يدفع الناس في الحيّ
+                    </h3>
+                    <p className="relative mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+                      الرقم الوسطي = ما يدفعه معظم المستأجرين هنا، والنطاق يمنحك
+                      حدود التفاوض.
+                    </p>
+                  </div>
+                </li>
+                <li className="group relative flex items-start gap-4 md:flex-col md:items-center md:gap-0 md:text-center">
+                  <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-base font-extrabold text-[var(--color-primary)] shadow-[0_0_16px_rgba(233,185,74,0.5)] ring-[6px] ring-[var(--color-success-light)] transition-transform duration-300 group-hover:scale-110">٣</span>
+                  <div className="relative flex-1 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-accent)]/60 hover:shadow-lg md:mt-5 md:w-full">
+                    <span aria-hidden className="pointer-events-none absolute -left-1 -top-3 select-none text-6xl font-extrabold leading-none text-[var(--color-primary)]/[0.07]">٣</span>
+                    <h3 className="relative text-base font-bold text-[var(--color-text)] transition-colors group-hover:text-[var(--color-primary)]">
+                      اسأل أهل الحيّ قبل الإيداع
+                    </h3>
+                    <p className="relative mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+                      ادخل «حارة» وارجع سؤالًا أو جرّب تجربة الجيران حول السعر والحياة
+                      في الحي — أقرب مصدر لحقيقة الشارع.
+                    </p>
+                    <a href="/hara" className="relative mt-3 inline-flex items-center gap-1 rounded-full bg-[var(--color-primary)]/10 px-4 py-2 text-xs font-bold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-primary)] hover:text-[var(--color-surface)]">
+                      افتح صفحة «حارة» ←
+                    </a>
+                  </div>
+                </li>
+              </ol>
             </div>
-            <p className="mt-6 text-center text-xs text-[var(--color-text-muted)]">
+            <p className="mt-6 text-center text-xs text-[var(--color-text-secondary)]">
               وراء كل رقم: نجمّع إعلانات السوق، نتحقق يدويًا، ونُحدّث باستمرار.
             </p>
           </div>
-        </section>
-
-        {/* حارة — مجتمع الحي المجهول */}
-        <section id="hara" className="bg-[var(--color-surface-warm)] px-4 py-14">
-          <CommunityFeed neighborhoodId={undefined} neighborhoodName={undefined} variant="full" />
         </section>
 
         {/* CTA الحاسبة */}

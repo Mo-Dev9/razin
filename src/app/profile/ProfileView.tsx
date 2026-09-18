@@ -100,7 +100,7 @@ export function ProfileView() {
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-lg font-extrabold text-[var(--color-primary)]">منشوراتي</h2>
           <Link
-            href="/#hara"
+            href="/hara"
             className="rounded-full bg-[var(--color-accent)] px-4 py-1.5 text-xs font-bold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-accent-dark)]"
           >
             اكتب في حارتك
