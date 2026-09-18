@@ -61,5 +61,13 @@ STUDY.md
 *.xlsx
 *.xls
 
+# operations layer (crawlers, reports, review tools) — private-only, not on public GitHub
+/tools/
+
+# transient crawl/debug dumps — regenerable, stay local-only
+/maadi-missing-urls.json
+/razin-maadi-preview.json
+*-preview.json
+
 .vercel
 .env*
