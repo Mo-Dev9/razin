@@ -63,11 +63,22 @@ STUDY.md
 
 # operations layer (crawlers, reports, review tools) — private-only, not on public GitHub
 /tools/
+/scripts/
+
+# internal docs & prompts — private-only
+AGENTS.md
+CLAUDE.md
+STUDY.md
+LOGO-PROMPT.md
 
 # transient crawl/debug dumps — regenerable, stay local-only
 /maadi-missing-urls.json
 /razin-maadi-preview.json
 *-preview.json
+
+# runtime logs
+/server-start.log
+/server.err.log
 
 .vercel
 .env*
