@@ -73,7 +73,7 @@ function formatDate(ts?: number): string {
 }
 
 function roomsLabel(rooms: number): string {
-  return rooms <= 0 ? 'استوديو' : `${rooms} غرف`;
+  return rooms <= 0 ? 'استوديو' : rooms === 1 ? 'غرفة واحدة' : rooms === 2 ? 'غرفتان' : `${rooms} غرف`;
 }
 
 export default function AdminListingsPage() {
@@ -282,7 +282,7 @@ export default function AdminListingsPage() {
   if (!checked) {
     return (
       <div className="min-h-screen flex items-center justify-center text-sm text-[var(--color-text-secondary)]">
-        جاري التحقق...
+        جارٍ التحقق…
       </div>
     );
   }

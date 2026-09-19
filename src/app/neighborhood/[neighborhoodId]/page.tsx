@@ -6,7 +6,7 @@ import { SiteFooter } from '@/components/layout/SiteFooter';
 import { CommunityFeed } from '@/components/community/CommunityFeed';
 import { placeByNeighborhoodId } from '@/lib/neighborhood-search';
 import { getNeighborhoodMeta, getNeighborhoodListings } from '@/lib/neighborhood-data';
-import { formatEGP } from '@/lib/format';
+import { arCount, formatEGP, AR_AD_FORMS } from '@/lib/format';
 import { MIN_DISPLAY_SOURCES, MIN_FILTER_SOURCES, computePriceStats, type PriceStats } from '@/lib/price-stats';
 import { isMonthlyListing } from '@/lib/neighborhood-writer';
 import { PROPERTY_TYPES, type PropertyType } from '@/types';
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? `أسعار الإيجار في ${place.name} — ${place.governorate}`
     : 'حي غير معروف';
   const description = meta && meta.median != null
-    ? `السعر الوسطي لإيجار الشقق في ${place?.name ?? neighborhoodId} هو ${formatEGP(Math.round(meta.median))} شهريًا (${meta.count} إعلان موثق).`
+    ? `السعر الوسطي لإيجار الشقق في ${place?.name ?? neighborhoodId} هو ${formatEGP(Math.round(meta.median))} شهريًا (${arCount(meta.count, { one: 'إعلان موثق', two: 'إعلانان موثقان', few: 'إعلانات موثقة', many: 'إعلانًا موثقًا' })}).`
     : `أسعار الإيجار الحقيقية في ${place?.name ?? neighborhoodId} — تُجمع من إعلانات السوق وتُدقق يدويًا.`;
   return { title, description, openGraph: { title, description } };
 }
@@ -163,7 +163,7 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
                 <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                   <p className="text-xs text-white/50">عدد المصادر</p>
                   <p className="mt-1 text-2xl font-extrabold text-[var(--color-surface)]" dir="ltr">
-                    {shown.count > 0 ? `${shown.count} إعلان` : '0'}
+                    {shown.count > 0 ? arCount(shown.count, AR_AD_FORMS) : '0'}
                   </p>
                 </div>
               </div>
@@ -243,7 +243,7 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
           <div className="mt-6 rounded-2xl border border-[var(--color-accent)]/40 bg-[var(--color-accent)]/10 px-5 py-4 text-sm leading-relaxed text-[var(--color-text)]">
             {meta
               ? <>لا يزال عدد الإعلانات الموثقة ({meta.count}) أقل من {MIN_DISPLAY_SOURCES} — نكشف أسعار الحي كاملة بهذه الصفحة فور اكتمال الجمع، وكل ما يظهر الآن مبدئي. </>
-              : <>لا توجد إعلانات موثقة لهذا الحي بعد. ابحث سريعًا: الموقع مسجل في دليلنا، وستظهر الأسعار فور جمع {MIN_DISPLAY_SOURCES} إعلانًا. </>
+              : <>لا توجد إعلانات موثقة لهذا الحي بعد — الحي مسجّل في دليلنا، وستظهر الأسعار فور اكتمال {MIN_DISPLAY_SOURCES} إعلانات. </>
             }
             <span className="mt-1 block text-xs text-[var(--color-text-muted)]">
               الأسعار تقديرية مبنية على إعلانات السوق العامة وليست عروضًا ملزمة.
@@ -257,14 +257,14 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
             <strong className="text-[var(--color-primary)]">
               لا توجد إعلانات تطابق فئتك حاليًا.
             </strong>{' '}
-            الأرقام أعلاه من كل إعلانات الحي ({meta?.count ?? 0}) — وعندما تصل عينات الفئة سنحاسب عليها وحدها.
+            الأرقام أعلاه من كل إعلانات الحي ({meta?.count ?? 0}) — وعندما تكتمل عينات الفئة نعرض أرقامها وحدها.
           </div>
         )}
 
         {filteredThin && (
           <div className="mt-6 rounded-2xl border border-dashed border-[var(--color-accent-dark)] bg-[#FFFBF0] px-5 py-4 text-sm leading-relaxed">
             <strong className="text-[var(--color-primary)]">
-              فئة صغيرة العينة ({filteredStats?.count ?? 0} إعلان من أصل {meta?.count ?? 0}).
+              فئة صغيرة العينة ({arCount(filteredStats?.count ?? 0, AR_AD_FORMS)} من أصل {meta?.count ?? 0}).
             </strong>{' '}
             نعرض أرقامها كما هي بشكل مبدئي حتى تكتمل بياناتها.
           </div>
@@ -279,7 +279,7 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
             >
               <span className="font-bold text-[var(--color-primary)]">حاسبة الأسعار</span>
               <span className="mt-1 block leading-relaxed text-[var(--color-text-secondary)]">
-                قيّم سعر شقة في {name} حسب عدد الغرف والحمامات.
+                احسب سعر شقة في {name} حسب عدد الغرف والحمامات.
               </span>
             </a>
           </div>

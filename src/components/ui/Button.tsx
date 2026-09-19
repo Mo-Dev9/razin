@@ -38,7 +38,7 @@ export function Button({
       disabled={disabled || loading}
       {...props}
     >
-      {loading ? 'جاري التحميل...' : children}
+      {loading ? 'جارٍ التحميل…' : children}
     </button>
   );
 }

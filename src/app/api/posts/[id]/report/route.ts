@@ -27,7 +27,7 @@ export async function POST(
   const uid = await authGoogleUid(req.headers.get('authorization'));
   if (!uid) {
     return NextResponse.json(
-      { error: 'الإبلاغ يتطلب تسجيل الدخول بحساب جوجل — رابط حسابك أولًا ثم أبلغ' },
+      { error: 'الإبلاغ يتطلب تسجيل الدخول بحساب جوجل — اربط حسابك أولًا ثم أبلغ' },
       { status: 401 }
     );
   }

@@ -82,7 +82,7 @@ export default function AdminPostsPage() {
   if (!checked) {
     return (
       <div className="min-h-screen flex items-center justify-center text-sm text-[var(--color-text-secondary)]">
-        جاري التحقق...
+        جارٍ التحقق…
       </div>
     );
   }
@@ -95,7 +95,7 @@ export default function AdminPostsPage() {
           <div>
             <h1 className="text-2xl font-bold">إشراف الحارة</h1>
             <p className="text-sm text-[var(--color-text-secondary)] mt-1">
-              المنشورات المبلَّغ عنها أُخفيت من العرض فورًا — راجع وقرر.
+              المنشورات المبلَّغ عنها بانتظار مراجعتك — من وصَل لبلاغين أُخفي من العرض فورًا، وما دون ذلك بقي ظاهرًا حتى قرارك.
             </p>
           </div>
           <LogoutButton />

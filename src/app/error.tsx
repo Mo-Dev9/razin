@@ -25,7 +25,7 @@ export default function Error({
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">⚠️</div>
-          <h1 className="text-2xl font-bold mb-2">            حصل مشكلة غير متوقعة</h1>
+          <h1 className="text-2xl font-bold mb-2">حصلت مشكلة غير متوقعة</h1>
           <p className="text-sm text-[var(--color-text-secondary)] mb-6">
             حاول مرة أخرى أو ارجع للرئيسية
           </p>

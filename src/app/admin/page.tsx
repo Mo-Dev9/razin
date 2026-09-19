@@ -22,7 +22,7 @@ export default function AdminDashboard() {
   if (!checked) {
     return (
       <div className="min-h-screen flex items-center justify-center text-sm text-[var(--color-text-secondary)]">
-        جاري التحقق...
+        جارٍ التحقق…
       </div>
     );
   }

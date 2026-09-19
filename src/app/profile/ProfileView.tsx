@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { placeByNeighborhoodId } from '@/lib/neighborhood-search';
 import { formatDate } from '@/lib/utils';
+import { arCount, AR_COMMENT_FORMS } from '@/lib/format';
 
 interface MinePost {
   id: string;
@@ -154,7 +155,7 @@ export function ProfileView() {
                       )}
                     </div>
                     <span className="shrink-0 text-xs font-bold text-[var(--color-text-secondary)]">
-                      {p.netVotes > 0 ? `+${p.netVotes}` : p.netVotes} · {p.numComments} تعليق
+                      {p.netVotes > 0 ? `+${p.netVotes}` : p.netVotes} · {arCount(p.numComments, AR_COMMENT_FORMS)}
                     </span>
                   </div>
                   <p className="mt-2 text-sm leading-relaxed text-[var(--color-text)]">{p.text}</p>

@@ -7,7 +7,7 @@ import { neighborhoodKey } from '@/lib/listing-utils';
 import { placeByNeighborhoodId } from '@/lib/neighborhood-search';
 import { MIN_DISPLAY_SOURCES } from '@/lib/price-stats';
 import { estimatePriceFromListings } from '@/lib/price-estimate';
-import { formatEGP } from '@/lib/format';
+import { arCount, formatEGP, AR_AD_FORMS } from '@/lib/format';
 import { PROPERTY_TYPES } from '@/types';
 
 interface StoredListing {
@@ -281,7 +281,7 @@ export function Calculator({ initialNeighborhoodId = '' }: CalculatorProps) {
               {fromFallback && (
                 <p className="mt-4 rounded-2xl bg-[var(--color-accent)]/10 px-4 py-3 text-xs leading-relaxed text-[var(--color-text)]">
                   لا توجد عينات تطابق مواصفاتك (الغرف والحمّامات والنوع والتأثيث) حرفيًا —
-                  الرقم أدناه مُحسب من أقرب بيانات متوفرة لديّ في {currentName} ({stats.count} إعلان)،
+                  الرقم أدناه مُحسب من أقرب بيانات متوفرة لدينا في {currentName} ({arCount(stats.count, AR_AD_FORMS)})،
                   وسيتحسن مع نمو البيانات.
                 </p>
               )}

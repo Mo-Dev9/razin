@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getFirebaseAuth } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
+import { arCount, AR_POST_FORMS, AR_COMMENT_FORMS } from '@/lib/format';
 import type { PostComment, PostView, ProximityKind } from '@/types';
 
 interface Props {
@@ -405,7 +406,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
           </h2>
           <p className="mt-1 text-sm leading-relaxed text-[var(--color-text-secondary)]">
             {variant === 'full'
-              ? 'مجتمع حيّك المجهول — اسأل، نزّه، وحذّر. لا أسماء حقيقية ولا مواقع دقيقة.'
+              ? 'مجتمع حيّك المجهول — اسأل، شارك، وحذّر. لا أسماء حقيقية ولا مواقع دقيقة.'
               : `أهل ${neighborhoodName ?? 'الحارة'} يسألون ويجيبون — بلا أسماء، وبجانب كل مشاركة مدى القرب منك فقط.`}
           </p>
         </div>
@@ -426,7 +427,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
             </button>
           )}
           <span className="shrink-0 rounded-full bg-[var(--color-surface-warm)] px-3 py-1 text-xs font-bold text-[var(--color-text-secondary)]">
-            {posts.filter((p) => !p.isGuide).length} مشاركة
+            {arCount(posts.filter((p) => !p.isGuide).length, AR_POST_FORMS)}
           </span>
         </div>
       </div>
@@ -462,7 +463,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
         <div className="mt-4 rounded-2xl border border-dashed border-[var(--color-accent-dark)] bg-[var(--color-accent)]/5 p-5 text-center">
           <p className="text-sm font-extrabold text-[var(--color-primary)]">اكتب مشاركة جديدة في حارتك</p>
           <p className="mx-auto mt-1 max-w-md text-xs leading-relaxed text-[var(--color-text-secondary)]">
-            النشر يتطلب تفعيل موقعك — لا يُعرض لأحد ولا يُحفظ بدقة (يُقرَّب ~150م قبل التخزين). بدونه تقرأ فقط.
+            النشر يتطلب تفعيل موقعك — موقعك لا يُعرض لأحد ويُقرَّب (~150م) قبل التخزين. بدونه تقرأ وتصوّت فقط.
           </p>
           <button
             type="button"
@@ -648,7 +649,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
                   onClick={() => void toggleComments(post)}
                   className="rounded-full bg-[var(--color-surface-warm)] px-3 py-1 text-xs font-bold text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-border)]"
                 >
-                  {post.numComments > 0 ? `${post.numComments} تعليق` : 'علّق'}
+                  {post.numComments > 0 ? arCount(post.numComments, AR_COMMENT_FORMS) : 'علّق'}
                 </button>
 
                 <button
@@ -687,7 +688,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
                       maxLength={200}
                       value={reportReason}
                       onChange={(e) => setReportReason(e.target.value)}
-                      placeholder="سبب الاختياري (اختياري)"
+                      placeholder="سبب الإبلاغ (اختياري)"
                       className="w-full flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-[var(--color-error)]"
                     />
                     <button

@@ -4,14 +4,14 @@ import { SiteFooter } from '@/components/layout/SiteFooter';
 import { NeighborhoodSearch } from '@/components/home/NeighborhoodSearch';
 import { getReadyNeighborhoods } from '@/lib/neighborhood-data';
 import { placeByNeighborhoodId } from '@/lib/neighborhood-search';
-import { formatEGP } from '@/lib/format';
+import { arCount, formatEGP, AR_AD_FORMS } from '@/lib/format';
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'رزين — دليل أسعار الإيجار الحقيقية في أحياء مصر',
   description:
-    'السعر الوسطي والأقل والأعلى لإيجار الشقق في حيّك — بيانات تُجمع من إعلانات السوق وتُدقق يدويًا. ابحث عن حي واعرف سعره الحقيقي، أو احسب سعر شقتك بنفسك.',
+    'السعر الوسطي والأقل والأعلى لإيجار الشقق في أحياء مصر — بيانات تُجمع من إعلانات السوق وتُدقق يدويًا. ابحث عن حيّك واعرف سعره الحقيقي، أو احسب سعر شقتك بنفسك.',
   openGraph: {
     title: 'رزين — دليل أسعار الإيجار الحقيقية في أحياء مصر',
     description: 'السعر الوسطي والأقل والأعلى لإيجار الشقق في حيّك.',
@@ -74,7 +74,7 @@ export default async function HomePage() {
             </div>
 
             <p className="mt-6 text-xs text-white/60">
-              أكثر من 27 محافظة وكل أحيائها — البحث فوري ومتاح للجميع دون تسجيل
+              27 محافظة وكل أحيائها — البحث فوري ومتاح للجميع دون تسجيل
             </p>
           </div>
         </section>
@@ -93,10 +93,10 @@ export default async function HomePage() {
 
           {ready.length === 0 ? (
             <div className="mt-8 rounded-3xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface-warm)] px-6 py-10 text-center">
-              <p className="text-lg font-semibold text-[var(--color-text)]">النجمع في بدايته الآن</p>
+              <p className="text-lg font-semibold text-[var(--color-text)]">جمع البيانات في بدايته الآن</p>
               <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-[var(--color-text-secondary)]">
                 نعمل على تزويد الأحياء بالبيانات حاليًا. ابحث عن حيّك لترى ما توفر
-                لدينا فورًا — وكلما نما العدد، ارتفع دقة سعره.
+                لدينا فورًا — وكلما نما العدد، ارتفعت دقة السعر.
               </p>
             </div>
           ) : (
@@ -127,7 +127,7 @@ export default async function HomePage() {
                           {m.median != null ? formatEGP(Math.round(m.median)) : '—'}
                         </p>
                       </div>
-                      <span className="text-xs text-[var(--color-text-muted)]">{m.count} إعلان</span>
+                      <span className="text-xs text-[var(--color-text-muted)]">{arCount(m.count, AR_AD_FORMS)}</span>
                     </div>
                   </a>
                 );
@@ -186,7 +186,7 @@ export default async function HomePage() {
                       اسأل أهل الحيّ قبل الإيداع
                     </h3>
                     <p className="relative mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
-                      ادخل «حارة» وارجع سؤالًا أو جرّب تجربة الجيران حول السعر والحياة
+                      ادخل «حارة» واطرح سؤالًا أو اقرأ تجارب الجيران حول السعر والحياة
                       في الحي — أقرب مصدر لحقيقة الشارع.
                     </p>
                     <a href="/hara" className="relative mt-3 inline-flex items-center gap-1 rounded-full bg-[var(--color-primary)]/10 px-4 py-2 text-xs font-bold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-primary)] hover:text-[var(--color-surface)]">
@@ -207,7 +207,7 @@ export default async function HomePage() {
           <div className="card-gradient relative overflow-hidden rounded-3xl px-6 py-12 text-center md:px-12">
             <div aria-hidden className="pointer-events-none absolute -left-16 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-[var(--color-accent)]/10 blur-2xl" />
             <h2 className="relative text-2xl font-extrabold text-[var(--color-surface)] md:text-3xl">
-              حاسب سعر الشقة قبل أن تبحث
+              اعرف نطاق السعر قبل التفاوض
             </h2>
             <p className="relative mx-auto mt-3 max-w-xl text-sm leading-relaxed text-white/60 md:text-base">
               اختر المحافظة والحي ومواصفات الشقة (غرف، حمامات) واحصل على نطاق
