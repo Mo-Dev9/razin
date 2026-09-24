@@ -145,7 +145,7 @@ export function ProfileView() {
                   className="rounded-2xl border border-[var(--color-border-light)] bg-[var(--color-surface-warm)] p-4"
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <div className="flex flex-wrap items-center gap-2 text-[11px] text-[var(--color-text-muted)]">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--color-text-muted)]">
                       {placeLabel && <span>{placeLabel}</span>}
                       <span>{formatDate(p.createdAt)}</span>
                       {p.status === 'hidden' && (

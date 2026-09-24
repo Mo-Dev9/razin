@@ -231,7 +231,7 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
               </div>
             )}
 
-            <p className="text-[11px] leading-relaxed text-[var(--color-text-muted)]">
+            <p className="text-xs leading-relaxed text-[var(--color-text-muted)]">
               تُحسب أرقام كل فئة من إعلاناتها المباشرة. وعند غياب عينات كافية نعرض أقرب بيانات
               متوفرة مع تصريح بذلك — لا نخفي النتيجة عنك.
             </p>

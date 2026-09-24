@@ -33,7 +33,7 @@ export default async function HomePage() {
         {/* البطل (Hero) */}
         <section
           className="relative overflow-hidden px-6 pb-20 pt-16 text-center md:pb-28 md:pt-24"
-          style={{ background: 'linear-gradient(160deg, #0F2C2C 0%, #16383C 50%, #0A1E1E 100%)' }}
+          style={{ background: 'var(--grad-teal)' }}
         >
           <div aria-hidden className="pointer-events-none absolute -top-40 right-[-10%] h-[34rem] w-[34rem] rounded-full opacity-20 blur-3xl"
             style={{ background: 'radial-gradient(circle, #E9B94A 0%, transparent 70%)' }} />

@@ -3,23 +3,24 @@
 @theme inline {
   --color-primary: #0F2C2C;
   --color-primary-dark: #0A1E1E;
-  --color-primary-light: #1A3D47;
   --color-accent: #E9B94A;
   --color-accent-dark: #D4A535;
-  --color-muted: #2E6259;
-  --color-muted-light: #3A7D72;
   --color-background: #F8F5F0;
   --color-surface: #FFFFFF;
   --color-surface-warm: #F2EDE5;
   --color-text: #132B29;
   --color-text-secondary: #486565;
-  --color-text-muted: #8FA5A0;
+  --color-text-muted: #55736D;
   --color-border: #EDE6D9;
   --color-border-light: #F5F0E8;
-  --color-error: #D94F4F;
+  --color-error: #C23D3D;
   --color-error-bg: #FDF2F2;
   --color-success: #1E4C48;
   --color-success-light: #E8F5F0;
+}
+
+:root {
+  --grad-teal: linear-gradient(160deg, #0F2C2C 0%, #16383C 50%, #0A1E1E 100%);
 }
 
 html {
@@ -71,16 +72,12 @@ input[type="range"]::-moz-range-thumb {
   border: 2px solid var(--color-surface);
 }
 
-.shadow-offset {
-  box-shadow: 4px 4px 0px var(--color-accent);
-}
-
 .shadow-soft {
   box-shadow: 0 10px 25px -5px rgb(15 44 44 / 0.1), 0 4px 6px -1px rgb(0 0 0 / 0.05);
 }
 
 .card-gradient {
-  background: linear-gradient(180deg, #0F2C2C 0%, #1E3A38 100%);
+  background: var(--grad-teal);
 }
 
 .font-display {

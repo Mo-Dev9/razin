@@ -26,7 +26,7 @@ export default function HarahPage() {
         {/* ترويسة حارة — تدفق حولك من كل الأحياء (قرار ٣: مجتمع ذرة دعم لا نواة) */}
         <section
           className="relative overflow-hidden px-6 pb-16 pt-14 text-center md:pb-20 md:pt-16"
-          style={{ background: 'linear-gradient(160deg, #0F2C2C 0%, #16383C 50%, #0A1E1E 100%)' }}
+          style={{ background: 'var(--grad-teal)' }}
         >
           <div aria-hidden className="pointer-events-none absolute -top-32 right-[-10%] h-80 w-80 rounded-full opacity-20 blur-3xl"
             style={{ background: 'radial-gradient(circle, #E9B94A 0%, transparent 70%)' }} />

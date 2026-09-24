@@ -433,7 +433,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
       </div>
 
       {/* تسميات القرب — شرح نصي فقط */}
-      <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-[var(--color-text-secondary)]">
+      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[var(--color-text-secondary)]">
         <span className="rounded-full bg-[var(--color-success-light)] px-3 py-1 font-bold text-[var(--color-success)]">هنا ≤1 كم</span>
         <span className="rounded-full bg-[var(--color-accent)]/15 px-3 py-1 font-bold text-[var(--color-primary)]">قريب جدًا ≤2 كم</span>
         <span className="rounded-full bg-[var(--color-surface-warm)] px-3 py-1 font-bold text-[var(--color-text-secondary)]">قريب ≤10 كم</span>
@@ -489,7 +489,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
           className="mt-2 w-full resize-none rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
         />
         <div className="mt-2 flex items-center justify-between gap-3">
-          <span className="text-[11px] text-[var(--color-text-muted)]">{text.length}/500</span>
+          <span className="text-xs text-[var(--color-text-muted)]">{text.length}/500</span>
           <button
             type="button"
             onClick={() => void submitPost()}
@@ -508,13 +508,13 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
             الأجهزة (الملف الشخصي /api/posts/mine مربوط بحسابك لا بجهازك). */}
         {user?.isAnonymous && !isLinkedWithGoogle && (
           <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl bg-[var(--color-accent)]/10 px-3 py-2">
-            <p className="text-[11px] leading-relaxed text-[var(--color-text-secondary)]">
+            <p className="text-xs leading-relaxed text-[var(--color-text-secondary)]">
               نشرك مجهول دائمًا — ويمكنك ربط حساب جوجل (اختياري) لرؤية منشوراتك على أي جهاز من صفحة «ملفي».
             </p>
             <button
               type="button"
               onClick={() => void signInWithGoogle()}
-              className="rounded-full bg-[var(--color-accent)] px-3 py-1 text-[11px] font-bold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-accent-dark)]"
+              className="rounded-full bg-[var(--color-accent)] px-3 py-1 text-xs font-bold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-accent-dark)]"
             >
               ربط حسابي
             </button>
@@ -580,7 +580,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm font-extrabold text-[var(--color-primary)]">{post.displayName}</span>
                   {post.isGuide && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-primary)]/15 px-3 py-1 text-[11px] font-bold text-[var(--color-primary)]">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-primary)]/15 px-3 py-1 text-xs font-bold text-[var(--color-primary)]">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3" aria-hidden>
                         <circle cx="12" cy="12" r="10" />
                         <path d="M12 16v-4M12 8h.01" />
@@ -589,19 +589,19 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
                     </span>
                   )}
                   {!post.isGuide && post.badgeLabel && (
-                    <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-[11px] font-bold ${BADGE_STYLES[post.kind]}`}>
+                    <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold ${BADGE_STYLES[post.kind]}`}>
                       <PinIcon className="h-3 w-3" />
                       {post.badgeLabel}
                     </span>
                   )}
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
-                  <span className="text-[11px] text-[var(--color-text-muted)]">{formatDate(post.createdAt)}</span>
+                  <span className="text-xs text-[var(--color-text-muted)]">{formatDate(post.createdAt)}</span>
                   {post.isGuide && (
                     <button
                       type="button"
                       onClick={() => dismissGuide(post.id)}
-                      className="rounded-full bg-[var(--color-surface-warm)] px-2 py-0.5 text-[10px] font-bold text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-error)]"
+                      className="rounded-full bg-[var(--color-surface-warm)] px-2 py-0.5 text-[11px] font-bold text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-error)]"
                       aria-label="إخفاء الإرشاد"
                     >
                       إخفاء ×
@@ -659,7 +659,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
                     setReportReason('');
                     setReportError(null);
                   }}
-                  className="mr-auto rounded-full px-3 py-1 text-[11px] font-bold text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-error)]/10 hover:text-[var(--color-error)]"
+                  className="ms-auto rounded-full px-3 py-1 text-xs font-bold text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-error)]/10 hover:text-[var(--color-error)]"
                 >
                   بلّغ
                 </button>
@@ -718,7 +718,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
                         <div key={c.id} className="border-b border-[var(--color-border-light)] py-2 last:border-b-0">
                           <div className="flex items-center justify-between gap-2">
                             <span className="text-xs font-extrabold text-[var(--color-primary)]">{c.displayName}</span>
-                            <span className="text-[10px] text-[var(--color-text-muted)]">{formatDate(c.createdAt)}</span>
+                            <span className="text-[11px] text-[var(--color-text-muted)]">{formatDate(c.createdAt)}</span>
                           </div>
                           <p className="mt-0.5 text-xs leading-relaxed text-[var(--color-text)]">{c.text}</p>
                         </div>
@@ -728,7 +728,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
                           type="button"
                           onClick={() => void loadMoreComments(post)}
                           disabled={!!commentsLoadingMore[post.id]}
-                          className="mt-2 w-full rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-xs font-bold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-border)] disabled:opacity-50"
+                          className="mt-2 w-full rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-xs font-bold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-border)] disabled:opacity-50"
                         >
                           {commentsLoadingMore[post.id] ? 'جارٍ تحميل المزيد…' : 'عرض المزيد من التعليقات'}
                         </button>
