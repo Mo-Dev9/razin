@@ -44,7 +44,7 @@ export default function AdminDashboard() {
         <div className="grid gap-4 sm:grid-cols-2">
           <a
             href="/admin/listings"
-            className="block rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-6 hover:border-[var(--color-accent)] transition-colors"
+            className="block rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-6 hover:border-[var(--color-primary)] transition-colors"
           >
             <div className="text-3xl mb-3">📊</div>
             <h2 className="font-semibold">الإعلانات</h2>
@@ -55,7 +55,7 @@ export default function AdminDashboard() {
 
           <a
             href="/admin/posts"
-            className="block rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-6 hover:border-[var(--color-accent)] transition-colors"
+            className="block rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-6 hover:border-[var(--color-primary)] transition-colors"
           >
             <div className="text-3xl mb-3">🗣️</div>
             <h2 className="font-semibold">إشراف الحارة</h2>

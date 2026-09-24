@@ -119,7 +119,7 @@ export default function AdminPostsPage() {
             <article key={post.id} className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-5">
               <div className="flex items-center justify-between gap-2 text-xs">
                 <div className="flex items-center gap-2">
-                  <span className="font-extrabold text-[var(--color-text)]">{post.displayName ?? 'منشور مجهول'}</span>
+                  <span className="font-extrabold text-[var(--color-primary)]">{post.displayName ?? 'منشور مجهول'}</span>
                   <span className="rounded-full bg-[var(--color-error)]/15 px-2.5 py-0.5 font-bold text-[var(--color-error)]">
                     {post.reportCount ?? 0} بلاغ
                   </span>

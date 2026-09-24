@@ -12,7 +12,7 @@ export default function TermsPage() {
     <>
       <SiteHeader />
       <main className="mx-auto max-w-3xl px-4 py-14">
-        <h1 className="text-3xl font-extrabold text-[var(--color-text)]">شروط الاستخدام</h1>
+        <h1 className="text-3xl font-extrabold text-[var(--color-primary)]">شروط الاستخدام</h1>
         <p className="mt-2 text-sm text-[var(--color-text-muted)]">آخر تحديث: سبتمبر 2026 — نسخة بيتا</p>
 
         <div className="mt-8 space-y-6 text-sm leading-relaxed text-[var(--color-text-secondary)]">

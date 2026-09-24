@@ -3,7 +3,7 @@ import { Logo } from '@/components/ui/Logo';
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-[var(--color-border)] bg-[var(--color-primary-dark)] text-white">
+    <footer className="mt-auto bg-[var(--color-primary)] text-white">
       <div className="mx-auto max-w-5xl px-4 py-10">
         <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
           <div className="max-w-xs">

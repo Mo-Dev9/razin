@@ -35,7 +35,7 @@ export function SiteHeader() {
           <span className="transition-transform group-hover:scale-105">
             <Logo size={44} />
           </span>
-          <span className="text-2xl font-extrabold leading-none tracking-tight text-[var(--color-text)]">
+          <span className="text-2xl font-extrabold leading-none tracking-tight text-[var(--color-primary)]">
             رزين
           </span>
         </Link>
@@ -50,8 +50,8 @@ export function SiteHeader() {
                 aria-current={active ? 'page' : undefined}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                   active
-                    ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
-                    : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)]'
+                    ? 'bg-[var(--color-primary)] text-[var(--color-accent)]'
+                    : 'text-[var(--color-text-secondary)] hover:text-[var(--color-primary)]'
                 }`}
               >
                 {item.label}
@@ -70,7 +70,7 @@ export function SiteHeader() {
         <button
           onClick={() => setOpen((v) => !v)}
           aria-label="القائمة"
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-[var(--color-text-secondary)] hover:bg-[var(--color-border)] md:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-xl text-[var(--color-primary)] hover:bg-[var(--color-border)] md:hidden"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             {open ? (
@@ -98,7 +98,7 @@ export function SiteHeader() {
               onClick={() => setOpen(false)}
               aria-current={pathname === item.href ? 'page' : undefined}
               className={`block rounded-lg px-2 py-1 text-sm font-medium ${
-                pathname === item.href ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)]'
+                pathname === item.href ? 'bg-[var(--color-primary)] text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)] hover:text-[var(--color-primary)]'
               }`}
             >
               {item.label}

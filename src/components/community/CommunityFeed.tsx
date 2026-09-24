@@ -15,7 +15,7 @@ interface Props {
 
 const BADGE_STYLES: Record<ProximityKind, string> = {
   here: 'bg-[var(--color-success-light)] text-[var(--color-success)]',
-  veryClose: 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]',
+  veryClose: 'bg-[var(--color-accent)]/15 text-[var(--color-primary)]',
   close: 'bg-[var(--color-surface-warm)] text-[var(--color-text-secondary)]',
   far: 'bg-[var(--color-surface-warm)] text-[var(--color-text-muted)]',
   unknown: 'bg-[var(--color-surface-warm)] text-[var(--color-text-muted)]',
@@ -401,7 +401,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
     >
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className={variant === 'full' ? 'text-2xl font-extrabold text-[var(--color-text)] md:text-3xl' : 'text-lg font-extrabold text-[var(--color-text)]'}>
+          <h2 className={variant === 'full' ? 'text-2xl font-extrabold text-[var(--color-primary)] md:text-3xl' : 'text-lg font-extrabold text-[var(--color-primary)]'}>
             حارة
           </h2>
           <p className="mt-1 text-sm leading-relaxed text-[var(--color-text-secondary)]">
@@ -435,7 +435,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
       {/* تسميات القرب — شرح نصي فقط */}
       <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-[var(--color-text-secondary)]">
         <span className="rounded-full bg-[var(--color-success-light)] px-3 py-1 font-bold text-[var(--color-success)]">هنا ≤1 كم</span>
-        <span className="rounded-full bg-[var(--color-accent)]/15 px-3 py-1 font-bold text-[var(--color-accent)]">قريب جدًا ≤2 كم</span>
+        <span className="rounded-full bg-[var(--color-accent)]/15 px-3 py-1 font-bold text-[var(--color-primary)]">قريب جدًا ≤2 كم</span>
         <span className="rounded-full bg-[var(--color-surface-warm)] px-3 py-1 font-bold text-[var(--color-text-secondary)]">قريب ≤10 كم</span>
       </div>
 
@@ -444,7 +444,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
         <button
           type="button"
           onClick={() => void activateLocation()}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-[var(--color-accent-dark)] bg-[var(--color-accent)]/10 px-4 py-3 text-sm font-bold text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)]/20"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-[var(--color-accent-dark)] bg-[var(--color-accent)]/10 px-4 py-3 text-sm font-bold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-accent)]/20"
         >
           <PinIcon className="h-4 w-4" />
           {neighborhoodId ? 'فعّل موقعك لنرى القريب منك' : 'فعّل موقعك لترى حارتك حولك'}
@@ -461,14 +461,14 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
       {/* زر/مربع المشاركة — ظاهر دائمًا (بعلامة تفعيل الموقع عند اللزوم بدل الاختفاء) */}
       {requireLoc ? (
         <div className="mt-4 rounded-2xl border border-dashed border-[var(--color-accent-dark)] bg-[var(--color-accent)]/5 p-5 text-center">
-          <p className="text-sm font-extrabold text-[var(--color-text)]">اكتب مشاركة جديدة في حارتك</p>
+          <p className="text-sm font-extrabold text-[var(--color-primary)]">اكتب مشاركة جديدة في حارتك</p>
           <p className="mx-auto mt-1 max-w-md text-xs leading-relaxed text-[var(--color-text-secondary)]">
             النشر يتطلب تفعيل موقعك — موقعك لا يُعرض لأحد ويُقرَّب (~150م) قبل التخزين. بدونه تقرأ وتصوّت فقط.
           </p>
           <button
             type="button"
             onClick={() => void activateLocation()}
-            className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] px-6 py-2.5 text-sm font-bold text-[var(--color-primary-dark)] transition-all hover:bg-[var(--color-accent-dark)]"
+            className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--color-primary)] px-6 py-2.5 text-sm font-bold text-[var(--color-surface)] transition-all hover:bg-[var(--color-primary-dark)]"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><path d="M12 5v14M5 12h14" /></svg>
             {locTried ? 'أعد محاولة تفعيل الموقع' : 'فعّل موقعك وابدأ الكتابة'}
@@ -486,7 +486,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
           rows={3}
           onChange={(e) => setText(e.target.value)}
           placeholder={neighborhoodId ? `مثال: التيار الكهربائي بيفصل في ${neighborhoodName ?? 'الحي'} الصيف ده؟` : 'مثال: نصيحة عن مالك عمارة، سؤال عن منطقة، خدمة تقدمها لأهل حيّك…'}
-          className="mt-2 w-full resize-none rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+          className="mt-2 w-full resize-none rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
         />
         <div className="mt-2 flex items-center justify-between gap-3">
           <span className="text-[11px] text-[var(--color-text-muted)]">{text.length}/500</span>
@@ -494,7 +494,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
             type="button"
             onClick={() => void submitPost()}
             disabled={submitting || authLoading || text.trim().length < 2}
-            className="rounded-full bg-[var(--color-accent)] px-5 py-2.5 text-sm font-bold text-[var(--color-primary-dark)] transition-all hover:bg-[var(--color-accent-dark)] disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-full bg-[var(--color-primary)] px-5 py-2.5 text-sm font-bold text-[var(--color-surface)] transition-all hover:bg-[var(--color-primary-dark)] disabled:cursor-not-allowed disabled:opacity-40"
           >
             {submitting ? 'جارٍ الإرسال…' : 'انشر'}
           </button>
@@ -532,7 +532,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
             onClick={() => setSort(t.id)}
             className={`rounded-full px-4 py-1.5 text-xs font-bold transition-colors ${
               sort === t.id
-                ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
+                ? 'bg-[var(--color-primary)] text-[var(--color-surface)]'
                 : 'bg-[var(--color-surface-warm)] text-[var(--color-text-secondary)] hover:bg-[var(--color-border)]'
             }`}
           >
@@ -578,9 +578,9 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
             <article key={post.id} className="border-b border-[var(--color-border-light)] py-4 last:border-b-0">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-sm font-extrabold text-[var(--color-text)]">{post.displayName}</span>
+                  <span className="text-sm font-extrabold text-[var(--color-primary)]">{post.displayName}</span>
                   {post.isGuide && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-accent)]/15 px-3 py-1 text-[11px] font-bold text-[var(--color-accent)]">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-primary)]/15 px-3 py-1 text-[11px] font-bold text-[var(--color-primary)]">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3" aria-hidden>
                         <circle cx="12" cy="12" r="10" />
                         <path d="M12 16v-4M12 8h.01" />
@@ -717,7 +717,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
                       {comments.map((c) => (
                         <div key={c.id} className="border-b border-[var(--color-border-light)] py-2 last:border-b-0">
                           <div className="flex items-center justify-between gap-2">
-                            <span className="text-xs font-extrabold text-[var(--color-text)]">{c.displayName}</span>
+                            <span className="text-xs font-extrabold text-[var(--color-primary)]">{c.displayName}</span>
                             <span className="text-[10px] text-[var(--color-text-muted)]">{formatDate(c.createdAt)}</span>
                           </div>
                           <p className="mt-0.5 text-xs leading-relaxed text-[var(--color-text)]">{c.text}</p>
@@ -728,7 +728,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
                           type="button"
                           onClick={() => void loadMoreComments(post)}
                           disabled={!!commentsLoadingMore[post.id]}
-                          className="mt-2 w-full rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-xs font-bold text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-border)] disabled:opacity-50"
+                          className="mt-2 w-full rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-xs font-bold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-border)] disabled:opacity-50"
                         >
                           {commentsLoadingMore[post.id] ? 'جارٍ تحميل المزيد…' : 'عرض المزيد من التعليقات'}
                         </button>
@@ -743,13 +743,13 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
                         value={myComment}
                         onChange={(e) => setCommentText((prev) => ({ ...prev, [post.id]: e.target.value }))}
                         placeholder="اكتب تعليقًا…"
-                        className="w-full flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                        className="w-full flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
                       />
                       <button
                         type="button"
                         onClick={() => void submitComment(post)}
                         disabled={myComment.trim().length < 2 || !user}
-                        className="rounded-xl bg-[var(--color-accent)] px-4 py-2 text-xs font-bold text-[var(--color-primary-dark)] transition-colors hover:bg-[var(--color-accent-dark)] disabled:opacity-40"
+                        className="rounded-xl bg-[var(--color-primary)] px-4 py-2 text-xs font-bold text-[var(--color-surface)] transition-colors hover:bg-[var(--color-primary-dark)] disabled:opacity-40"
                       >
                         رد
                       </button>
@@ -765,7 +765,7 @@ export function CommunityFeed({ neighborhoodId, neighborhoodName, variant = 'inl
           <button
             type="button"
             onClick={() => void loadFeed(nextOffset)}
-            className="mt-4 w-full rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm font-bold text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-border)]"
+            className="mt-4 w-full rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-3 text-sm font-bold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-border)]"
           >
             عرض المزيد
           </button>

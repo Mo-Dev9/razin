@@ -26,6 +26,7 @@ export default function HarahPage() {
         {/* ترويسة حارة — تدفق حولك من كل الأحياء (قرار ٣: مجتمع ذرة دعم لا نواة) */}
         <section
           className="relative overflow-hidden px-6 pb-16 pt-14 text-center md:pb-20 md:pt-16"
+          style={{ background: 'linear-gradient(160deg, #0F2C2C 0%, #16383C 50%, #0A1E1E 100%)' }}
         >
           <div aria-hidden className="pointer-events-none absolute -top-32 right-[-10%] h-80 w-80 rounded-full opacity-20 blur-3xl"
             style={{ background: 'radial-gradient(circle, #E9B94A 0%, transparent 70%)' }} />
@@ -35,7 +36,7 @@ export default function HarahPage() {
               <span className="h-2 w-2 rounded-full bg-[var(--color-accent)]" />
               مجتمع حيّك المجهول — لا أسماء حقيقية ولا مواقع دقيقة
             </span>
-            <h1 className="mt-6 text-3xl font-extrabold leading-tight text-[var(--color-text)] sm:text-4xl md:text-5xl">
+            <h1 className="mt-6 text-3xl font-extrabold leading-tight text-[var(--color-surface)] sm:text-4xl md:text-5xl">
               اسأل أهل الحي قبل الإيداع
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-white/70">
@@ -45,7 +46,7 @@ export default function HarahPage() {
         </section>
 
         {/* التدفق */}
-        <section className="px-4 py-10">
+        <section className="bg-[var(--color-surface-warm)] px-4 py-10">
           <CommunityFeed neighborhoodId={undefined} neighborhoodName={undefined} variant="full" />
         </section>
       </main>

@@ -109,7 +109,7 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
       <main className="mx-auto max-w-5xl px-4 py-8">
         {/* فتات التنقل */}
         <nav aria-label="مسار التنقل" className="mb-4 text-xs text-[var(--color-text-muted)]">
-          <Link href="/" className="hover:text-[var(--color-accent)]">الرئيسية</Link>
+          <Link href="/" className="hover:text-[var(--color-primary)]">الرئيسية</Link>
           <span className="mx-2">/</span>
           <span>{name}</span>
         </nav>
@@ -120,7 +120,7 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
           <div className="relative flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
             <div>
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-3xl font-extrabold text-[var(--color-text)] md:text-4xl">{name}</h1>
+                <h1 className="text-3xl font-extrabold text-[var(--color-surface)] md:text-4xl">{name}</h1>
                 <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">{governorate ?? '—'}</span>
                 {filterActive ? (
                   <span className="rounded-full bg-[var(--color-accent)] px-3 py-1 text-xs font-bold text-[var(--color-primary)]">
@@ -146,7 +146,7 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
                 </div>
                 <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                   <p className="text-xs text-white/50">النطاق الأكثر شيوعًا</p>
-                  <p className="mt-1 text-2xl font-extrabold text-[var(--color-text)]" dir="ltr">
+                  <p className="mt-1 text-2xl font-extrabold text-[var(--color-surface)]" dir="ltr">
                     {shown.p25 != null && shown.p75 != null
                       ? `${formatEGP(Math.round(shown.p25))} – ${formatEGP(Math.round(shown.p75))}`
                       : '—'}
@@ -154,7 +154,7 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
                 </div>
                 <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                   <p className="text-xs text-white/50">أقل — أعلى</p>
-                  <p className="mt-1 text-xl font-bold text-[var(--color-text)]" dir="ltr">
+                  <p className="mt-1 text-xl font-bold text-[var(--color-surface)]" dir="ltr">
                     {shown.min != null && shown.max != null
                       ? `${formatEGP(Math.round(shown.min))} – ${formatEGP(Math.round(shown.max))}`
                       : '—'}
@@ -162,7 +162,7 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
                 </div>
                 <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                   <p className="text-xs text-white/50">عدد المصادر</p>
-                  <p className="mt-1 text-2xl font-extrabold text-[var(--color-text)]" dir="ltr">
+                  <p className="mt-1 text-2xl font-extrabold text-[var(--color-surface)]" dir="ltr">
                     {shown.count > 0 ? arCount(shown.count, AR_AD_FORMS) : '0'}
                   </p>
                 </div>
@@ -187,7 +187,7 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
                 href={filterHref(neighborhoodId, null, furnishedParam)}
                 className={`rounded-full px-3 py-1.5 text-xs font-bold transition-colors ${
                   typeParam === null
-                    ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
+                    ? 'bg-[var(--color-primary)] text-[var(--color-surface)]'
                     : 'bg-[var(--color-surface-warm)] text-[var(--color-text-secondary)] hover:bg-[var(--color-border)]'
                 }`}
               >
@@ -199,7 +199,7 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
                   href={filterHref(neighborhoodId, t, furnishedParam)}
                   className={`rounded-full px-3 py-1.5 text-xs font-bold transition-colors ${
                     typeParam === t
-                      ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
+                      ? 'bg-[var(--color-primary)] text-[var(--color-surface)]'
                       : 'bg-[var(--color-surface-warm)] text-[var(--color-text-secondary)] hover:bg-[var(--color-border)]'
                   }`}
                 >
@@ -220,7 +220,7 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
                       href={filterHref(neighborhoodId, typeParam, f)}
                       className={`rounded-full px-3 py-1.5 text-xs font-bold transition-colors ${
                         active
-                          ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
+                          ? 'bg-[var(--color-primary)] text-[var(--color-surface)]'
                           : 'bg-[var(--color-surface-warm)] text-[var(--color-text-secondary)] hover:bg-[var(--color-border)]'
                       }`}
                     >
@@ -253,8 +253,8 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
 
         {/* حارس الكفاية */}
         {filteredFallback && (
-          <div className="mt-6 rounded-2xl border border-dashed border-[var(--color-accent-dark)] bg-[var(--color-surface-warm)] px-5 py-4 text-sm leading-relaxed">
-            <strong className="text-[var(--color-text)]">
+          <div className="mt-6 rounded-2xl border border-dashed border-[var(--color-accent-dark)] bg-[#FFFBF0] px-5 py-4 text-sm leading-relaxed">
+            <strong className="text-[var(--color-primary)]">
               لا توجد إعلانات تطابق فئتك حاليًا.
             </strong>{' '}
             الأرقام أعلاه من كل إعلانات الحي ({meta?.count ?? 0}) — وعندما تكتمل عينات الفئة نعرض أرقامها وحدها.
@@ -262,8 +262,8 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
         )}
 
         {filteredThin && (
-          <div className="mt-6 rounded-2xl border border-dashed border-[var(--color-accent-dark)] bg-[var(--color-surface-warm)] px-5 py-4 text-sm leading-relaxed">
-            <strong className="text-[var(--color-text)]">
+          <div className="mt-6 rounded-2xl border border-dashed border-[var(--color-accent-dark)] bg-[#FFFBF0] px-5 py-4 text-sm leading-relaxed">
+            <strong className="text-[var(--color-primary)]">
               فئة صغيرة العينة ({arCount(filteredStats?.count ?? 0, AR_AD_FORMS)} من أصل {meta?.count ?? 0}).
             </strong>{' '}
             نعرض أرقامها كما هي بشكل مبدئي حتى تكتمل بياناتها.
@@ -277,7 +277,7 @@ export default async function NeighborhoodPage({ params, searchParams }: Props) 
               href={`/calculator?neighborhoodId=${encodeURIComponent(neighborhoodId)}`}
               className="block rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] p-5 text-sm transition-all hover:bg-[var(--color-border)]"
             >
-              <span className="font-bold text-[var(--color-text)]">حاسبة الأسعار</span>
+              <span className="font-bold text-[var(--color-primary)]">حاسبة الأسعار</span>
               <span className="mt-1 block leading-relaxed text-[var(--color-text-secondary)]">
                 احسب سعر شقة في {name} حسب عدد الغرف والحمامات.
               </span>

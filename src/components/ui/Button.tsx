@@ -9,7 +9,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants = {
-  primary: 'bg-[var(--color-primary-light)] text-[var(--color-text)] hover:bg-[var(--color-muted)] hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]',
+  primary: 'bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]',
   secondary: 'bg-[var(--color-surface-warm)] text-[var(--color-text)] hover:bg-[var(--color-border)] hover:scale-[1.02]',
   accent: 'bg-[var(--color-accent)] text-[var(--color-primary)] hover:bg-[var(--color-accent-dark)] hover:shadow-lg hover:scale-[1.02]',
   outline: 'border border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface-warm)] hover:scale-[1.02]',

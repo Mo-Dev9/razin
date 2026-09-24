@@ -49,12 +49,9 @@ export function NeighborhoodSearch({ placeholder = 'ابحث عن حي أو مد
     }
   };
 
-  const inputCls =
-    'w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] py-4 ps-12 pe-12 text-base text-[var(--color-text)] placeholder-[var(--color-text-muted)] shadow-soft';
-  const inputClsDark =
-    'w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] py-4 ps-12 pe-12 text-base text-[var(--color-text)] placeholder-[var(--color-text-muted)] shadow-lg';
-
-  const activeCls = dark ? inputClsDark : inputCls;
+  const inputCls = dark
+    ? 'w-full rounded-2xl border border-white/15 bg-white/95 py-4 ps-12 pe-12 text-base text-[var(--color-text)] placeholder-[var(--color-text-muted)] shadow-lg'
+    : 'w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] py-4 ps-12 pe-12 text-base text-[var(--color-text)] placeholder-[var(--color-text-muted)] shadow-soft';
 
   return (
     <div className="relative w-full" ref={boxRef}>
@@ -75,7 +72,7 @@ export function NeighborhoodSearch({ placeholder = 'ابحث عن حي أو مد
         onFocus={() => setOpen(true)}
         onKeyDown={onKeyDown}
         placeholder={placeholder}
-        className={activeCls}
+        className={inputCls}
         aria-label="بحث عن حي أو مدينة"
         role="combobox"
         aria-expanded={open && results.length > 0}

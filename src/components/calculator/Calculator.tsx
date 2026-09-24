@@ -142,7 +142,7 @@ export function Calculator({ initialNeighborhoodId = '' }: CalculatorProps) {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       <div className="text-center">
-        <h1 className="text-3xl font-extrabold text-[var(--color-text)] md:text-4xl">حاسبة أسعار الإيجار</h1>
+        <h1 className="text-3xl font-extrabold text-[var(--color-primary)] md:text-4xl">حاسبة أسعار الإيجار</h1>
         <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-secondary)] md:text-base">
           اختر المحافظة والحي ثم المواصفات — نحسب لك نطاق السعر الشائع من الإعلانات
           الموثقة في السوق.
@@ -243,7 +243,7 @@ export function Calculator({ initialNeighborhoodId = '' }: CalculatorProps) {
               لا توجد بيانات أسعار مسجلة في {currentName || 'هذا الحي'} بعد.
               <span className="mt-2 block text-xs text-[var(--color-text-muted)]">
                 ابحث عنه في{' '}
-                <Link href={`/neighborhood/${encodeURIComponent(neighborhoodId)}`} className="font-semibold text-[var(--color-text-secondary)] underline underline-offset-2 hover:text-[var(--color-accent)]">
+                <Link href={`/neighborhood/${encodeURIComponent(neighborhoodId)}`} className="font-semibold text-[var(--color-primary)] underline underline-offset-2">
                   صفحة الحي
                 </Link>{' '}
                 لترى ما تم جمعه حتى الآن.
@@ -252,8 +252,8 @@ export function Calculator({ initialNeighborhoodId = '' }: CalculatorProps) {
           ) : (
             <div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="rounded-2xl bg-[var(--color-primary-light)] p-4 text-center">
-                  <p className="text-xs text-[var(--color-text-muted)]">السعر الوسطي الشهري</p>
+                <div className="rounded-2xl bg-[var(--color-primary)] p-4 text-center">
+                  <p className="text-xs text-white/50">السعر الوسطي الشهري</p>
                   <p className="mt-1 text-2xl font-extrabold text-[var(--color-accent)]" dir="ltr">{formatEGP(Math.round(stats.median ?? 0))}</p>
                 </div>
                 <div className="rounded-2xl bg-[var(--color-surface-warm)] p-4 text-center">
@@ -305,7 +305,7 @@ export function Calculator({ initialNeighborhoodId = '' }: CalculatorProps) {
         <div className="mt-6 text-center">
           <Link
             href={`/neighborhood/${encodeURIComponent(neighborhoodId)}`}
-            className="text-sm font-semibold text-[var(--color-text-secondary)] underline underline-offset-4 hover:text-[var(--color-accent)]"
+            className="text-sm font-semibold text-[var(--color-primary)] underline underline-offset-4 hover:text-[var(--color-primary-dark)]"
           >
             عرض كل إعلانات {currentName} وأسعار الحي الكاملة
           </Link>
