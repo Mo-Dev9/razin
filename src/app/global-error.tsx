@@ -12,8 +12,8 @@ export default function GlobalError({
     <html lang="ar" dir="rtl">
       <body
         style={{
-          background: '#FAF7F2',
-          color: '#132E35',
+          background: '#0F2C2C',
+          color: '#E8E4DA',
           fontFamily: "'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif",
           minHeight: '100vh',
           display: 'flex',
@@ -27,14 +27,14 @@ export default function GlobalError({
           <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
             خطأ غير متوقع
           </h1>
-          <p style={{ fontSize: '0.875rem', color: '#6B7C7F', marginBottom: '1.5rem' }}>
+          <p style={{ fontSize: '0.875rem', color: '#9FB8B4', marginBottom: '1.5rem' }}>
             حاول إعادة تحميل الصفحة
           </p>
           <button
             onClick={reset}
             style={{
-              background: '#132E35',
-              color: 'white',
+              background: '#E9B94A',
+              color: '#0F2C2C',
               border: 'none',
               borderRadius: '999px',
               padding: '0.75rem 1.5rem',

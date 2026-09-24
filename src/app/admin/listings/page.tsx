@@ -333,7 +333,7 @@ export default function AdminListingsPage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         dir="ltr"
-                        className="block text-sm font-medium text-[var(--color-primary)] hover:underline truncate"
+                        className="block text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] hover:underline truncate"
                       >
                         {item.url}
                       </a>
@@ -601,7 +601,7 @@ export default function AdminListingsPage() {
                       </div>
 
                       <div className="flex flex-wrap items-center gap-3 mt-3">
-                        <span className="font-bold text-[var(--color-primary)]">
+                        <span className="font-bold text-[var(--color-accent)]">
                           {typeof row.price === 'number'
                             ? `${row.price.toLocaleString('en-US')} ج.م`
                             : '—'}
@@ -625,7 +625,7 @@ export default function AdminListingsPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                             dir="ltr"
-                            className="block text-[var(--color-primary)] hover:underline truncate mt-0.5"
+                            className="block text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] hover:underline truncate mt-0.5"
                           >
                             {row.sourceUrl}
                           </a>

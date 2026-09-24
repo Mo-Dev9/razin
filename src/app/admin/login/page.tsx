@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-[var(--color-background)] px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-[var(--color-primary)] tracking-tight">رزين</h1>
+          <h1 className="text-2xl font-bold text-[var(--color-text)] tracking-tight">رزين</h1>
           <p className="text-sm text-[var(--color-text-secondary)] mt-2">لوحة التحكم</p>
         </div>
 
@@ -59,7 +59,7 @@ export default function AdminLoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
               placeholder="أدخل كلمة المرور"
-              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] px-4 py-3 text-sm text-[var(--color-text)] placeholder-[var(--color-text-secondary)] outline-none focus:border-[var(--color-primary)]"
+              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] px-4 py-3 text-sm text-[var(--color-text)] placeholder-[var(--color-text-secondary)] outline-none focus:border-[var(--color-accent)]"
               autoFocus
             />
           </div>

@@ -47,7 +47,7 @@ export default async function HomePage() {
               اعرف سعر السوق قبل ما يقوله الوسيط
             </span>
 
-            <h1 className="mt-8 text-4xl font-extrabold leading-tight text-[var(--color-surface)] sm:text-5xl md:text-6xl">
+            <h1 className="mt-8 text-4xl font-extrabold leading-tight text-[var(--color-text)] sm:text-5xl md:text-6xl">
               قبل الإيداع، خذ رأي الحي — خذ رأي &quot;رزين&quot;
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-white/70 md:text-xl">
@@ -82,7 +82,7 @@ export default async function HomePage() {
         {/* أحياء جاهزة (10+ مصدر) */}
         <section id="ready" className="mx-auto max-w-5xl px-4 py-14">
           <div className="flex flex-col items-center gap-2 text-center">
-            <h2 className="text-2xl font-extrabold text-[var(--color-primary)] md:text-3xl">
+            <h2 className="text-2xl font-extrabold text-[var(--color-text)] md:text-3xl">
               الأحياء المدروسة
             </h2>
             <div className="mt-1 inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-4 py-1.5 text-xs text-[var(--color-text-secondary)]">
@@ -112,7 +112,7 @@ export default async function HomePage() {
                     className="group rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-soft transition-all hover:-translate-y-1 hover:shadow-lg"
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="text-lg font-bold text-[var(--color-text)] group-hover:text-[var(--color-primary)]">
+                      <h3 className="text-lg font-bold text-[var(--color-text)] group-hover:text-[var(--color-accent)]">
                         {name}
                       </h3>
                       <span className="shrink-0 rounded-full bg-[var(--color-success-light)] px-2.5 py-1 text-xs font-medium text-[var(--color-success)]">
@@ -123,7 +123,7 @@ export default async function HomePage() {
                     <div className="mt-4 flex items-end justify-between">
                       <div>
                         <p className="text-xs text-[var(--color-text-muted)]">السعر الوسطي الشهري</p>
-                        <p className="mt-1 text-2xl font-extrabold text-[var(--color-primary)]" dir="ltr">
+                        <p className="mt-1 text-2xl font-extrabold text-[var(--color-accent)]" dir="ltr">
                           {m.median != null ? formatEGP(Math.round(m.median)) : '—'}
                         </p>
                       </div>
@@ -139,7 +139,7 @@ export default async function HomePage() {
         {/* كيف تستخدم رزين؟ */}
         <section className="border-t border-[var(--color-border)] bg-[var(--color-success-light)] px-4 py-14">
           <div className="mx-auto max-w-5xl">
-            <h2 className="text-center text-2xl font-extrabold text-[var(--color-primary)] md:text-3xl">
+            <h2 className="text-center text-2xl font-extrabold text-[var(--color-text)] md:text-3xl">
               كيف تستخدم رزين؟
             </h2>
             <p className="mx-auto mt-2 max-w-md text-center text-sm text-[var(--color-text-secondary)]">
@@ -147,16 +147,16 @@ export default async function HomePage() {
             </p>
             <div className="relative mt-12">
               {/* الخط الواصل الأفقي — أجهزة كبيرة */}
-              <div aria-hidden className="absolute inset-x-2 top-5 hidden h-px border-t-2 border-dashed border-[var(--color-primary)]/25 md:block" />
+              <div aria-hidden className="absolute inset-x-2 top-5 hidden h-px border-t-2 border-dashed border-[var(--color-accent)]/30 md:block" />
               {/* الخط الواصل الرأسي — موبايل */}
-              <div aria-hidden className="absolute bottom-2 right-5 top-1 w-px border-r-2 border-dashed border-[var(--color-primary)]/25 md:hidden" />
+              <div aria-hidden className="absolute bottom-2 right-5 top-1 w-px border-r-2 border-dashed border-[var(--color-accent)]/30 md:hidden" />
 
               <ol className="relative grid gap-8 md:grid-cols-3 md:gap-6">
                 <li className="group relative flex items-start gap-4 md:flex-col md:items-center md:gap-0 md:text-center">
                   <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-base font-extrabold text-[var(--color-primary)] shadow-[0_0_16px_rgba(233,185,74,0.5)] ring-[6px] ring-[var(--color-success-light)] transition-transform duration-300 group-hover:scale-110">١</span>
                   <div className="relative flex-1 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-accent)]/60 hover:shadow-lg md:mt-5 md:w-full">
-                    <span aria-hidden className="pointer-events-none absolute -left-1 -top-3 select-none text-6xl font-extrabold leading-none text-[var(--color-primary)]/[0.07]">١</span>
-                    <h3 className="relative text-base font-bold text-[var(--color-text)] transition-colors group-hover:text-[var(--color-primary)]">
+                    <span aria-hidden className="pointer-events-none absolute -left-1 -top-3 select-none text-6xl font-extrabold leading-none text-[var(--color-text)]/[0.07]">١</span>
+                    <h3 className="relative text-base font-bold text-[var(--color-text)] transition-colors group-hover:text-[var(--color-accent)]">
                       ابحث عن حيّك أو احسب سعر شقتك
                     </h3>
                     <p className="relative mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
@@ -168,8 +168,8 @@ export default async function HomePage() {
                 <li className="group relative flex items-start gap-4 md:flex-col md:items-center md:gap-0 md:text-center">
                   <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-base font-extrabold text-[var(--color-primary)] shadow-[0_0_16px_rgba(233,185,74,0.5)] ring-[6px] ring-[var(--color-success-light)] transition-transform duration-300 group-hover:scale-110">٢</span>
                   <div className="relative flex-1 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-accent)]/60 hover:shadow-lg md:mt-5 md:w-full">
-                    <span aria-hidden className="pointer-events-none absolute -left-1 -top-3 select-none text-6xl font-extrabold leading-none text-[var(--color-primary)]/[0.07]">٢</span>
-                    <h3 className="relative text-base font-bold text-[var(--color-text)] transition-colors group-hover:text-[var(--color-primary)]">
+                    <span aria-hidden className="pointer-events-none absolute -left-1 -top-3 select-none text-6xl font-extrabold leading-none text-[var(--color-text)]/[0.07]">٢</span>
+                    <h3 className="relative text-base font-bold text-[var(--color-text)] transition-colors group-hover:text-[var(--color-accent)]">
                       اعرف كم يدفع الناس في الحيّ
                     </h3>
                     <p className="relative mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
@@ -181,15 +181,15 @@ export default async function HomePage() {
                 <li className="group relative flex items-start gap-4 md:flex-col md:items-center md:gap-0 md:text-center">
                   <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-base font-extrabold text-[var(--color-primary)] shadow-[0_0_16px_rgba(233,185,74,0.5)] ring-[6px] ring-[var(--color-success-light)] transition-transform duration-300 group-hover:scale-110">٣</span>
                   <div className="relative flex-1 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-accent)]/60 hover:shadow-lg md:mt-5 md:w-full">
-                    <span aria-hidden className="pointer-events-none absolute -left-1 -top-3 select-none text-6xl font-extrabold leading-none text-[var(--color-primary)]/[0.07]">٣</span>
-                    <h3 className="relative text-base font-bold text-[var(--color-text)] transition-colors group-hover:text-[var(--color-primary)]">
+                    <span aria-hidden className="pointer-events-none absolute -left-1 -top-3 select-none text-6xl font-extrabold leading-none text-[var(--color-text)]/[0.07]">٣</span>
+                    <h3 className="relative text-base font-bold text-[var(--color-text)] transition-colors group-hover:text-[var(--color-accent)]">
                       اسأل أهل الحيّ قبل الإيداع
                     </h3>
                     <p className="relative mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
                       ادخل «حارة» واطرح سؤالًا أو اقرأ تجارب الجيران حول السعر والحياة
                       في الحي — أقرب مصدر لحقيقة الشارع.
                     </p>
-                    <a href="/hara" className="relative mt-3 inline-flex items-center gap-1 rounded-full bg-[var(--color-primary)]/10 px-4 py-2 text-xs font-bold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-primary)] hover:text-[var(--color-surface)]">
+                    <a href="/hara" className="relative mt-3 inline-flex items-center gap-1 rounded-full bg-[var(--color-accent)]/10 px-4 py-2 text-xs font-bold text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)] hover:text-[var(--color-primary-dark)]">
                       افتح صفحة «حارة» ←
                     </a>
                   </div>
@@ -206,7 +206,7 @@ export default async function HomePage() {
         <section className="mx-auto max-w-5xl px-4 py-14">
           <div className="card-gradient relative overflow-hidden rounded-3xl px-6 py-12 text-center md:px-12">
             <div aria-hidden className="pointer-events-none absolute -left-16 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-[var(--color-accent)]/10 blur-2xl" />
-            <h2 className="relative text-2xl font-extrabold text-[var(--color-surface)] md:text-3xl">
+            <h2 className="relative text-2xl font-extrabold text-[var(--color-text)] md:text-3xl">
               اعرف نطاق السعر قبل التفاوض
             </h2>
             <p className="relative mx-auto mt-3 max-w-xl text-sm leading-relaxed text-white/60 md:text-base">

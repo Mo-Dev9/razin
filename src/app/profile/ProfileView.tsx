@@ -67,12 +67,12 @@ export function ProfileView() {
       <section className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-soft">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-surface-warm)] text-xl font-extrabold text-[var(--color-primary)]">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-surface-warm)] text-xl font-extrabold text-[var(--color-text)]">
               {user ? '؟' : '—'}
             </div>
             <div>
               <p className="text-xs text-[var(--color-text-muted)]">أنت في «حارة»</p>
-              <h1 className="text-2xl font-extrabold text-[var(--color-primary)]" dir="ltr">
+              <h1 className="text-2xl font-extrabold text-[var(--color-text)]" dir="ltr">
                 {displayName || '…'}
               </h1>
             </div>
@@ -90,7 +90,7 @@ export function ProfileView() {
 
         <div className="mt-4 flex flex-wrap gap-3">
           <div className="flex-1 rounded-2xl bg-[var(--color-surface-warm)] p-4 text-center">
-            <p className="text-2xl font-extrabold text-[var(--color-primary)]">{loadState === 'ready' ? posts.length : '—'}</p>
+            <p className="text-2xl font-extrabold text-[var(--color-accent)]">{loadState === 'ready' ? posts.length : '—'}</p>
             <p className="mt-0.5 text-xs text-[var(--color-text-muted)]">منشوراتي في «حارة»</p>
           </div>
         </div>
@@ -99,7 +99,7 @@ export function ProfileView() {
       {/* منشوراتي */}
       <section className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-soft">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="text-lg font-extrabold text-[var(--color-primary)]">منشوراتي</h2>
+          <h2 className="text-lg font-extrabold text-[var(--color-text)]">منشوراتي</h2>
           <Link
             href="/hara"
             className="rounded-full bg-[var(--color-accent)] px-4 py-1.5 text-xs font-bold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-accent-dark)]"

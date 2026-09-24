@@ -36,7 +36,7 @@ export default function HarahPage() {
               <span className="h-2 w-2 rounded-full bg-[var(--color-accent)]" />
               مجتمع حيّك المجهول — لا أسماء حقيقية ولا مواقع دقيقة
             </span>
-            <h1 className="mt-6 text-3xl font-extrabold leading-tight text-[var(--color-surface)] sm:text-4xl md:text-5xl">
+            <h1 className="mt-6 text-3xl font-extrabold leading-tight text-[var(--color-text)] sm:text-4xl md:text-5xl">
               اسأل أهل الحي قبل الإيداع
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-white/70">
