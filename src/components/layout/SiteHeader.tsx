@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Logo } from '@/components/ui/Logo';
 
 const NAV = [
@@ -15,12 +15,23 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const [activePath, setActivePath] = useState('');
+  const lastPath = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (lastPath.current !== pathname) {
+      lastPath.current = pathname;
+      setActivePath(pathname);
+    }
+  }, [pathname]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 32);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  const isActive = (href: string) => activePath === href;
 
   return (
     <header
@@ -42,7 +53,7 @@ export function SiteHeader() {
 
         <nav className="hidden items-center gap-2 md:flex">
           {NAV.map((item) => {
-            const active = pathname === item.href;
+            const active = isActive(item.href);
             return (
               <Link
                 key={item.href}
@@ -96,9 +107,9 @@ export function SiteHeader() {
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              aria-current={pathname === item.href ? 'page' : undefined}
+              aria-current={isActive(item.href) ? 'page' : undefined}
               className={`block rounded-lg px-2 py-1 text-sm font-medium ${
-                pathname === item.href ? 'bg-[var(--color-accent)] text-[var(--color-primary)]' : 'text-white/70 hover:text-[var(--color-surface)]'
+                isActive(item.href) ? 'bg-[var(--color-accent)] text-[var(--color-primary)]' : 'text-white/70 hover:text-[var(--color-surface)]'
               }`}
             >
               {item.label}
