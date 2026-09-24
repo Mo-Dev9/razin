@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
+import { AppSplash } from '@/components/layout/AppSplash';
 import { VisitTracker } from '@/components/layout/VisitTracker';
 import 'leaflet/dist/leaflet.css';
 import './globals.css';
@@ -72,6 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" href="/logo-192.png" />
       </head>
       <body className="flex flex-col min-h-screen">
+        <AppSplash />
         {children}
         <ServiceWorkerRegistration />
         <VisitTracker />
