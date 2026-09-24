@@ -22,17 +22,17 @@ export function SiteHeader() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // فوق الهيرو الداكن (الرئيسية/حارة بلا سكرول) ينقلب الهيدر لفاتح على داكن
+  // فوق الهيرو الداكن (الرئيسية/حارة بلا سكرول) يأخذ الهيدر لون افتتاحية التدرج (#0F2C2C) فيندمج بلا لحفة
   const overDark = !scrolled && (pathname === '/' || pathname === '/hara');
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b transition-all duration-300 ${
+      className={`sticky top-0 z-50 transition-all duration-300 ${
         overDark
-          ? 'border-b border-white/15 bg-transparent'
+          ? 'border-b border-white/10 bg-[var(--color-primary)]'
           : scrolled
-            ? 'border-[var(--color-border)] bg-[var(--color-surface-warm)]/55 backdrop-blur-md'
-            : 'border-[var(--color-border)] bg-[var(--color-surface-warm)]/95 backdrop-blur'
+            ? 'border-b border-[var(--color-border)] bg-[var(--color-surface-warm)]/55 backdrop-blur-md'
+            : 'border-b border-[var(--color-border)] bg-[var(--color-surface-warm)]/95 backdrop-blur'
       }`}
     >
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
