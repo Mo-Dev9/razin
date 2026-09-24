@@ -33,7 +33,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
         <Link href="/" className="group flex items-center gap-2.5">
           <span className="transition-transform group-hover:scale-105">
-            <Logo size={44} />
+            <Logo size={44} variant="dark" />
           </span>
           <span className="text-2xl font-extrabold leading-none tracking-tight text-[var(--color-surface)]">
             رزين
