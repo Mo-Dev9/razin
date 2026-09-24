@@ -22,17 +22,12 @@ export function SiteHeader() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // فوق الهيرو الداكن (الرئيسية/حارة بلا سكرول) يأخذ الهيدر لون افتتاحية التدرج (#0F2C2C) فيندمج بلا لحفة
-  const overDark = !scrolled && (pathname === '/' || pathname === '/hara');
-
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        overDark
-          ? 'border-b border-white/10 bg-[var(--color-primary)]'
-          : scrolled
-            ? 'border-b border-[var(--color-border)] bg-[var(--color-surface-warm)]/55 backdrop-blur-md'
-            : 'border-b border-[var(--color-border)] bg-[var(--color-surface-warm)]/95 backdrop-blur'
+      className={`sticky top-0 z-50 border-b border-white/10 transition-all duration-300 ${
+        scrolled
+          ? 'bg-[var(--color-primary)]/55 backdrop-blur-md'
+          : 'bg-[var(--color-primary)]'
       }`}
     >
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
@@ -40,7 +35,7 @@ export function SiteHeader() {
           <span className="transition-transform group-hover:scale-105">
             <Logo size={44} />
           </span>
-          <span className={`text-2xl font-extrabold leading-none tracking-tight ${overDark ? 'text-[var(--color-surface)]' : 'text-[var(--color-primary)]'}`}>
+          <span className="text-2xl font-extrabold leading-none tracking-tight text-[var(--color-surface)]">
             رزين
           </span>
         </Link>
@@ -55,19 +50,15 @@ export function SiteHeader() {
                 aria-current={active ? 'page' : undefined}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                   active
-                    ? overDark
-                      ? 'bg-[var(--color-accent)] text-[var(--color-primary)]'
-                      : 'bg-[var(--color-primary)] text-[var(--color-accent)]'
-                    : overDark
-                      ? 'text-white/70 hover:text-[var(--color-surface)]'
-                      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-primary)]'
+                    ? 'bg-[var(--color-accent)] text-[var(--color-primary)]'
+                    : 'text-white/70 hover:text-[var(--color-surface)]'
                 }`}
               >
                 {item.label}
               </Link>
             );
           })}
-          <span className={`mx-1 h-5 w-px ${overDark ? 'bg-white/20' : 'bg-[var(--color-border)]'}`} aria-hidden />
+          <span className="mx-1 h-5 w-px bg-white/20" aria-hidden />
           <Link
             href="/calculator"
             className="rounded-full bg-[var(--color-accent)] px-5 py-2.5 text-sm font-bold text-[var(--color-primary)] transition-all hover:-translate-y-0.5 hover:bg-[var(--color-accent-dark)] hover:shadow-lg"
@@ -79,7 +70,7 @@ export function SiteHeader() {
         <button
           onClick={() => setOpen((v) => !v)}
           aria-label="القائمة"
-          className={`flex h-10 w-10 items-center justify-center rounded-xl hover:bg-[var(--color-border)] md:hidden ${overDark ? 'text-[var(--color-surface)]' : 'text-[var(--color-primary)]'}`}
+          className="flex h-10 w-10 items-center justify-center rounded-xl text-[var(--color-surface)] hover:bg-white/10 md:hidden"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             {open ? (
@@ -99,7 +90,7 @@ export function SiteHeader() {
       </div>
 
       {open && (
-        <nav className="space-y-3 border-t border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-4 md:hidden">
+        <nav className="space-y-3 border-t border-white/10 bg-[var(--color-primary)] px-4 py-4 md:hidden">
           {NAV.map((item) => (
             <Link
               key={item.href}
@@ -107,7 +98,7 @@ export function SiteHeader() {
               onClick={() => setOpen(false)}
               aria-current={pathname === item.href ? 'page' : undefined}
               className={`block rounded-lg px-2 py-1 text-sm font-medium ${
-                pathname === item.href ? 'bg-[var(--color-primary)] text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)] hover:text-[var(--color-primary)]'
+                pathname === item.href ? 'bg-[var(--color-accent)] text-[var(--color-primary)]' : 'text-white/70 hover:text-[var(--color-surface)]'
               }`}
             >
               {item.label}
