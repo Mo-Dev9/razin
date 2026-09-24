@@ -52,7 +52,7 @@ export function NeighborhoodSearch({ placeholder = 'ابحث عن حي أو مد
   const inputCls =
     'w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] py-4 ps-12 pe-12 text-base text-[var(--color-text)] placeholder-[var(--color-text-muted)] shadow-soft';
   const inputClsDark =
-    'w-full rounded-2xl border border-white/15 bg-[#14383C] py-4 ps-12 pe-12 text-base text-[var(--color-text)] placeholder-[var(--color-text-muted)] shadow-lg';
+    'w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] py-4 ps-12 pe-12 text-base text-[var(--color-text)] placeholder-[var(--color-text-muted)] shadow-lg';
 
   const activeCls = dark ? inputClsDark : inputCls;
 

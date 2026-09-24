@@ -33,7 +33,6 @@ export default async function HomePage() {
         {/* البطل (Hero) */}
         <section
           className="relative overflow-hidden px-6 pb-20 pt-16 text-center md:pb-28 md:pt-24"
-          style={{ background: 'linear-gradient(160deg, #0F2C2C 0%, #16383C 50%, #0A1E1E 100%)' }}
         >
           <div aria-hidden className="pointer-events-none absolute -top-40 right-[-10%] h-[34rem] w-[34rem] rounded-full opacity-20 blur-3xl"
             style={{ background: 'radial-gradient(circle, #E9B94A 0%, transparent 70%)' }} />
@@ -204,7 +203,7 @@ export default async function HomePage() {
 
         {/* CTA الحاسبة */}
         <section className="mx-auto max-w-5xl px-4 py-14">
-          <div className="card-gradient relative overflow-hidden rounded-3xl px-6 py-12 text-center md:px-12">
+          <div className="relative overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] px-6 py-12 text-center md:px-12 shadow-soft">
             <div aria-hidden className="pointer-events-none absolute -left-16 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-[var(--color-accent)]/10 blur-2xl" />
             <h2 className="relative text-2xl font-extrabold text-[var(--color-text)] md:text-3xl">
               اعرف نطاق السعر قبل التفاوض
