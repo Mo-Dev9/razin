@@ -1,0 +1,83 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Buildings — silent legacy collection; closed: no public read, no client writes
+    // (fresh تصريح: هذه البيانات لا تُقرأ من العميل أصلًا — أغلقناها لوقف تسريب
+    // العناوين/الجغرافية عبر REST — قرار QA 16 سبتمبر 2026)
+    match /buildings/{buildingId} {
+      allow read: if false;
+      allow write: if false;
+    }
+
+    // Reviews — silent legacy collection; closed: same treatment (نصوص حرة + userId)
+    match /reviews/{reviewId} {
+      allow read: if false;
+      allow write: if false;
+    }
+
+    // Users — own-read/own-write only (لا قراءة عامة لبيانات المستخدمين)
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Neighborhoods — meta doc + subcollections.
+    // Listings (price ads) + questions («صوت الحارة»): public read; all writes via server API + Admin SDK
+    match /neighborhoods/{neighborhoodId} {
+      allow read: if true;
+      allow write: if false;
+
+      match /listings/{listingId} {
+        allow read: if true;
+        allow write: if false;
+      }
+
+      match /questions/{questionId} {
+        allow read: if true;
+        allow write: if false;
+
+        match /replies/{replyId} {
+          allow read: if true;
+          allow write: if false;
+        }
+      }
+    }
+
+    // Posts («حارة») — مجتمع الحي: تقدَّم كاملة عبر API بخادم إشراف (Admin SDK).
+    // read: false للعملاء حتى لا يتسرب موقع مُرسل أو هنوية بعد الآن (قرار ٦).
+    match /posts/{postId} {
+      allow read: if false;
+      allow write: if false;
+
+      match /comments/{commentId} {
+        allow read: if false;
+        allow write: if false;
+      }
+      match /votes/{voteId} {
+        allow read: if false;
+        allow write: if false;
+      }
+      match /reports/{reportId} {
+        allow read: if false;
+        allow write: if false;
+      }
+    }
+
+    // Manual-collection queue (protected pages recorded by the crawler) — read any, no client writes
+    match /collectionQueue/{queueId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Visits — read any, no client writes (all writes via server API + Admin SDK)
+    match /visitDays/{day} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /visitPages/{page} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

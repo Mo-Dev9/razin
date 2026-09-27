@@ -1,0 +1,79 @@
+import type { Metadata, Viewport } from 'next';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
+import { AppSplash } from '@/components/layout/AppSplash';
+import { VisitTracker } from '@/components/layout/VisitTracker';
+import 'leaflet/dist/leaflet.css';
+import './globals.css';
+
+const BASE_URL = 'https://razin-eg.vercel.app';
+
+export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: 'رزين — دليل أسعار الإيجار الحقيقية في أحياء مصر',
+    template: '%s | رزين',
+  },
+  description:
+    'السعر الوسطي والأقل والأعلى لإيجار الشقق في أحياء مصر — بيانات تُجمع من إعلانات السوق وتُدقق يدويًا. ابحث عن حيّك واعرف سعره الحقيقي، أو احسب سعر شقتك بنفسك.',
+  openGraph: {
+    type: 'website',
+    locale: 'ar_EG',
+    url: BASE_URL,
+    siteName: 'رزين',
+    title: 'رزين — دليل أسعار الإيجار الحقيقية في أحياء مصر',
+    description: 'السعر الوسطي والأقل والأعلى لإيجار الشقق في أحياء مصر — من إعلانات السوق الموثقة.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'رزين — دليل أسعار الإيجار الحقيقية في أحياء مصر',
+    description: 'السعر الوسطي والأقل والأعلى لإيجار الشقق في أحياء مصر.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'رزين',
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#F8F5F0',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="ar" dir="rtl">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
+          rel="stylesheet"
+        />
+        <link rel="apple-touch-icon" href="/logo-192.png" />
+      </head>
+      <body className="flex flex-col min-h-screen">
+        <AppSplash />
+        {children}
+        <ServiceWorkerRegistration />
+        <VisitTracker />
+        <Analytics />
+        <SpeedInsights />
+      </body>
+    </html>
+  );
+}

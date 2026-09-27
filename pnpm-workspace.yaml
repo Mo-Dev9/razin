@@ -1,0 +1,8 @@
+allowBuilds:
+  '@firebase/util': true
+  '@sentry/cli': true
+  protobufjs: true
+  esbuild: false
+  re2: false
+  sharp: false
+  unrs-resolver: false

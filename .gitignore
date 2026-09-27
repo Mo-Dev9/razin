@@ -1,0 +1,84 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/.playwright/
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# firebase admin
+scripts/service-account.json
+
+# unnecessary files
+AGENTS.md
+CLAUDE.md
+
+# runtime + accidental redirect artifacts
+.next-start*.log
+server.log
+-w
+
+# local reference docs (review files, study) — stay local-only
+STUDY.md
+*.xlsx
+*.xls
+
+# operations layer (crawlers, reports, review tools) — private-only, not on public GitHub
+/tools/
+/scripts/
+
+# internal docs & prompts — private-only
+AGENTS.md
+CLAUDE.md
+STUDY.md
+LOGO-PROMPT.md
+
+# transient crawl/debug dumps — regenerable, stay local-only
+/maadi-missing-urls.json
+/razin-maadi-preview.json
+*-preview.json
+
+# runtime logs
+/server-start.log
+/server.err.log
+
+.vercel
+.env*

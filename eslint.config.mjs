@@ -1,0 +1,21 @@
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
+
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  // Override default ignores of eslint-config-next.
+  globalIgnores([
+    ".next/**",
+    ".vercel/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+    "scripts/**",
+    // أدوات التشغيل منفردة (cjs) خارج باندل Next — لا تمر عبر flat config
+    "tools/**/*.cjs",
+  ]),
+]);
+
+export default eslintConfig;
